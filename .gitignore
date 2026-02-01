@@ -1,0 +1,6 @@
+# Go build cache and binaries
+.cache/
+.go-build/
+.go-build-cache/
+.gocache/
+bin/
