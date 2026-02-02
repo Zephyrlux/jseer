@@ -1,0 +1,48 @@
+app:
+  env: dev
+  name: jseer
+  version: 0.1.0
+
+log:
+  level: info
+
+database:
+  driver: sqlite
+  dsn: "file:jseer.db?_fk=1"
+
+login:
+  address: ":1863"
+  policy_port: 843
+  policy_enabled: true
+
+gateway:
+  address: ":5000"
+  max_connections: 5000
+  read_buffer_bytes: 65536
+  write_buffer_bytes: 65536
+  handshake_timeout_s: 5
+
+game:
+  public_ip: "127.0.0.1"
+  port: 5000
+  server_id: 1
+
+http:
+  address: ":32401"
+  enable_pprof: false
+  allow_origins: "*"
+  ip_txt: "127.0.0.1:1863"
+  static_root: "../Reseer-main/gameres"
+  proxy_root: "../Reseer-main/gameres_proxy"
+
+gm:
+  address: ":3001"
+  jwt_secret: "change-me"
+  token_ttl_minutes: 120
+  require_2fa: false
+  default_admin_user: "admin"
+  default_admin_pass: "admin"
+  config_cache_seconds: 5
+
+security:
+  allowed_ips: []

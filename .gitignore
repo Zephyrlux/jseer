@@ -4,3 +4,41 @@
 .go-build-cache/
 .gocache/
 bin/
+*.exe
+*.exe~
+*.test
+*.out
+*.prof
+coverage/
+coverage.out
+
+# Go workspace files
+go.work
+go.work.sum
+
+# Env files
+.env
+.env.*
+
+# Logs
+*.log
+logs/
+
+# Databases
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Node / Vite
+node_modules/
+gm-web/node_modules/
+dist/
+gm-web/dist/
+gm-web/.vite/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
