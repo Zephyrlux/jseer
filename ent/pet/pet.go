@@ -24,6 +24,10 @@ const (
 	FieldExp = "exp"
 	// FieldHp holds the string denoting the hp field in the database.
 	FieldHp = "hp"
+	// FieldCatchTime holds the string denoting the catch_time field in the database.
+	FieldCatchTime = "catch_time"
+	// FieldDv holds the string denoting the dv field in the database.
+	FieldDv = "dv"
 	// FieldNature holds the string denoting the nature field in the database.
 	FieldNature = "nature"
 	// FieldSkills holds the string denoting the skills field in the database.
@@ -53,6 +57,8 @@ var Columns = []string{
 	FieldLevel,
 	FieldExp,
 	FieldHp,
+	FieldCatchTime,
+	FieldDv,
 	FieldNature,
 	FieldSkills,
 	FieldCreatedAt,
@@ -76,6 +82,10 @@ var (
 	DefaultExp int
 	// DefaultHp holds the default value on creation for the "hp" field.
 	DefaultHp int
+	// DefaultCatchTime holds the default value on creation for the "catch_time" field.
+	DefaultCatchTime int64
+	// DefaultDv holds the default value on creation for the "dv" field.
+	DefaultDv int
 	// DefaultNature holds the default value on creation for the "nature" field.
 	DefaultNature string
 	// DefaultSkills holds the default value on creation for the "skills" field.
@@ -119,6 +129,16 @@ func ByExp(opts ...sql.OrderTermOption) OrderOption {
 // ByHp orders the results by the hp field.
 func ByHp(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldHp, opts...).ToFunc()
+}
+
+// ByCatchTime orders the results by the catch_time field.
+func ByCatchTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCatchTime, opts...).ToFunc()
+}
+
+// ByDv orders the results by the dv field.
+func ByDv(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDv, opts...).ToFunc()
 }
 
 // ByNature orders the results by the nature field.

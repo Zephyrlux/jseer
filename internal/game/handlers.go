@@ -1,57 +1,36 @@
 package game
 
 import (
-	"bytes"
-	"crypto/rand"
-	"encoding/binary"
-	"time"
-
 	"jseer/internal/gateway"
-	"jseer/internal/protocol"
+	"jseer/internal/storage"
 
 	"go.uber.org/zap"
 )
 
 type Deps struct {
-	Logger *zap.Logger
+	Logger      *zap.Logger
+	State       *State
+	GameIP      string
+	GamePort    int
+	Store       storage.Store
 }
 
 func RegisterHandlers(s *gateway.Server, deps *Deps) {
-	s.Register(1001, handleLogin(deps))
-	s.Register(1002, handleSystemTime())
-	s.Register(2001, handleEnterMap())
-
+	state := deps.State
+	if state == nil {
+		state = NewState()
+	}
+	registerSystemHandlers(s, deps, state)
+	registerNonoHandlers(s, deps, state)
+	registerPetHandlers(s, deps, state)
+	registerPetAdvancedHandlers(s, deps, state)
+	registerMapHandlers(s, deps, state)
+	registerRoomHandlers(s, deps, state)
+	registerTaskHandlers(s, deps, state)
+	registerItemHandlers(s, deps, state)
 	registerStubHandlers(s)
 
 	s.SetDefault(handleStubEmpty())
-}
-
-func handleLogin(deps *Deps) gateway.Handler {
-	return func(ctx *gateway.Context) {
-		body := buildLoginBody(ctx.UserID)
-		ctx.Server.SendResponse(ctx.Conn, 1001, ctx.UserID, body)
-		if deps != nil && deps.Logger != nil {
-			deps.Logger.Info("login placeholder sent", zap.Uint32("uid", ctx.UserID))
-		}
-	}
-}
-
-func handleSystemTime() gateway.Handler {
-	return func(ctx *gateway.Context) {
-		buf := make([]byte, 8)
-		binary.BigEndian.PutUint32(buf[0:4], uint32(time.Now().Unix()))
-		binary.BigEndian.PutUint32(buf[4:8], 0)
-		ctx.Server.SendResponse(ctx.Conn, 1002, ctx.UserID, buf)
-	}
-}
-
-func handleEnterMap() gateway.Handler {
-	return func(ctx *gateway.Context) {
-		// Minimal map entry response placeholder. Full protocol should be aligned with Lua client.
-		buf := new(bytes.Buffer)
-		protocol.WriteUint32BE(buf, 0) // ret
-		ctx.Server.SendResponse(ctx.Conn, 2001, ctx.UserID, buf.Bytes())
-	}
 }
 
 func handleStubEmpty() gateway.Handler {
@@ -77,7 +56,7 @@ func registerStubHandlers(s *gateway.Server) {
 	stub4Zero := []int32{
 		5001, 5002, 3201, 9757, 2442, 2444, 2445, 2446,
 		2053, 2054, 2055,
-		2302, 2306, 2307, 2308, 2309, 2310, 2311, 2312, 2313, 2314, 2315, 2316,
+		2311, 2312, 2314, 2315,
 		2320, 2321, 2322, 2323, 2324, 2327, 2328, 2329, 2330, 2331, 2332,
 		2343, 2351, 2352, 2353, 2356, 2357, 2358, 2393,
 		3401, 3402, 3403, 3406, 3407,
@@ -86,7 +65,7 @@ func registerStubHandlers(s *gateway.Server) {
 		3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011,
 		4001, 4002, 4003, 4004, 4005, 4006, 4007, 4008, 4009, 4010, 4011, 4012, 4013, 4014,
 		4017, 4018, 4019, 4020, 4022, 4023, 4024, 4025, 4101, 4102, 2481,
-		10001, 10002, 10003, 10004, 10005, 10007, 10008, 10009,
+		10004, 10005, 10007, 10008, 10009,
 	}
 	for _, cmd := range stub4Zero {
 		s.Register(cmd, handleStub4Zero())
@@ -104,29 +83,4 @@ func registerStubHandlers(s *gateway.Server) {
 	for _, cmd := range stubEmpty {
 		s.Register(cmd, handleStubEmpty())
 	}
-}
-
-func buildLoginBody(userID uint32) []byte {
-	buf := new(bytes.Buffer)
-	// session 16 bytes
-	session := make([]byte, 16)
-	_, _ = rand.Read(session)
-	buf.Write(session)
-	// keySeed 4 bytes
-	binary.Write(buf, binary.BigEndian, uint32(12345))
-	// userID
-	binary.Write(buf, binary.BigEndian, userID)
-	// regTime
-	binary.Write(buf, binary.BigEndian, uint32(time.Now().Unix()))
-	// nick 16 bytes
-	protocol.WriteFixedString(buf, "Seer", 16)
-	// decorate list 5 * uint32
-	for i := 0; i < 5; i++ {
-		binary.Write(buf, binary.BigEndian, uint32(0))
-	}
-	// placeholder fields (aligned with Lua structure, expanded later)
-	for i := 0; i < 20; i++ {
-		binary.Write(buf, binary.BigEndian, uint32(0))
-	}
-	return buf.Bytes()
 }

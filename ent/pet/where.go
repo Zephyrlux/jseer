@@ -80,6 +80,16 @@ func Hp(v int) predicate.Pet {
 	return predicate.Pet(sql.FieldEQ(FieldHp, v))
 }
 
+// CatchTime applies equality check predicate on the "catch_time" field. It's identical to CatchTimeEQ.
+func CatchTime(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldEQ(FieldCatchTime, v))
+}
+
+// Dv applies equality check predicate on the "dv" field. It's identical to DvEQ.
+func Dv(v int) predicate.Pet {
+	return predicate.Pet(sql.FieldEQ(FieldDv, v))
+}
+
 // Nature applies equality check predicate on the "nature" field. It's identical to NatureEQ.
 func Nature(v string) predicate.Pet {
 	return predicate.Pet(sql.FieldEQ(FieldNature, v))
@@ -278,6 +288,86 @@ func HpLT(v int) predicate.Pet {
 // HpLTE applies the LTE predicate on the "hp" field.
 func HpLTE(v int) predicate.Pet {
 	return predicate.Pet(sql.FieldLTE(FieldHp, v))
+}
+
+// CatchTimeEQ applies the EQ predicate on the "catch_time" field.
+func CatchTimeEQ(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldEQ(FieldCatchTime, v))
+}
+
+// CatchTimeNEQ applies the NEQ predicate on the "catch_time" field.
+func CatchTimeNEQ(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldNEQ(FieldCatchTime, v))
+}
+
+// CatchTimeIn applies the In predicate on the "catch_time" field.
+func CatchTimeIn(vs ...int64) predicate.Pet {
+	return predicate.Pet(sql.FieldIn(FieldCatchTime, vs...))
+}
+
+// CatchTimeNotIn applies the NotIn predicate on the "catch_time" field.
+func CatchTimeNotIn(vs ...int64) predicate.Pet {
+	return predicate.Pet(sql.FieldNotIn(FieldCatchTime, vs...))
+}
+
+// CatchTimeGT applies the GT predicate on the "catch_time" field.
+func CatchTimeGT(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldGT(FieldCatchTime, v))
+}
+
+// CatchTimeGTE applies the GTE predicate on the "catch_time" field.
+func CatchTimeGTE(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldGTE(FieldCatchTime, v))
+}
+
+// CatchTimeLT applies the LT predicate on the "catch_time" field.
+func CatchTimeLT(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldLT(FieldCatchTime, v))
+}
+
+// CatchTimeLTE applies the LTE predicate on the "catch_time" field.
+func CatchTimeLTE(v int64) predicate.Pet {
+	return predicate.Pet(sql.FieldLTE(FieldCatchTime, v))
+}
+
+// DvEQ applies the EQ predicate on the "dv" field.
+func DvEQ(v int) predicate.Pet {
+	return predicate.Pet(sql.FieldEQ(FieldDv, v))
+}
+
+// DvNEQ applies the NEQ predicate on the "dv" field.
+func DvNEQ(v int) predicate.Pet {
+	return predicate.Pet(sql.FieldNEQ(FieldDv, v))
+}
+
+// DvIn applies the In predicate on the "dv" field.
+func DvIn(vs ...int) predicate.Pet {
+	return predicate.Pet(sql.FieldIn(FieldDv, vs...))
+}
+
+// DvNotIn applies the NotIn predicate on the "dv" field.
+func DvNotIn(vs ...int) predicate.Pet {
+	return predicate.Pet(sql.FieldNotIn(FieldDv, vs...))
+}
+
+// DvGT applies the GT predicate on the "dv" field.
+func DvGT(v int) predicate.Pet {
+	return predicate.Pet(sql.FieldGT(FieldDv, v))
+}
+
+// DvGTE applies the GTE predicate on the "dv" field.
+func DvGTE(v int) predicate.Pet {
+	return predicate.Pet(sql.FieldGTE(FieldDv, v))
+}
+
+// DvLT applies the LT predicate on the "dv" field.
+func DvLT(v int) predicate.Pet {
+	return predicate.Pet(sql.FieldLT(FieldDv, v))
+}
+
+// DvLTE applies the LTE predicate on the "dv" field.
+func DvLTE(v int) predicate.Pet {
+	return predicate.Pet(sql.FieldLTE(FieldDv, v))
 }
 
 // NatureEQ applies the EQ predicate on the "nature" field.

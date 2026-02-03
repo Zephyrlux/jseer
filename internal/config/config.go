@@ -25,6 +25,7 @@ type AppConfig struct {
 	Env     string `mapstructure:"env"`
 	Name    string `mapstructure:"name"`
 	Version string `mapstructure:"version"`
+	ReloadIntervalS int `mapstructure:"reload_interval_s"`
 }
 
 type LogConfig struct {
@@ -40,6 +41,8 @@ type LoginConfig struct {
 	Address       string `mapstructure:"address"`
 	PolicyPort    int    `mapstructure:"policy_port"`
 	PolicyEnabled bool   `mapstructure:"policy_enabled"`
+	AdminAddress  string `mapstructure:"admin_address"`
+	AdminPprof    bool   `mapstructure:"admin_pprof"`
 }
 
 type GatewayConfig struct {
@@ -48,6 +51,8 @@ type GatewayConfig struct {
 	ReadBufferBytes   int    `mapstructure:"read_buffer_bytes"`
 	WriteBufferBytes  int    `mapstructure:"write_buffer_bytes"`
 	HandshakeTimeoutS int    `mapstructure:"handshake_timeout_s"`
+	AdminAddress      string `mapstructure:"admin_address"`
+	AdminPprof        bool   `mapstructure:"admin_pprof"`
 }
 
 type GameConfig struct {
@@ -63,6 +68,7 @@ type HTTPConfig struct {
 	IPTxt        string `mapstructure:"ip_txt"`
 	StaticRoot   string `mapstructure:"static_root"`
 	ProxyRoot    string `mapstructure:"proxy_root"`
+	Upstream     string `mapstructure:"upstream"`
 }
 
 type GMConfig struct {
@@ -118,17 +124,22 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("app.env", "dev")
 	v.SetDefault("app.name", "jseer")
 	v.SetDefault("app.version", "0.1.0")
+	v.SetDefault("app.reload_interval_s", 0)
 	v.SetDefault("log.level", "info")
 	v.SetDefault("database.driver", "sqlite")
 	v.SetDefault("database.dsn", "file:jseer.db?_fk=1")
 	v.SetDefault("login.address", ":1863")
 	v.SetDefault("login.policy_port", 843)
 	v.SetDefault("login.policy_enabled", true)
+	v.SetDefault("login.admin_address", "")
+	v.SetDefault("login.admin_pprof", false)
 	v.SetDefault("gateway.address", ":5000")
 	v.SetDefault("gateway.max_connections", 5000)
 	v.SetDefault("gateway.read_buffer_bytes", 65536)
 	v.SetDefault("gateway.write_buffer_bytes", 65536)
 	v.SetDefault("gateway.handshake_timeout_s", 5)
+	v.SetDefault("gateway.admin_address", "")
+	v.SetDefault("gateway.admin_pprof", false)
 	v.SetDefault("game.public_ip", "127.0.0.1")
 	v.SetDefault("game.port", 5000)
 	v.SetDefault("game.server_id", 1)
@@ -136,8 +147,9 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("http.enable_pprof", false)
 	v.SetDefault("http.allow_origins", "*")
 	v.SetDefault("http.ip_txt", "127.0.0.1:1863")
-	v.SetDefault("http.static_root", "../Reseer-main/gameres")
-	v.SetDefault("http.proxy_root", "../Reseer-main/gameres_proxy")
+	v.SetDefault("http.static_root", "../Reseer-main/gameres/root")
+	v.SetDefault("http.proxy_root", "../Reseer-main/gameres_proxy/root")
+	v.SetDefault("http.upstream", "")
 	v.SetDefault("gm.address", ":3001")
 	v.SetDefault("gm.jwt_secret", "change-me")
 	v.SetDefault("gm.token_ttl_minutes", 120)

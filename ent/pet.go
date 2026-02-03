@@ -28,6 +28,10 @@ type Pet struct {
 	Exp int `json:"exp,omitempty"`
 	// Hp holds the value of the "hp" field.
 	Hp int `json:"hp,omitempty"`
+	// CatchTime holds the value of the "catch_time" field.
+	CatchTime int64 `json:"catch_time,omitempty"`
+	// Dv holds the value of the "dv" field.
+	Dv int `json:"dv,omitempty"`
 	// Nature holds the value of the "nature" field.
 	Nature string `json:"nature,omitempty"`
 	// Skills holds the value of the "skills" field.
@@ -67,7 +71,7 @@ func (*Pet) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case pet.FieldID, pet.FieldPlayerID, pet.FieldSpeciesID, pet.FieldLevel, pet.FieldExp, pet.FieldHp:
+		case pet.FieldID, pet.FieldPlayerID, pet.FieldSpeciesID, pet.FieldLevel, pet.FieldExp, pet.FieldHp, pet.FieldCatchTime, pet.FieldDv:
 			values[i] = new(sql.NullInt64)
 		case pet.FieldNature, pet.FieldSkills:
 			values[i] = new(sql.NullString)
@@ -123,6 +127,18 @@ func (_m *Pet) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field hp", values[i])
 			} else if value.Valid {
 				_m.Hp = int(value.Int64)
+			}
+		case pet.FieldCatchTime:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field catch_time", values[i])
+			} else if value.Valid {
+				_m.CatchTime = value.Int64
+			}
+		case pet.FieldDv:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field dv", values[i])
+			} else if value.Valid {
+				_m.Dv = int(value.Int64)
 			}
 		case pet.FieldNature:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -203,6 +219,12 @@ func (_m *Pet) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("hp=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Hp))
+	builder.WriteString(", ")
+	builder.WriteString("catch_time=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CatchTime))
+	builder.WriteString(", ")
+	builder.WriteString("dv=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Dv))
 	builder.WriteString(", ")
 	builder.WriteString("nature=")
 	builder.WriteString(_m.Nature)

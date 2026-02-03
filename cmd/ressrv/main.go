@@ -1,11 +1,14 @@
 package main
 
 import (
+	"io"
 	"net/http"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
+	"sync/atomic"
+	"time"
 
 	"github.com/kataras/iris/v12"
 
@@ -16,7 +19,8 @@ import (
 )
 
 func main() {
-	cfg, err := config.Load(config.ResolvePath("configs/config.yaml"))
+	cfgPath := config.ResolvePath("configs/config.yaml")
+	cfg, err := config.Load(cfgPath)
 	if err != nil {
 		panic(err)
 	}
@@ -25,13 +29,23 @@ func main() {
 		panic(err)
 	}
 
+	var cfgVal atomic.Value
+	cfgVal.Store(cfg)
+	if cfg.App.ReloadIntervalS > 0 {
+		config.Watch(cfgPath, time.Duration(cfg.App.ReloadIntervalS)*time.Second, func(newCfg *config.Config) {
+			cfgVal.Store(newCfg)
+		})
+	}
+
 	app := iris.New()
 	app.Get("/ip.txt", func(ctx iris.Context) {
-		_, _ = ctx.WriteString(cfg.HTTP.IPTxt)
+		current := cfgVal.Load().(*config.Config)
+		_, _ = ctx.WriteString(current.HTTP.IPTxt)
 	})
 	app.Get("/healthz", func(ctx iris.Context) { ctx.JSON(iris.Map{"status": "ok"}) })
 	app.Get("/{path:path}", func(ctx iris.Context) {
-		serveResource(ctx, cfg.HTTP.StaticRoot, cfg.HTTP.ProxyRoot)
+		current := cfgVal.Load().(*config.Config)
+		serveResource(ctx, current.HTTP.StaticRoot, current.HTTP.ProxyRoot, current.HTTP.Upstream)
 	})
 
 	if err := app.Listen(cfg.HTTP.Address); err != nil {
@@ -40,13 +54,12 @@ func main() {
 	}
 }
 
-func serveResource(ctx iris.Context, staticRoot, proxyRoot string) {
+func serveResource(ctx iris.Context, staticRoot, proxyRoot, upstream string) {
 	reqPath := ctx.Path()
 	rel := strings.TrimPrefix(reqPath, "/")
 	rel = path.Clean(rel)
 	if rel == "." || rel == "/" {
-		ctx.StatusCode(404)
-		return
+		rel = "index.html"
 	}
 	if strings.Contains(rel, "..") {
 		ctx.StatusCode(400)
@@ -62,6 +75,11 @@ func serveResource(ctx iris.Context, staticRoot, proxyRoot string) {
 	if staticRoot != "" {
 		if filePath, ok := safeJoin(staticRoot, rel); ok && isFile(filePath) {
 			http.ServeFile(ctx.ResponseWriter(), ctx.Request(), filePath)
+			return
+		}
+	}
+	if upstream != "" {
+		if fetchAndServe(ctx, upstream, proxyRoot, rel) {
 			return
 		}
 	}
@@ -92,4 +110,38 @@ func isFile(path string) bool {
 		return false
 	}
 	return !info.IsDir()
+}
+
+func fetchAndServe(ctx iris.Context, upstream, proxyRoot, rel string) bool {
+	base := strings.TrimRight(upstream, "/")
+	url := base + "/" + rel
+	client := http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Get(url)
+	if err != nil {
+		return false
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return false
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return false
+	}
+
+	for k, v := range resp.Header {
+		if len(v) > 0 {
+			ctx.ResponseWriter().Header()[k] = v
+		}
+	}
+	ctx.StatusCode(resp.StatusCode)
+	_, _ = ctx.Write(body)
+
+	if proxyRoot != "" {
+		if filePath, ok := safeJoin(proxyRoot, rel); ok {
+			_ = os.MkdirAll(filepath.Dir(filePath), 0o755)
+			_ = os.WriteFile(filePath, body, 0o644)
+		}
+	}
+	return true
 }

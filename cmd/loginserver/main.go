@@ -9,6 +9,7 @@ import (
 	"jseer/internal/config"
 	"jseer/internal/loginserver"
 	"jseer/internal/logging"
+	"jseer/internal/ops"
 	"jseer/internal/storage"
 
 	"go.uber.org/zap"
@@ -33,6 +34,7 @@ func main() {
 
 	srv := loginserver.New(cfg.Login, cfg.Game, store, logger)
 	loginserver.RegisterHandlers(srv)
+	ops.StartAdminServer(cfg.Login.AdminAddress, cfg.Login.AdminPprof, logger)
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()

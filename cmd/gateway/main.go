@@ -10,6 +10,8 @@ import (
 	"jseer/internal/game"
 	"jseer/internal/gateway"
 	"jseer/internal/logging"
+	"jseer/internal/ops"
+	"jseer/internal/storage"
 
 	"go.uber.org/zap"
 )
@@ -24,8 +26,21 @@ func main() {
 		panic(err)
 	}
 
+	store, err := storage.NewStore(cfg.Database)
+	if err != nil {
+		logger.Error("store init failed", zap.Error(err))
+		os.Exit(1)
+	}
+	defer store.Close()
+
 	gw := gateway.New(cfg.Gateway, logger)
-	game.RegisterHandlers(gw, &game.Deps{Logger: logger})
+	ops.StartAdminServer(cfg.Gateway.AdminAddress, cfg.Gateway.AdminPprof, logger)
+	game.RegisterHandlers(gw, &game.Deps{
+		Logger:   logger,
+		GameIP:   cfg.Game.PublicIP,
+		GamePort: cfg.Game.Port,
+		Store:    store,
+	})
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()

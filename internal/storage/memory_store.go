@@ -16,6 +16,9 @@ type memoryStore struct {
 	players       map[int64]*Player
 	config        map[string]*ConfigEntry
 	versions      map[string][]*ConfigVersion
+	items         map[int64][]*Item
+	pets          map[int64][]*Pet
+	audit         []*AuditLog
 }
 
 func newMemoryStore() *memoryStore {
@@ -24,6 +27,9 @@ func newMemoryStore() *memoryStore {
 		players:  make(map[int64]*Player),
 		config:   make(map[string]*ConfigEntry),
 		versions: make(map[string][]*ConfigVersion),
+		items:    make(map[int64][]*Item),
+		pets:     make(map[int64][]*Pet),
+		audit:    make([]*AuditLog, 0),
 	}
 }
 
@@ -86,6 +92,90 @@ func (s *memoryStore) CreatePlayer(ctx context.Context, in *Player) (*Player, er
 	return &copy, nil
 }
 
+func (s *memoryStore) UpdatePlayer(ctx context.Context, in *Player) (*Player, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if in == nil {
+		return nil, errors.New("nil player")
+	}
+	_, ok := s.players[in.ID]
+	if !ok {
+		return nil, errors.New("not found")
+	}
+	copy := *in
+	s.players[copy.ID] = &copy
+	return &copy, nil
+}
+
+func (s *memoryStore) ListItemsByPlayer(ctx context.Context, playerID int64) ([]*Item, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	list := s.items[playerID]
+	out := make([]*Item, 0, len(list))
+	for _, it := range list {
+		copy := *it
+		out = append(out, &copy)
+	}
+	return out, nil
+}
+
+func (s *memoryStore) UpsertItem(ctx context.Context, playerID int64, itemID int, count int, meta string) (*Item, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	list := s.items[playerID]
+	for _, it := range list {
+		if it.ItemID == itemID {
+			it.Count = count
+			it.Meta = meta
+			copy := *it
+			return &copy, nil
+		}
+	}
+	newItem := &Item{
+		ID:       time.Now().UnixNano(),
+		PlayerID: playerID,
+		ItemID:   itemID,
+		Count:    count,
+		Meta:     meta,
+	}
+	s.items[playerID] = append(list, newItem)
+	copy := *newItem
+	return &copy, nil
+}
+
+func (s *memoryStore) DeleteItem(ctx context.Context, playerID int64, itemID int) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	list := s.items[playerID]
+	if len(list) == 0 {
+		return nil
+	}
+	next := list[:0]
+	for _, it := range list {
+		if it.ItemID != itemID {
+			next = append(next, it)
+		}
+	}
+	if len(next) == 0 {
+		delete(s.items, playerID)
+	} else {
+		s.items[playerID] = next
+	}
+	return nil
+}
+
+func (s *memoryStore) ListPetsByPlayer(ctx context.Context, playerID int64) ([]*Pet, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	list := s.pets[playerID]
+	out := make([]*Pet, 0, len(list))
+	for _, it := range list {
+		copy := *it
+		out = append(out, &copy)
+	}
+	return out, nil
+}
+
 func (s *memoryStore) ListConfigKeys(ctx context.Context) ([]string, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
@@ -126,6 +216,15 @@ func (s *memoryStore) SaveConfig(ctx context.Context, entry *ConfigEntry, operat
 		CreatedAt: time.Now().Unix(),
 	}
 	s.versions[entry.Key] = append(s.versions[entry.Key], cv)
+	s.audit = append(s.audit, &AuditLog{
+		ID:         time.Now().UnixNano(),
+		Operator:   operator,
+		Action:     "config.save",
+		Resource:   "config",
+		ResourceID: entry.Key,
+		Detail:     "config updated",
+		CreatedAt:  time.Now().Unix(),
+	})
 	return cv, nil
 }
 
@@ -137,6 +236,15 @@ func (s *memoryStore) ListConfigVersions(ctx context.Context, key string, limit 
 		return append([]*ConfigVersion{}, list...), nil
 	}
 	return append([]*ConfigVersion{}, list[len(list)-limit:]...), nil
+}
+
+func (s *memoryStore) ListAuditLogs(ctx context.Context, limit int) ([]*AuditLog, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	if limit <= 0 || len(s.audit) <= limit {
+		return append([]*AuditLog{}, s.audit...), nil
+	}
+	return append([]*AuditLog{}, s.audit[len(s.audit)-limit:]...), nil
 }
 
 var _ Store = (*memoryStore)(nil)

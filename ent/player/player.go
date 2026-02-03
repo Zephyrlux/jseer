@@ -26,10 +26,42 @@ const (
 	FieldGold = "gold"
 	// FieldMapID holds the string denoting the map_id field in the database.
 	FieldMapID = "map_id"
+	// FieldMapType holds the string denoting the map_type field in the database.
+	FieldMapType = "map_type"
 	// FieldPosX holds the string denoting the pos_x field in the database.
 	FieldPosX = "pos_x"
 	// FieldPosY holds the string denoting the pos_y field in the database.
 	FieldPosY = "pos_y"
+	// FieldLastMapID holds the string denoting the last_map_id field in the database.
+	FieldLastMapID = "last_map_id"
+	// FieldColor holds the string denoting the color field in the database.
+	FieldColor = "color"
+	// FieldTexture holds the string denoting the texture field in the database.
+	FieldTexture = "texture"
+	// FieldEnergy holds the string denoting the energy field in the database.
+	FieldEnergy = "energy"
+	// FieldFightBadge holds the string denoting the fight_badge field in the database.
+	FieldFightBadge = "fight_badge"
+	// FieldTimeToday holds the string denoting the time_today field in the database.
+	FieldTimeToday = "time_today"
+	// FieldTimeLimit holds the string denoting the time_limit field in the database.
+	FieldTimeLimit = "time_limit"
+	// FieldTeacherID holds the string denoting the teacher_id field in the database.
+	FieldTeacherID = "teacher_id"
+	// FieldStudentID holds the string denoting the student_id field in the database.
+	FieldStudentID = "student_id"
+	// FieldCurTitle holds the string denoting the cur_title field in the database.
+	FieldCurTitle = "cur_title"
+	// FieldTaskStatus holds the string denoting the task_status field in the database.
+	FieldTaskStatus = "task_status"
+	// FieldTaskBufs holds the string denoting the task_bufs field in the database.
+	FieldTaskBufs = "task_bufs"
+	// FieldCurrentPetID holds the string denoting the current_pet_id field in the database.
+	FieldCurrentPetID = "current_pet_id"
+	// FieldCurrentPetCatchTime holds the string denoting the current_pet_catch_time field in the database.
+	FieldCurrentPetCatchTime = "current_pet_catch_time"
+	// FieldCurrentPetDv holds the string denoting the current_pet_dv field in the database.
+	FieldCurrentPetDv = "current_pet_dv"
 	// FieldLastLoginAt holds the string denoting the last_login_at field in the database.
 	FieldLastLoginAt = "last_login_at"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
@@ -76,8 +108,24 @@ var Columns = []string{
 	FieldCoins,
 	FieldGold,
 	FieldMapID,
+	FieldMapType,
 	FieldPosX,
 	FieldPosY,
+	FieldLastMapID,
+	FieldColor,
+	FieldTexture,
+	FieldEnergy,
+	FieldFightBadge,
+	FieldTimeToday,
+	FieldTimeLimit,
+	FieldTeacherID,
+	FieldStudentID,
+	FieldCurTitle,
+	FieldTaskStatus,
+	FieldTaskBufs,
+	FieldCurrentPetID,
+	FieldCurrentPetCatchTime,
+	FieldCurrentPetDv,
 	FieldLastLoginAt,
 	FieldCreatedAt,
 	FieldUpdatedAt,
@@ -104,10 +152,42 @@ var (
 	DefaultGold int64
 	// DefaultMapID holds the default value on creation for the "map_id" field.
 	DefaultMapID int
+	// DefaultMapType holds the default value on creation for the "map_type" field.
+	DefaultMapType int
 	// DefaultPosX holds the default value on creation for the "pos_x" field.
 	DefaultPosX int
 	// DefaultPosY holds the default value on creation for the "pos_y" field.
 	DefaultPosY int
+	// DefaultLastMapID holds the default value on creation for the "last_map_id" field.
+	DefaultLastMapID int
+	// DefaultColor holds the default value on creation for the "color" field.
+	DefaultColor int64
+	// DefaultTexture holds the default value on creation for the "texture" field.
+	DefaultTexture int64
+	// DefaultEnergy holds the default value on creation for the "energy" field.
+	DefaultEnergy int64
+	// DefaultFightBadge holds the default value on creation for the "fight_badge" field.
+	DefaultFightBadge int64
+	// DefaultTimeToday holds the default value on creation for the "time_today" field.
+	DefaultTimeToday int64
+	// DefaultTimeLimit holds the default value on creation for the "time_limit" field.
+	DefaultTimeLimit int64
+	// DefaultTeacherID holds the default value on creation for the "teacher_id" field.
+	DefaultTeacherID int64
+	// DefaultStudentID holds the default value on creation for the "student_id" field.
+	DefaultStudentID int64
+	// DefaultCurTitle holds the default value on creation for the "cur_title" field.
+	DefaultCurTitle int64
+	// DefaultTaskStatus holds the default value on creation for the "task_status" field.
+	DefaultTaskStatus string
+	// DefaultTaskBufs holds the default value on creation for the "task_bufs" field.
+	DefaultTaskBufs string
+	// DefaultCurrentPetID holds the default value on creation for the "current_pet_id" field.
+	DefaultCurrentPetID int64
+	// DefaultCurrentPetCatchTime holds the default value on creation for the "current_pet_catch_time" field.
+	DefaultCurrentPetCatchTime int64
+	// DefaultCurrentPetDv holds the default value on creation for the "current_pet_dv" field.
+	DefaultCurrentPetDv int64
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -154,6 +234,11 @@ func ByMapID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMapID, opts...).ToFunc()
 }
 
+// ByMapType orders the results by the map_type field.
+func ByMapType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMapType, opts...).ToFunc()
+}
+
 // ByPosX orders the results by the pos_x field.
 func ByPosX(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPosX, opts...).ToFunc()
@@ -162,6 +247,81 @@ func ByPosX(opts ...sql.OrderTermOption) OrderOption {
 // ByPosY orders the results by the pos_y field.
 func ByPosY(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPosY, opts...).ToFunc()
+}
+
+// ByLastMapID orders the results by the last_map_id field.
+func ByLastMapID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLastMapID, opts...).ToFunc()
+}
+
+// ByColor orders the results by the color field.
+func ByColor(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldColor, opts...).ToFunc()
+}
+
+// ByTexture orders the results by the texture field.
+func ByTexture(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTexture, opts...).ToFunc()
+}
+
+// ByEnergy orders the results by the energy field.
+func ByEnergy(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEnergy, opts...).ToFunc()
+}
+
+// ByFightBadge orders the results by the fight_badge field.
+func ByFightBadge(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFightBadge, opts...).ToFunc()
+}
+
+// ByTimeToday orders the results by the time_today field.
+func ByTimeToday(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTimeToday, opts...).ToFunc()
+}
+
+// ByTimeLimit orders the results by the time_limit field.
+func ByTimeLimit(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTimeLimit, opts...).ToFunc()
+}
+
+// ByTeacherID orders the results by the teacher_id field.
+func ByTeacherID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTeacherID, opts...).ToFunc()
+}
+
+// ByStudentID orders the results by the student_id field.
+func ByStudentID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStudentID, opts...).ToFunc()
+}
+
+// ByCurTitle orders the results by the cur_title field.
+func ByCurTitle(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurTitle, opts...).ToFunc()
+}
+
+// ByTaskStatus orders the results by the task_status field.
+func ByTaskStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTaskStatus, opts...).ToFunc()
+}
+
+// ByTaskBufs orders the results by the task_bufs field.
+func ByTaskBufs(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTaskBufs, opts...).ToFunc()
+}
+
+// ByCurrentPetID orders the results by the current_pet_id field.
+func ByCurrentPetID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrentPetID, opts...).ToFunc()
+}
+
+// ByCurrentPetCatchTime orders the results by the current_pet_catch_time field.
+func ByCurrentPetCatchTime(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrentPetCatchTime, opts...).ToFunc()
+}
+
+// ByCurrentPetDv orders the results by the current_pet_dv field.
+func ByCurrentPetDv(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCurrentPetDv, opts...).ToFunc()
 }
 
 // ByLastLoginAt orders the results by the last_login_at field.

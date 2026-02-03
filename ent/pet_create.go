@@ -75,6 +75,34 @@ func (_c *PetCreate) SetNillableHp(v *int) *PetCreate {
 	return _c
 }
 
+// SetCatchTime sets the "catch_time" field.
+func (_c *PetCreate) SetCatchTime(v int64) *PetCreate {
+	_c.mutation.SetCatchTime(v)
+	return _c
+}
+
+// SetNillableCatchTime sets the "catch_time" field if the given value is not nil.
+func (_c *PetCreate) SetNillableCatchTime(v *int64) *PetCreate {
+	if v != nil {
+		_c.SetCatchTime(*v)
+	}
+	return _c
+}
+
+// SetDv sets the "dv" field.
+func (_c *PetCreate) SetDv(v int) *PetCreate {
+	_c.mutation.SetDv(v)
+	return _c
+}
+
+// SetNillableDv sets the "dv" field if the given value is not nil.
+func (_c *PetCreate) SetNillableDv(v *int) *PetCreate {
+	if v != nil {
+		_c.SetDv(*v)
+	}
+	return _c
+}
+
 // SetNature sets the "nature" field.
 func (_c *PetCreate) SetNature(v string) *PetCreate {
 	_c.mutation.SetNature(v)
@@ -183,6 +211,14 @@ func (_c *PetCreate) defaults() {
 		v := pet.DefaultHp
 		_c.mutation.SetHp(v)
 	}
+	if _, ok := _c.mutation.CatchTime(); !ok {
+		v := pet.DefaultCatchTime
+		_c.mutation.SetCatchTime(v)
+	}
+	if _, ok := _c.mutation.Dv(); !ok {
+		v := pet.DefaultDv
+		_c.mutation.SetDv(v)
+	}
 	if _, ok := _c.mutation.Nature(); !ok {
 		v := pet.DefaultNature
 		_c.mutation.SetNature(v)
@@ -217,6 +253,12 @@ func (_c *PetCreate) check() error {
 	}
 	if _, ok := _c.mutation.Hp(); !ok {
 		return &ValidationError{Name: "hp", err: errors.New(`ent: missing required field "Pet.hp"`)}
+	}
+	if _, ok := _c.mutation.CatchTime(); !ok {
+		return &ValidationError{Name: "catch_time", err: errors.New(`ent: missing required field "Pet.catch_time"`)}
+	}
+	if _, ok := _c.mutation.Dv(); !ok {
+		return &ValidationError{Name: "dv", err: errors.New(`ent: missing required field "Pet.dv"`)}
 	}
 	if _, ok := _c.mutation.Nature(); !ok {
 		return &ValidationError{Name: "nature", err: errors.New(`ent: missing required field "Pet.nature"`)}
@@ -274,6 +316,14 @@ func (_c *PetCreate) createSpec() (*Pet, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Hp(); ok {
 		_spec.SetField(pet.FieldHp, field.TypeInt, value)
 		_node.Hp = value
+	}
+	if value, ok := _c.mutation.CatchTime(); ok {
+		_spec.SetField(pet.FieldCatchTime, field.TypeInt64, value)
+		_node.CatchTime = value
+	}
+	if value, ok := _c.mutation.Dv(); ok {
+		_spec.SetField(pet.FieldDv, field.TypeInt, value)
+		_node.Dv = value
 	}
 	if value, ok := _c.mutation.Nature(); ok {
 		_spec.SetField(pet.FieldNature, field.TypeString, value)

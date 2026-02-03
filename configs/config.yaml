@@ -2,6 +2,7 @@ app:
   env: dev
   name: jseer
   version: 0.1.0
+  reload_interval_s: 0
 
 log:
   level: info
@@ -14,6 +15,8 @@ login:
   address: ":1863"
   policy_port: 843
   policy_enabled: true
+  admin_address: ""
+  admin_pprof: false
 
 gateway:
   address: ":5000"
@@ -21,6 +24,8 @@ gateway:
   read_buffer_bytes: 65536
   write_buffer_bytes: 65536
   handshake_timeout_s: 5
+  admin_address: ""
+  admin_pprof: false
 
 game:
   public_ip: "127.0.0.1"
@@ -32,8 +37,9 @@ http:
   enable_pprof: false
   allow_origins: "*"
   ip_txt: "127.0.0.1:1863"
-  static_root: "../Reseer-main/gameres"
-  proxy_root: "../Reseer-main/gameres_proxy"
+  static_root: "../Reseer-main/gameres/root"
+  proxy_root: "../Reseer-main/gameres_proxy/root"
+  upstream: ""
 
 gm:
   address: ":3001"

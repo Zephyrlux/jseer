@@ -59,6 +59,7 @@ start_service "gmserver" "go run ./cmd/gmserver"
 
 echo "\nAll services started. PIDs: ${pids[*]}"
 echo "资源地址: http://localhost:32401/ip.txt"
+echo "资源入口: http://localhost:32401/index.html"
 echo "GM 地址:  http://localhost:3001"
 
 cleanup() {

@@ -143,6 +143,27 @@ func (_u *PlayerUpdate) AddMapID(v int) *PlayerUpdate {
 	return _u
 }
 
+// SetMapType sets the "map_type" field.
+func (_u *PlayerUpdate) SetMapType(v int) *PlayerUpdate {
+	_u.mutation.ResetMapType()
+	_u.mutation.SetMapType(v)
+	return _u
+}
+
+// SetNillableMapType sets the "map_type" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableMapType(v *int) *PlayerUpdate {
+	if v != nil {
+		_u.SetMapType(*v)
+	}
+	return _u
+}
+
+// AddMapType adds value to the "map_type" field.
+func (_u *PlayerUpdate) AddMapType(v int) *PlayerUpdate {
+	_u.mutation.AddMapType(v)
+	return _u
+}
+
 // SetPosX sets the "pos_x" field.
 func (_u *PlayerUpdate) SetPosX(v int) *PlayerUpdate {
 	_u.mutation.ResetPosX()
@@ -182,6 +203,307 @@ func (_u *PlayerUpdate) SetNillablePosY(v *int) *PlayerUpdate {
 // AddPosY adds value to the "pos_y" field.
 func (_u *PlayerUpdate) AddPosY(v int) *PlayerUpdate {
 	_u.mutation.AddPosY(v)
+	return _u
+}
+
+// SetLastMapID sets the "last_map_id" field.
+func (_u *PlayerUpdate) SetLastMapID(v int) *PlayerUpdate {
+	_u.mutation.ResetLastMapID()
+	_u.mutation.SetLastMapID(v)
+	return _u
+}
+
+// SetNillableLastMapID sets the "last_map_id" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableLastMapID(v *int) *PlayerUpdate {
+	if v != nil {
+		_u.SetLastMapID(*v)
+	}
+	return _u
+}
+
+// AddLastMapID adds value to the "last_map_id" field.
+func (_u *PlayerUpdate) AddLastMapID(v int) *PlayerUpdate {
+	_u.mutation.AddLastMapID(v)
+	return _u
+}
+
+// SetColor sets the "color" field.
+func (_u *PlayerUpdate) SetColor(v int64) *PlayerUpdate {
+	_u.mutation.ResetColor()
+	_u.mutation.SetColor(v)
+	return _u
+}
+
+// SetNillableColor sets the "color" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableColor(v *int64) *PlayerUpdate {
+	if v != nil {
+		_u.SetColor(*v)
+	}
+	return _u
+}
+
+// AddColor adds value to the "color" field.
+func (_u *PlayerUpdate) AddColor(v int64) *PlayerUpdate {
+	_u.mutation.AddColor(v)
+	return _u
+}
+
+// SetTexture sets the "texture" field.
+func (_u *PlayerUpdate) SetTexture(v int64) *PlayerUpdate {
+	_u.mutation.ResetTexture()
+	_u.mutation.SetTexture(v)
+	return _u
+}
+
+// SetNillableTexture sets the "texture" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableTexture(v *int64) *PlayerUpdate {
+	if v != nil {
+		_u.SetTexture(*v)
+	}
+	return _u
+}
+
+// AddTexture adds value to the "texture" field.
+func (_u *PlayerUpdate) AddTexture(v int64) *PlayerUpdate {
+	_u.mutation.AddTexture(v)
+	return _u
+}
+
+// SetEnergy sets the "energy" field.
+func (_u *PlayerUpdate) SetEnergy(v int64) *PlayerUpdate {
+	_u.mutation.ResetEnergy()
+	_u.mutation.SetEnergy(v)
+	return _u
+}
+
+// SetNillableEnergy sets the "energy" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableEnergy(v *int64) *PlayerUpdate {
+	if v != nil {
+		_u.SetEnergy(*v)
+	}
+	return _u
+}
+
+// AddEnergy adds value to the "energy" field.
+func (_u *PlayerUpdate) AddEnergy(v int64) *PlayerUpdate {
+	_u.mutation.AddEnergy(v)
+	return _u
+}
+
+// SetFightBadge sets the "fight_badge" field.
+func (_u *PlayerUpdate) SetFightBadge(v int64) *PlayerUpdate {
+	_u.mutation.ResetFightBadge()
+	_u.mutation.SetFightBadge(v)
+	return _u
+}
+
+// SetNillableFightBadge sets the "fight_badge" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableFightBadge(v *int64) *PlayerUpdate {
+	if v != nil {
+		_u.SetFightBadge(*v)
+	}
+	return _u
+}
+
+// AddFightBadge adds value to the "fight_badge" field.
+func (_u *PlayerUpdate) AddFightBadge(v int64) *PlayerUpdate {
+	_u.mutation.AddFightBadge(v)
+	return _u
+}
+
+// SetTimeToday sets the "time_today" field.
+func (_u *PlayerUpdate) SetTimeToday(v int64) *PlayerUpdate {
+	_u.mutation.ResetTimeToday()
+	_u.mutation.SetTimeToday(v)
+	return _u
+}
+
+// SetNillableTimeToday sets the "time_today" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableTimeToday(v *int64) *PlayerUpdate {
+	if v != nil {
+		_u.SetTimeToday(*v)
+	}
+	return _u
+}
+
+// AddTimeToday adds value to the "time_today" field.
+func (_u *PlayerUpdate) AddTimeToday(v int64) *PlayerUpdate {
+	_u.mutation.AddTimeToday(v)
+	return _u
+}
+
+// SetTimeLimit sets the "time_limit" field.
+func (_u *PlayerUpdate) SetTimeLimit(v int64) *PlayerUpdate {
+	_u.mutation.ResetTimeLimit()
+	_u.mutation.SetTimeLimit(v)
+	return _u
+}
+
+// SetNillableTimeLimit sets the "time_limit" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableTimeLimit(v *int64) *PlayerUpdate {
+	if v != nil {
+		_u.SetTimeLimit(*v)
+	}
+	return _u
+}
+
+// AddTimeLimit adds value to the "time_limit" field.
+func (_u *PlayerUpdate) AddTimeLimit(v int64) *PlayerUpdate {
+	_u.mutation.AddTimeLimit(v)
+	return _u
+}
+
+// SetTeacherID sets the "teacher_id" field.
+func (_u *PlayerUpdate) SetTeacherID(v int64) *PlayerUpdate {
+	_u.mutation.ResetTeacherID()
+	_u.mutation.SetTeacherID(v)
+	return _u
+}
+
+// SetNillableTeacherID sets the "teacher_id" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableTeacherID(v *int64) *PlayerUpdate {
+	if v != nil {
+		_u.SetTeacherID(*v)
+	}
+	return _u
+}
+
+// AddTeacherID adds value to the "teacher_id" field.
+func (_u *PlayerUpdate) AddTeacherID(v int64) *PlayerUpdate {
+	_u.mutation.AddTeacherID(v)
+	return _u
+}
+
+// SetStudentID sets the "student_id" field.
+func (_u *PlayerUpdate) SetStudentID(v int64) *PlayerUpdate {
+	_u.mutation.ResetStudentID()
+	_u.mutation.SetStudentID(v)
+	return _u
+}
+
+// SetNillableStudentID sets the "student_id" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableStudentID(v *int64) *PlayerUpdate {
+	if v != nil {
+		_u.SetStudentID(*v)
+	}
+	return _u
+}
+
+// AddStudentID adds value to the "student_id" field.
+func (_u *PlayerUpdate) AddStudentID(v int64) *PlayerUpdate {
+	_u.mutation.AddStudentID(v)
+	return _u
+}
+
+// SetCurTitle sets the "cur_title" field.
+func (_u *PlayerUpdate) SetCurTitle(v int64) *PlayerUpdate {
+	_u.mutation.ResetCurTitle()
+	_u.mutation.SetCurTitle(v)
+	return _u
+}
+
+// SetNillableCurTitle sets the "cur_title" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableCurTitle(v *int64) *PlayerUpdate {
+	if v != nil {
+		_u.SetCurTitle(*v)
+	}
+	return _u
+}
+
+// AddCurTitle adds value to the "cur_title" field.
+func (_u *PlayerUpdate) AddCurTitle(v int64) *PlayerUpdate {
+	_u.mutation.AddCurTitle(v)
+	return _u
+}
+
+// SetTaskStatus sets the "task_status" field.
+func (_u *PlayerUpdate) SetTaskStatus(v string) *PlayerUpdate {
+	_u.mutation.SetTaskStatus(v)
+	return _u
+}
+
+// SetNillableTaskStatus sets the "task_status" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableTaskStatus(v *string) *PlayerUpdate {
+	if v != nil {
+		_u.SetTaskStatus(*v)
+	}
+	return _u
+}
+
+// SetTaskBufs sets the "task_bufs" field.
+func (_u *PlayerUpdate) SetTaskBufs(v string) *PlayerUpdate {
+	_u.mutation.SetTaskBufs(v)
+	return _u
+}
+
+// SetNillableTaskBufs sets the "task_bufs" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableTaskBufs(v *string) *PlayerUpdate {
+	if v != nil {
+		_u.SetTaskBufs(*v)
+	}
+	return _u
+}
+
+// SetCurrentPetID sets the "current_pet_id" field.
+func (_u *PlayerUpdate) SetCurrentPetID(v int64) *PlayerUpdate {
+	_u.mutation.ResetCurrentPetID()
+	_u.mutation.SetCurrentPetID(v)
+	return _u
+}
+
+// SetNillableCurrentPetID sets the "current_pet_id" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableCurrentPetID(v *int64) *PlayerUpdate {
+	if v != nil {
+		_u.SetCurrentPetID(*v)
+	}
+	return _u
+}
+
+// AddCurrentPetID adds value to the "current_pet_id" field.
+func (_u *PlayerUpdate) AddCurrentPetID(v int64) *PlayerUpdate {
+	_u.mutation.AddCurrentPetID(v)
+	return _u
+}
+
+// SetCurrentPetCatchTime sets the "current_pet_catch_time" field.
+func (_u *PlayerUpdate) SetCurrentPetCatchTime(v int64) *PlayerUpdate {
+	_u.mutation.ResetCurrentPetCatchTime()
+	_u.mutation.SetCurrentPetCatchTime(v)
+	return _u
+}
+
+// SetNillableCurrentPetCatchTime sets the "current_pet_catch_time" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableCurrentPetCatchTime(v *int64) *PlayerUpdate {
+	if v != nil {
+		_u.SetCurrentPetCatchTime(*v)
+	}
+	return _u
+}
+
+// AddCurrentPetCatchTime adds value to the "current_pet_catch_time" field.
+func (_u *PlayerUpdate) AddCurrentPetCatchTime(v int64) *PlayerUpdate {
+	_u.mutation.AddCurrentPetCatchTime(v)
+	return _u
+}
+
+// SetCurrentPetDv sets the "current_pet_dv" field.
+func (_u *PlayerUpdate) SetCurrentPetDv(v int64) *PlayerUpdate {
+	_u.mutation.ResetCurrentPetDv()
+	_u.mutation.SetCurrentPetDv(v)
+	return _u
+}
+
+// SetNillableCurrentPetDv sets the "current_pet_dv" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableCurrentPetDv(v *int64) *PlayerUpdate {
+	if v != nil {
+		_u.SetCurrentPetDv(*v)
+	}
+	return _u
+}
+
+// AddCurrentPetDv adds value to the "current_pet_dv" field.
+func (_u *PlayerUpdate) AddCurrentPetDv(v int64) *PlayerUpdate {
+	_u.mutation.AddCurrentPetDv(v)
 	return _u
 }
 
@@ -401,6 +723,12 @@ func (_u *PlayerUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if value, ok := _u.mutation.AddedMapID(); ok {
 		_spec.AddField(player.FieldMapID, field.TypeInt, value)
 	}
+	if value, ok := _u.mutation.MapType(); ok {
+		_spec.SetField(player.FieldMapType, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMapType(); ok {
+		_spec.AddField(player.FieldMapType, field.TypeInt, value)
+	}
 	if value, ok := _u.mutation.PosX(); ok {
 		_spec.SetField(player.FieldPosX, field.TypeInt, value)
 	}
@@ -412,6 +740,90 @@ func (_u *PlayerUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AddedPosY(); ok {
 		_spec.AddField(player.FieldPosY, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.LastMapID(); ok {
+		_spec.SetField(player.FieldLastMapID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedLastMapID(); ok {
+		_spec.AddField(player.FieldLastMapID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Color(); ok {
+		_spec.SetField(player.FieldColor, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedColor(); ok {
+		_spec.AddField(player.FieldColor, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.Texture(); ok {
+		_spec.SetField(player.FieldTexture, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedTexture(); ok {
+		_spec.AddField(player.FieldTexture, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.Energy(); ok {
+		_spec.SetField(player.FieldEnergy, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedEnergy(); ok {
+		_spec.AddField(player.FieldEnergy, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.FightBadge(); ok {
+		_spec.SetField(player.FieldFightBadge, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedFightBadge(); ok {
+		_spec.AddField(player.FieldFightBadge, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.TimeToday(); ok {
+		_spec.SetField(player.FieldTimeToday, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedTimeToday(); ok {
+		_spec.AddField(player.FieldTimeToday, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.TimeLimit(); ok {
+		_spec.SetField(player.FieldTimeLimit, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedTimeLimit(); ok {
+		_spec.AddField(player.FieldTimeLimit, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.TeacherID(); ok {
+		_spec.SetField(player.FieldTeacherID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedTeacherID(); ok {
+		_spec.AddField(player.FieldTeacherID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.StudentID(); ok {
+		_spec.SetField(player.FieldStudentID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedStudentID(); ok {
+		_spec.AddField(player.FieldStudentID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.CurTitle(); ok {
+		_spec.SetField(player.FieldCurTitle, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCurTitle(); ok {
+		_spec.AddField(player.FieldCurTitle, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.TaskStatus(); ok {
+		_spec.SetField(player.FieldTaskStatus, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.TaskBufs(); ok {
+		_spec.SetField(player.FieldTaskBufs, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.CurrentPetID(); ok {
+		_spec.SetField(player.FieldCurrentPetID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCurrentPetID(); ok {
+		_spec.AddField(player.FieldCurrentPetID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.CurrentPetCatchTime(); ok {
+		_spec.SetField(player.FieldCurrentPetCatchTime, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCurrentPetCatchTime(); ok {
+		_spec.AddField(player.FieldCurrentPetCatchTime, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.CurrentPetDv(); ok {
+		_spec.SetField(player.FieldCurrentPetDv, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCurrentPetDv(); ok {
+		_spec.AddField(player.FieldCurrentPetDv, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.LastLoginAt(); ok {
 		_spec.SetField(player.FieldLastLoginAt, field.TypeTime, value)
@@ -676,6 +1088,27 @@ func (_u *PlayerUpdateOne) AddMapID(v int) *PlayerUpdateOne {
 	return _u
 }
 
+// SetMapType sets the "map_type" field.
+func (_u *PlayerUpdateOne) SetMapType(v int) *PlayerUpdateOne {
+	_u.mutation.ResetMapType()
+	_u.mutation.SetMapType(v)
+	return _u
+}
+
+// SetNillableMapType sets the "map_type" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableMapType(v *int) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetMapType(*v)
+	}
+	return _u
+}
+
+// AddMapType adds value to the "map_type" field.
+func (_u *PlayerUpdateOne) AddMapType(v int) *PlayerUpdateOne {
+	_u.mutation.AddMapType(v)
+	return _u
+}
+
 // SetPosX sets the "pos_x" field.
 func (_u *PlayerUpdateOne) SetPosX(v int) *PlayerUpdateOne {
 	_u.mutation.ResetPosX()
@@ -715,6 +1148,307 @@ func (_u *PlayerUpdateOne) SetNillablePosY(v *int) *PlayerUpdateOne {
 // AddPosY adds value to the "pos_y" field.
 func (_u *PlayerUpdateOne) AddPosY(v int) *PlayerUpdateOne {
 	_u.mutation.AddPosY(v)
+	return _u
+}
+
+// SetLastMapID sets the "last_map_id" field.
+func (_u *PlayerUpdateOne) SetLastMapID(v int) *PlayerUpdateOne {
+	_u.mutation.ResetLastMapID()
+	_u.mutation.SetLastMapID(v)
+	return _u
+}
+
+// SetNillableLastMapID sets the "last_map_id" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableLastMapID(v *int) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetLastMapID(*v)
+	}
+	return _u
+}
+
+// AddLastMapID adds value to the "last_map_id" field.
+func (_u *PlayerUpdateOne) AddLastMapID(v int) *PlayerUpdateOne {
+	_u.mutation.AddLastMapID(v)
+	return _u
+}
+
+// SetColor sets the "color" field.
+func (_u *PlayerUpdateOne) SetColor(v int64) *PlayerUpdateOne {
+	_u.mutation.ResetColor()
+	_u.mutation.SetColor(v)
+	return _u
+}
+
+// SetNillableColor sets the "color" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableColor(v *int64) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetColor(*v)
+	}
+	return _u
+}
+
+// AddColor adds value to the "color" field.
+func (_u *PlayerUpdateOne) AddColor(v int64) *PlayerUpdateOne {
+	_u.mutation.AddColor(v)
+	return _u
+}
+
+// SetTexture sets the "texture" field.
+func (_u *PlayerUpdateOne) SetTexture(v int64) *PlayerUpdateOne {
+	_u.mutation.ResetTexture()
+	_u.mutation.SetTexture(v)
+	return _u
+}
+
+// SetNillableTexture sets the "texture" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableTexture(v *int64) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetTexture(*v)
+	}
+	return _u
+}
+
+// AddTexture adds value to the "texture" field.
+func (_u *PlayerUpdateOne) AddTexture(v int64) *PlayerUpdateOne {
+	_u.mutation.AddTexture(v)
+	return _u
+}
+
+// SetEnergy sets the "energy" field.
+func (_u *PlayerUpdateOne) SetEnergy(v int64) *PlayerUpdateOne {
+	_u.mutation.ResetEnergy()
+	_u.mutation.SetEnergy(v)
+	return _u
+}
+
+// SetNillableEnergy sets the "energy" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableEnergy(v *int64) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetEnergy(*v)
+	}
+	return _u
+}
+
+// AddEnergy adds value to the "energy" field.
+func (_u *PlayerUpdateOne) AddEnergy(v int64) *PlayerUpdateOne {
+	_u.mutation.AddEnergy(v)
+	return _u
+}
+
+// SetFightBadge sets the "fight_badge" field.
+func (_u *PlayerUpdateOne) SetFightBadge(v int64) *PlayerUpdateOne {
+	_u.mutation.ResetFightBadge()
+	_u.mutation.SetFightBadge(v)
+	return _u
+}
+
+// SetNillableFightBadge sets the "fight_badge" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableFightBadge(v *int64) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetFightBadge(*v)
+	}
+	return _u
+}
+
+// AddFightBadge adds value to the "fight_badge" field.
+func (_u *PlayerUpdateOne) AddFightBadge(v int64) *PlayerUpdateOne {
+	_u.mutation.AddFightBadge(v)
+	return _u
+}
+
+// SetTimeToday sets the "time_today" field.
+func (_u *PlayerUpdateOne) SetTimeToday(v int64) *PlayerUpdateOne {
+	_u.mutation.ResetTimeToday()
+	_u.mutation.SetTimeToday(v)
+	return _u
+}
+
+// SetNillableTimeToday sets the "time_today" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableTimeToday(v *int64) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetTimeToday(*v)
+	}
+	return _u
+}
+
+// AddTimeToday adds value to the "time_today" field.
+func (_u *PlayerUpdateOne) AddTimeToday(v int64) *PlayerUpdateOne {
+	_u.mutation.AddTimeToday(v)
+	return _u
+}
+
+// SetTimeLimit sets the "time_limit" field.
+func (_u *PlayerUpdateOne) SetTimeLimit(v int64) *PlayerUpdateOne {
+	_u.mutation.ResetTimeLimit()
+	_u.mutation.SetTimeLimit(v)
+	return _u
+}
+
+// SetNillableTimeLimit sets the "time_limit" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableTimeLimit(v *int64) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetTimeLimit(*v)
+	}
+	return _u
+}
+
+// AddTimeLimit adds value to the "time_limit" field.
+func (_u *PlayerUpdateOne) AddTimeLimit(v int64) *PlayerUpdateOne {
+	_u.mutation.AddTimeLimit(v)
+	return _u
+}
+
+// SetTeacherID sets the "teacher_id" field.
+func (_u *PlayerUpdateOne) SetTeacherID(v int64) *PlayerUpdateOne {
+	_u.mutation.ResetTeacherID()
+	_u.mutation.SetTeacherID(v)
+	return _u
+}
+
+// SetNillableTeacherID sets the "teacher_id" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableTeacherID(v *int64) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetTeacherID(*v)
+	}
+	return _u
+}
+
+// AddTeacherID adds value to the "teacher_id" field.
+func (_u *PlayerUpdateOne) AddTeacherID(v int64) *PlayerUpdateOne {
+	_u.mutation.AddTeacherID(v)
+	return _u
+}
+
+// SetStudentID sets the "student_id" field.
+func (_u *PlayerUpdateOne) SetStudentID(v int64) *PlayerUpdateOne {
+	_u.mutation.ResetStudentID()
+	_u.mutation.SetStudentID(v)
+	return _u
+}
+
+// SetNillableStudentID sets the "student_id" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableStudentID(v *int64) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetStudentID(*v)
+	}
+	return _u
+}
+
+// AddStudentID adds value to the "student_id" field.
+func (_u *PlayerUpdateOne) AddStudentID(v int64) *PlayerUpdateOne {
+	_u.mutation.AddStudentID(v)
+	return _u
+}
+
+// SetCurTitle sets the "cur_title" field.
+func (_u *PlayerUpdateOne) SetCurTitle(v int64) *PlayerUpdateOne {
+	_u.mutation.ResetCurTitle()
+	_u.mutation.SetCurTitle(v)
+	return _u
+}
+
+// SetNillableCurTitle sets the "cur_title" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableCurTitle(v *int64) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetCurTitle(*v)
+	}
+	return _u
+}
+
+// AddCurTitle adds value to the "cur_title" field.
+func (_u *PlayerUpdateOne) AddCurTitle(v int64) *PlayerUpdateOne {
+	_u.mutation.AddCurTitle(v)
+	return _u
+}
+
+// SetTaskStatus sets the "task_status" field.
+func (_u *PlayerUpdateOne) SetTaskStatus(v string) *PlayerUpdateOne {
+	_u.mutation.SetTaskStatus(v)
+	return _u
+}
+
+// SetNillableTaskStatus sets the "task_status" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableTaskStatus(v *string) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetTaskStatus(*v)
+	}
+	return _u
+}
+
+// SetTaskBufs sets the "task_bufs" field.
+func (_u *PlayerUpdateOne) SetTaskBufs(v string) *PlayerUpdateOne {
+	_u.mutation.SetTaskBufs(v)
+	return _u
+}
+
+// SetNillableTaskBufs sets the "task_bufs" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableTaskBufs(v *string) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetTaskBufs(*v)
+	}
+	return _u
+}
+
+// SetCurrentPetID sets the "current_pet_id" field.
+func (_u *PlayerUpdateOne) SetCurrentPetID(v int64) *PlayerUpdateOne {
+	_u.mutation.ResetCurrentPetID()
+	_u.mutation.SetCurrentPetID(v)
+	return _u
+}
+
+// SetNillableCurrentPetID sets the "current_pet_id" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableCurrentPetID(v *int64) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetCurrentPetID(*v)
+	}
+	return _u
+}
+
+// AddCurrentPetID adds value to the "current_pet_id" field.
+func (_u *PlayerUpdateOne) AddCurrentPetID(v int64) *PlayerUpdateOne {
+	_u.mutation.AddCurrentPetID(v)
+	return _u
+}
+
+// SetCurrentPetCatchTime sets the "current_pet_catch_time" field.
+func (_u *PlayerUpdateOne) SetCurrentPetCatchTime(v int64) *PlayerUpdateOne {
+	_u.mutation.ResetCurrentPetCatchTime()
+	_u.mutation.SetCurrentPetCatchTime(v)
+	return _u
+}
+
+// SetNillableCurrentPetCatchTime sets the "current_pet_catch_time" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableCurrentPetCatchTime(v *int64) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetCurrentPetCatchTime(*v)
+	}
+	return _u
+}
+
+// AddCurrentPetCatchTime adds value to the "current_pet_catch_time" field.
+func (_u *PlayerUpdateOne) AddCurrentPetCatchTime(v int64) *PlayerUpdateOne {
+	_u.mutation.AddCurrentPetCatchTime(v)
+	return _u
+}
+
+// SetCurrentPetDv sets the "current_pet_dv" field.
+func (_u *PlayerUpdateOne) SetCurrentPetDv(v int64) *PlayerUpdateOne {
+	_u.mutation.ResetCurrentPetDv()
+	_u.mutation.SetCurrentPetDv(v)
+	return _u
+}
+
+// SetNillableCurrentPetDv sets the "current_pet_dv" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableCurrentPetDv(v *int64) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetCurrentPetDv(*v)
+	}
+	return _u
+}
+
+// AddCurrentPetDv adds value to the "current_pet_dv" field.
+func (_u *PlayerUpdateOne) AddCurrentPetDv(v int64) *PlayerUpdateOne {
+	_u.mutation.AddCurrentPetDv(v)
 	return _u
 }
 
@@ -964,6 +1698,12 @@ func (_u *PlayerUpdateOne) sqlSave(ctx context.Context) (_node *Player, err erro
 	if value, ok := _u.mutation.AddedMapID(); ok {
 		_spec.AddField(player.FieldMapID, field.TypeInt, value)
 	}
+	if value, ok := _u.mutation.MapType(); ok {
+		_spec.SetField(player.FieldMapType, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedMapType(); ok {
+		_spec.AddField(player.FieldMapType, field.TypeInt, value)
+	}
 	if value, ok := _u.mutation.PosX(); ok {
 		_spec.SetField(player.FieldPosX, field.TypeInt, value)
 	}
@@ -975,6 +1715,90 @@ func (_u *PlayerUpdateOne) sqlSave(ctx context.Context) (_node *Player, err erro
 	}
 	if value, ok := _u.mutation.AddedPosY(); ok {
 		_spec.AddField(player.FieldPosY, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.LastMapID(); ok {
+		_spec.SetField(player.FieldLastMapID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedLastMapID(); ok {
+		_spec.AddField(player.FieldLastMapID, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.Color(); ok {
+		_spec.SetField(player.FieldColor, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedColor(); ok {
+		_spec.AddField(player.FieldColor, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.Texture(); ok {
+		_spec.SetField(player.FieldTexture, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedTexture(); ok {
+		_spec.AddField(player.FieldTexture, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.Energy(); ok {
+		_spec.SetField(player.FieldEnergy, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedEnergy(); ok {
+		_spec.AddField(player.FieldEnergy, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.FightBadge(); ok {
+		_spec.SetField(player.FieldFightBadge, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedFightBadge(); ok {
+		_spec.AddField(player.FieldFightBadge, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.TimeToday(); ok {
+		_spec.SetField(player.FieldTimeToday, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedTimeToday(); ok {
+		_spec.AddField(player.FieldTimeToday, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.TimeLimit(); ok {
+		_spec.SetField(player.FieldTimeLimit, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedTimeLimit(); ok {
+		_spec.AddField(player.FieldTimeLimit, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.TeacherID(); ok {
+		_spec.SetField(player.FieldTeacherID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedTeacherID(); ok {
+		_spec.AddField(player.FieldTeacherID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.StudentID(); ok {
+		_spec.SetField(player.FieldStudentID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedStudentID(); ok {
+		_spec.AddField(player.FieldStudentID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.CurTitle(); ok {
+		_spec.SetField(player.FieldCurTitle, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCurTitle(); ok {
+		_spec.AddField(player.FieldCurTitle, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.TaskStatus(); ok {
+		_spec.SetField(player.FieldTaskStatus, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.TaskBufs(); ok {
+		_spec.SetField(player.FieldTaskBufs, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.CurrentPetID(); ok {
+		_spec.SetField(player.FieldCurrentPetID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCurrentPetID(); ok {
+		_spec.AddField(player.FieldCurrentPetID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.CurrentPetCatchTime(); ok {
+		_spec.SetField(player.FieldCurrentPetCatchTime, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCurrentPetCatchTime(); ok {
+		_spec.AddField(player.FieldCurrentPetCatchTime, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.CurrentPetDv(); ok {
+		_spec.SetField(player.FieldCurrentPetDv, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCurrentPetDv(); ok {
+		_spec.AddField(player.FieldCurrentPetDv, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.LastLoginAt(); ok {
 		_spec.SetField(player.FieldLastLoginAt, field.TypeTime, value)

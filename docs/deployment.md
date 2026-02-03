@@ -5,7 +5,10 @@
 - `database.driver`: `mysql` / `sqlite` / `postgres`（Ent ORM）
 - `database.dsn`: 对应数据库 DSN
 - `gateway.address`: TCP 网关端口（默认 5000）
-- `http.address`: 资源服务端口（默认 32400）
+- `http.address`: 资源服务端口（默认 32401）
+- `http.static_root`: 本地资源根目录（默认指向 gameres/root）
+- `http.proxy_root`: 资源覆盖目录（默认指向 gameres_proxy/root）
+- `http.upstream`: 缺失资源回源地址（可选）
 - `gm.address`: GM 服务端口（默认 3001）
 
 ## 2. Ent 代码生成（必需）

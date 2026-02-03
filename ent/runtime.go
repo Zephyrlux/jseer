@@ -167,20 +167,28 @@ func init() {
 	petDescHp := petFields[4].Descriptor()
 	// pet.DefaultHp holds the default value on creation for the hp field.
 	pet.DefaultHp = petDescHp.Default.(int)
+	// petDescCatchTime is the schema descriptor for catch_time field.
+	petDescCatchTime := petFields[5].Descriptor()
+	// pet.DefaultCatchTime holds the default value on creation for the catch_time field.
+	pet.DefaultCatchTime = petDescCatchTime.Default.(int64)
+	// petDescDv is the schema descriptor for dv field.
+	petDescDv := petFields[6].Descriptor()
+	// pet.DefaultDv holds the default value on creation for the dv field.
+	pet.DefaultDv = petDescDv.Default.(int)
 	// petDescNature is the schema descriptor for nature field.
-	petDescNature := petFields[5].Descriptor()
+	petDescNature := petFields[7].Descriptor()
 	// pet.DefaultNature holds the default value on creation for the nature field.
 	pet.DefaultNature = petDescNature.Default.(string)
 	// petDescSkills is the schema descriptor for skills field.
-	petDescSkills := petFields[6].Descriptor()
+	petDescSkills := petFields[8].Descriptor()
 	// pet.DefaultSkills holds the default value on creation for the skills field.
 	pet.DefaultSkills = petDescSkills.Default.(string)
 	// petDescCreatedAt is the schema descriptor for created_at field.
-	petDescCreatedAt := petFields[7].Descriptor()
+	petDescCreatedAt := petFields[9].Descriptor()
 	// pet.DefaultCreatedAt holds the default value on creation for the created_at field.
 	pet.DefaultCreatedAt = petDescCreatedAt.Default.(func() time.Time)
 	// petDescUpdatedAt is the schema descriptor for updated_at field.
-	petDescUpdatedAt := petFields[8].Descriptor()
+	petDescUpdatedAt := petFields[10].Descriptor()
 	// pet.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	pet.DefaultUpdatedAt = petDescUpdatedAt.Default.(func() time.Time)
 	// pet.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
@@ -207,20 +215,84 @@ func init() {
 	playerDescMapID := playerFields[5].Descriptor()
 	// player.DefaultMapID holds the default value on creation for the map_id field.
 	player.DefaultMapID = playerDescMapID.Default.(int)
+	// playerDescMapType is the schema descriptor for map_type field.
+	playerDescMapType := playerFields[6].Descriptor()
+	// player.DefaultMapType holds the default value on creation for the map_type field.
+	player.DefaultMapType = playerDescMapType.Default.(int)
 	// playerDescPosX is the schema descriptor for pos_x field.
-	playerDescPosX := playerFields[6].Descriptor()
+	playerDescPosX := playerFields[7].Descriptor()
 	// player.DefaultPosX holds the default value on creation for the pos_x field.
 	player.DefaultPosX = playerDescPosX.Default.(int)
 	// playerDescPosY is the schema descriptor for pos_y field.
-	playerDescPosY := playerFields[7].Descriptor()
+	playerDescPosY := playerFields[8].Descriptor()
 	// player.DefaultPosY holds the default value on creation for the pos_y field.
 	player.DefaultPosY = playerDescPosY.Default.(int)
+	// playerDescLastMapID is the schema descriptor for last_map_id field.
+	playerDescLastMapID := playerFields[9].Descriptor()
+	// player.DefaultLastMapID holds the default value on creation for the last_map_id field.
+	player.DefaultLastMapID = playerDescLastMapID.Default.(int)
+	// playerDescColor is the schema descriptor for color field.
+	playerDescColor := playerFields[10].Descriptor()
+	// player.DefaultColor holds the default value on creation for the color field.
+	player.DefaultColor = playerDescColor.Default.(int64)
+	// playerDescTexture is the schema descriptor for texture field.
+	playerDescTexture := playerFields[11].Descriptor()
+	// player.DefaultTexture holds the default value on creation for the texture field.
+	player.DefaultTexture = playerDescTexture.Default.(int64)
+	// playerDescEnergy is the schema descriptor for energy field.
+	playerDescEnergy := playerFields[12].Descriptor()
+	// player.DefaultEnergy holds the default value on creation for the energy field.
+	player.DefaultEnergy = playerDescEnergy.Default.(int64)
+	// playerDescFightBadge is the schema descriptor for fight_badge field.
+	playerDescFightBadge := playerFields[13].Descriptor()
+	// player.DefaultFightBadge holds the default value on creation for the fight_badge field.
+	player.DefaultFightBadge = playerDescFightBadge.Default.(int64)
+	// playerDescTimeToday is the schema descriptor for time_today field.
+	playerDescTimeToday := playerFields[14].Descriptor()
+	// player.DefaultTimeToday holds the default value on creation for the time_today field.
+	player.DefaultTimeToday = playerDescTimeToday.Default.(int64)
+	// playerDescTimeLimit is the schema descriptor for time_limit field.
+	playerDescTimeLimit := playerFields[15].Descriptor()
+	// player.DefaultTimeLimit holds the default value on creation for the time_limit field.
+	player.DefaultTimeLimit = playerDescTimeLimit.Default.(int64)
+	// playerDescTeacherID is the schema descriptor for teacher_id field.
+	playerDescTeacherID := playerFields[16].Descriptor()
+	// player.DefaultTeacherID holds the default value on creation for the teacher_id field.
+	player.DefaultTeacherID = playerDescTeacherID.Default.(int64)
+	// playerDescStudentID is the schema descriptor for student_id field.
+	playerDescStudentID := playerFields[17].Descriptor()
+	// player.DefaultStudentID holds the default value on creation for the student_id field.
+	player.DefaultStudentID = playerDescStudentID.Default.(int64)
+	// playerDescCurTitle is the schema descriptor for cur_title field.
+	playerDescCurTitle := playerFields[18].Descriptor()
+	// player.DefaultCurTitle holds the default value on creation for the cur_title field.
+	player.DefaultCurTitle = playerDescCurTitle.Default.(int64)
+	// playerDescTaskStatus is the schema descriptor for task_status field.
+	playerDescTaskStatus := playerFields[19].Descriptor()
+	// player.DefaultTaskStatus holds the default value on creation for the task_status field.
+	player.DefaultTaskStatus = playerDescTaskStatus.Default.(string)
+	// playerDescTaskBufs is the schema descriptor for task_bufs field.
+	playerDescTaskBufs := playerFields[20].Descriptor()
+	// player.DefaultTaskBufs holds the default value on creation for the task_bufs field.
+	player.DefaultTaskBufs = playerDescTaskBufs.Default.(string)
+	// playerDescCurrentPetID is the schema descriptor for current_pet_id field.
+	playerDescCurrentPetID := playerFields[21].Descriptor()
+	// player.DefaultCurrentPetID holds the default value on creation for the current_pet_id field.
+	player.DefaultCurrentPetID = playerDescCurrentPetID.Default.(int64)
+	// playerDescCurrentPetCatchTime is the schema descriptor for current_pet_catch_time field.
+	playerDescCurrentPetCatchTime := playerFields[22].Descriptor()
+	// player.DefaultCurrentPetCatchTime holds the default value on creation for the current_pet_catch_time field.
+	player.DefaultCurrentPetCatchTime = playerDescCurrentPetCatchTime.Default.(int64)
+	// playerDescCurrentPetDv is the schema descriptor for current_pet_dv field.
+	playerDescCurrentPetDv := playerFields[23].Descriptor()
+	// player.DefaultCurrentPetDv holds the default value on creation for the current_pet_dv field.
+	player.DefaultCurrentPetDv = playerDescCurrentPetDv.Default.(int64)
 	// playerDescCreatedAt is the schema descriptor for created_at field.
-	playerDescCreatedAt := playerFields[9].Descriptor()
+	playerDescCreatedAt := playerFields[25].Descriptor()
 	// player.DefaultCreatedAt holds the default value on creation for the created_at field.
 	player.DefaultCreatedAt = playerDescCreatedAt.Default.(func() time.Time)
 	// playerDescUpdatedAt is the schema descriptor for updated_at field.
-	playerDescUpdatedAt := playerFields[10].Descriptor()
+	playerDescUpdatedAt := playerFields[26].Descriptor()
 	// player.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	player.DefaultUpdatedAt = playerDescUpdatedAt.Default.(func() time.Time)
 	// player.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

@@ -20,6 +20,8 @@ func (Pet) Fields() []ent.Field {
 		field.Int("level").Default(1),
 		field.Int("exp").Default(0),
 		field.Int("hp").Default(0),
+		field.Int64("catch_time").Default(0),
+		field.Int("dv").Default(31),
 		field.String("nature").Default("normal"),
 		field.String("skills").Default(""),
 		field.Time("created_at").Default(time.Now),

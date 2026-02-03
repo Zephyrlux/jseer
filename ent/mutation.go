@@ -4671,6 +4671,10 @@ type PetMutation struct {
 	addexp        *int
 	hp            *int
 	addhp         *int
+	catch_time    *int64
+	addcatch_time *int64
+	dv            *int
+	adddv         *int
 	nature        *string
 	skills        *string
 	created_at    *time.Time
@@ -5041,6 +5045,118 @@ func (m *PetMutation) ResetHp() {
 	m.addhp = nil
 }
 
+// SetCatchTime sets the "catch_time" field.
+func (m *PetMutation) SetCatchTime(i int64) {
+	m.catch_time = &i
+	m.addcatch_time = nil
+}
+
+// CatchTime returns the value of the "catch_time" field in the mutation.
+func (m *PetMutation) CatchTime() (r int64, exists bool) {
+	v := m.catch_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCatchTime returns the old "catch_time" field's value of the Pet entity.
+// If the Pet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PetMutation) OldCatchTime(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCatchTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCatchTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCatchTime: %w", err)
+	}
+	return oldValue.CatchTime, nil
+}
+
+// AddCatchTime adds i to the "catch_time" field.
+func (m *PetMutation) AddCatchTime(i int64) {
+	if m.addcatch_time != nil {
+		*m.addcatch_time += i
+	} else {
+		m.addcatch_time = &i
+	}
+}
+
+// AddedCatchTime returns the value that was added to the "catch_time" field in this mutation.
+func (m *PetMutation) AddedCatchTime() (r int64, exists bool) {
+	v := m.addcatch_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCatchTime resets all changes to the "catch_time" field.
+func (m *PetMutation) ResetCatchTime() {
+	m.catch_time = nil
+	m.addcatch_time = nil
+}
+
+// SetDv sets the "dv" field.
+func (m *PetMutation) SetDv(i int) {
+	m.dv = &i
+	m.adddv = nil
+}
+
+// Dv returns the value of the "dv" field in the mutation.
+func (m *PetMutation) Dv() (r int, exists bool) {
+	v := m.dv
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDv returns the old "dv" field's value of the Pet entity.
+// If the Pet object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PetMutation) OldDv(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDv is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDv requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDv: %w", err)
+	}
+	return oldValue.Dv, nil
+}
+
+// AddDv adds i to the "dv" field.
+func (m *PetMutation) AddDv(i int) {
+	if m.adddv != nil {
+		*m.adddv += i
+	} else {
+		m.adddv = &i
+	}
+}
+
+// AddedDv returns the value that was added to the "dv" field in this mutation.
+func (m *PetMutation) AddedDv() (r int, exists bool) {
+	v := m.adddv
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDv resets all changes to the "dv" field.
+func (m *PetMutation) ResetDv() {
+	m.dv = nil
+	m.adddv = nil
+}
+
 // SetNature sets the "nature" field.
 func (m *PetMutation) SetNature(s string) {
 	m.nature = &s
@@ -5246,7 +5362,7 @@ func (m *PetMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PetMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 11)
 	if m.player != nil {
 		fields = append(fields, pet.FieldPlayerID)
 	}
@@ -5261,6 +5377,12 @@ func (m *PetMutation) Fields() []string {
 	}
 	if m.hp != nil {
 		fields = append(fields, pet.FieldHp)
+	}
+	if m.catch_time != nil {
+		fields = append(fields, pet.FieldCatchTime)
+	}
+	if m.dv != nil {
+		fields = append(fields, pet.FieldDv)
 	}
 	if m.nature != nil {
 		fields = append(fields, pet.FieldNature)
@@ -5292,6 +5414,10 @@ func (m *PetMutation) Field(name string) (ent.Value, bool) {
 		return m.Exp()
 	case pet.FieldHp:
 		return m.Hp()
+	case pet.FieldCatchTime:
+		return m.CatchTime()
+	case pet.FieldDv:
+		return m.Dv()
 	case pet.FieldNature:
 		return m.Nature()
 	case pet.FieldSkills:
@@ -5319,6 +5445,10 @@ func (m *PetMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldExp(ctx)
 	case pet.FieldHp:
 		return m.OldHp(ctx)
+	case pet.FieldCatchTime:
+		return m.OldCatchTime(ctx)
+	case pet.FieldDv:
+		return m.OldDv(ctx)
 	case pet.FieldNature:
 		return m.OldNature(ctx)
 	case pet.FieldSkills:
@@ -5371,6 +5501,20 @@ func (m *PetMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetHp(v)
 		return nil
+	case pet.FieldCatchTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCatchTime(v)
+		return nil
+	case pet.FieldDv:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDv(v)
+		return nil
 	case pet.FieldNature:
 		v, ok := value.(string)
 		if !ok {
@@ -5419,6 +5563,12 @@ func (m *PetMutation) AddedFields() []string {
 	if m.addhp != nil {
 		fields = append(fields, pet.FieldHp)
 	}
+	if m.addcatch_time != nil {
+		fields = append(fields, pet.FieldCatchTime)
+	}
+	if m.adddv != nil {
+		fields = append(fields, pet.FieldDv)
+	}
 	return fields
 }
 
@@ -5435,6 +5585,10 @@ func (m *PetMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedExp()
 	case pet.FieldHp:
 		return m.AddedHp()
+	case pet.FieldCatchTime:
+		return m.AddedCatchTime()
+	case pet.FieldDv:
+		return m.AddedDv()
 	}
 	return nil, false
 }
@@ -5471,6 +5625,20 @@ func (m *PetMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddHp(v)
+		return nil
+	case pet.FieldCatchTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCatchTime(v)
+		return nil
+	case pet.FieldDv:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDv(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Pet numeric field %s", name)
@@ -5513,6 +5681,12 @@ func (m *PetMutation) ResetField(name string) error {
 		return nil
 	case pet.FieldHp:
 		m.ResetHp()
+		return nil
+	case pet.FieldCatchTime:
+		m.ResetCatchTime()
+		return nil
+	case pet.FieldDv:
+		m.ResetDv()
 		return nil
 	case pet.FieldNature:
 		m.ResetNature()
@@ -5607,37 +5781,67 @@ func (m *PetMutation) ResetEdge(name string) error {
 // PlayerMutation represents an operation that mutates the Player nodes in the graph.
 type PlayerMutation struct {
 	config
-	op             Op
-	typ            string
-	id             *int
-	nick           *string
-	level          *int
-	addlevel       *int
-	coins          *int64
-	addcoins       *int64
-	gold           *int64
-	addgold        *int64
-	map_id         *int
-	addmap_id      *int
-	pos_x          *int
-	addpos_x       *int
-	pos_y          *int
-	addpos_y       *int
-	last_login_at  *time.Time
-	created_at     *time.Time
-	updated_at     *time.Time
-	clearedFields  map[string]struct{}
-	account        *int
-	clearedaccount bool
-	pets           map[int]struct{}
-	removedpets    map[int]struct{}
-	clearedpets    bool
-	items          map[int]struct{}
-	removeditems   map[int]struct{}
-	cleareditems   bool
-	done           bool
-	oldValue       func(context.Context) (*Player, error)
-	predicates     []predicate.Player
+	op                        Op
+	typ                       string
+	id                        *int
+	nick                      *string
+	level                     *int
+	addlevel                  *int
+	coins                     *int64
+	addcoins                  *int64
+	gold                      *int64
+	addgold                   *int64
+	map_id                    *int
+	addmap_id                 *int
+	map_type                  *int
+	addmap_type               *int
+	pos_x                     *int
+	addpos_x                  *int
+	pos_y                     *int
+	addpos_y                  *int
+	last_map_id               *int
+	addlast_map_id            *int
+	color                     *int64
+	addcolor                  *int64
+	texture                   *int64
+	addtexture                *int64
+	energy                    *int64
+	addenergy                 *int64
+	fight_badge               *int64
+	addfight_badge            *int64
+	time_today                *int64
+	addtime_today             *int64
+	time_limit                *int64
+	addtime_limit             *int64
+	teacher_id                *int64
+	addteacher_id             *int64
+	student_id                *int64
+	addstudent_id             *int64
+	cur_title                 *int64
+	addcur_title              *int64
+	task_status               *string
+	task_bufs                 *string
+	current_pet_id            *int64
+	addcurrent_pet_id         *int64
+	current_pet_catch_time    *int64
+	addcurrent_pet_catch_time *int64
+	current_pet_dv            *int64
+	addcurrent_pet_dv         *int64
+	last_login_at             *time.Time
+	created_at                *time.Time
+	updated_at                *time.Time
+	clearedFields             map[string]struct{}
+	account                   *int
+	clearedaccount            bool
+	pets                      map[int]struct{}
+	removedpets               map[int]struct{}
+	clearedpets               bool
+	items                     map[int]struct{}
+	removeditems              map[int]struct{}
+	cleareditems              bool
+	done                      bool
+	oldValue                  func(context.Context) (*Player, error)
+	predicates                []predicate.Player
 }
 
 var _ ent.Mutation = (*PlayerMutation)(nil)
@@ -6034,6 +6238,62 @@ func (m *PlayerMutation) ResetMapID() {
 	m.addmap_id = nil
 }
 
+// SetMapType sets the "map_type" field.
+func (m *PlayerMutation) SetMapType(i int) {
+	m.map_type = &i
+	m.addmap_type = nil
+}
+
+// MapType returns the value of the "map_type" field in the mutation.
+func (m *PlayerMutation) MapType() (r int, exists bool) {
+	v := m.map_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMapType returns the old "map_type" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldMapType(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMapType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMapType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMapType: %w", err)
+	}
+	return oldValue.MapType, nil
+}
+
+// AddMapType adds i to the "map_type" field.
+func (m *PlayerMutation) AddMapType(i int) {
+	if m.addmap_type != nil {
+		*m.addmap_type += i
+	} else {
+		m.addmap_type = &i
+	}
+}
+
+// AddedMapType returns the value that was added to the "map_type" field in this mutation.
+func (m *PlayerMutation) AddedMapType() (r int, exists bool) {
+	v := m.addmap_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMapType resets all changes to the "map_type" field.
+func (m *PlayerMutation) ResetMapType() {
+	m.map_type = nil
+	m.addmap_type = nil
+}
+
 // SetPosX sets the "pos_x" field.
 func (m *PlayerMutation) SetPosX(i int) {
 	m.pos_x = &i
@@ -6144,6 +6404,806 @@ func (m *PlayerMutation) AddedPosY() (r int, exists bool) {
 func (m *PlayerMutation) ResetPosY() {
 	m.pos_y = nil
 	m.addpos_y = nil
+}
+
+// SetLastMapID sets the "last_map_id" field.
+func (m *PlayerMutation) SetLastMapID(i int) {
+	m.last_map_id = &i
+	m.addlast_map_id = nil
+}
+
+// LastMapID returns the value of the "last_map_id" field in the mutation.
+func (m *PlayerMutation) LastMapID() (r int, exists bool) {
+	v := m.last_map_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLastMapID returns the old "last_map_id" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldLastMapID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLastMapID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLastMapID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLastMapID: %w", err)
+	}
+	return oldValue.LastMapID, nil
+}
+
+// AddLastMapID adds i to the "last_map_id" field.
+func (m *PlayerMutation) AddLastMapID(i int) {
+	if m.addlast_map_id != nil {
+		*m.addlast_map_id += i
+	} else {
+		m.addlast_map_id = &i
+	}
+}
+
+// AddedLastMapID returns the value that was added to the "last_map_id" field in this mutation.
+func (m *PlayerMutation) AddedLastMapID() (r int, exists bool) {
+	v := m.addlast_map_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLastMapID resets all changes to the "last_map_id" field.
+func (m *PlayerMutation) ResetLastMapID() {
+	m.last_map_id = nil
+	m.addlast_map_id = nil
+}
+
+// SetColor sets the "color" field.
+func (m *PlayerMutation) SetColor(i int64) {
+	m.color = &i
+	m.addcolor = nil
+}
+
+// Color returns the value of the "color" field in the mutation.
+func (m *PlayerMutation) Color() (r int64, exists bool) {
+	v := m.color
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldColor returns the old "color" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldColor(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldColor is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldColor requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldColor: %w", err)
+	}
+	return oldValue.Color, nil
+}
+
+// AddColor adds i to the "color" field.
+func (m *PlayerMutation) AddColor(i int64) {
+	if m.addcolor != nil {
+		*m.addcolor += i
+	} else {
+		m.addcolor = &i
+	}
+}
+
+// AddedColor returns the value that was added to the "color" field in this mutation.
+func (m *PlayerMutation) AddedColor() (r int64, exists bool) {
+	v := m.addcolor
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetColor resets all changes to the "color" field.
+func (m *PlayerMutation) ResetColor() {
+	m.color = nil
+	m.addcolor = nil
+}
+
+// SetTexture sets the "texture" field.
+func (m *PlayerMutation) SetTexture(i int64) {
+	m.texture = &i
+	m.addtexture = nil
+}
+
+// Texture returns the value of the "texture" field in the mutation.
+func (m *PlayerMutation) Texture() (r int64, exists bool) {
+	v := m.texture
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTexture returns the old "texture" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldTexture(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTexture is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTexture requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTexture: %w", err)
+	}
+	return oldValue.Texture, nil
+}
+
+// AddTexture adds i to the "texture" field.
+func (m *PlayerMutation) AddTexture(i int64) {
+	if m.addtexture != nil {
+		*m.addtexture += i
+	} else {
+		m.addtexture = &i
+	}
+}
+
+// AddedTexture returns the value that was added to the "texture" field in this mutation.
+func (m *PlayerMutation) AddedTexture() (r int64, exists bool) {
+	v := m.addtexture
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTexture resets all changes to the "texture" field.
+func (m *PlayerMutation) ResetTexture() {
+	m.texture = nil
+	m.addtexture = nil
+}
+
+// SetEnergy sets the "energy" field.
+func (m *PlayerMutation) SetEnergy(i int64) {
+	m.energy = &i
+	m.addenergy = nil
+}
+
+// Energy returns the value of the "energy" field in the mutation.
+func (m *PlayerMutation) Energy() (r int64, exists bool) {
+	v := m.energy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnergy returns the old "energy" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldEnergy(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnergy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnergy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnergy: %w", err)
+	}
+	return oldValue.Energy, nil
+}
+
+// AddEnergy adds i to the "energy" field.
+func (m *PlayerMutation) AddEnergy(i int64) {
+	if m.addenergy != nil {
+		*m.addenergy += i
+	} else {
+		m.addenergy = &i
+	}
+}
+
+// AddedEnergy returns the value that was added to the "energy" field in this mutation.
+func (m *PlayerMutation) AddedEnergy() (r int64, exists bool) {
+	v := m.addenergy
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetEnergy resets all changes to the "energy" field.
+func (m *PlayerMutation) ResetEnergy() {
+	m.energy = nil
+	m.addenergy = nil
+}
+
+// SetFightBadge sets the "fight_badge" field.
+func (m *PlayerMutation) SetFightBadge(i int64) {
+	m.fight_badge = &i
+	m.addfight_badge = nil
+}
+
+// FightBadge returns the value of the "fight_badge" field in the mutation.
+func (m *PlayerMutation) FightBadge() (r int64, exists bool) {
+	v := m.fight_badge
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFightBadge returns the old "fight_badge" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldFightBadge(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFightBadge is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFightBadge requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFightBadge: %w", err)
+	}
+	return oldValue.FightBadge, nil
+}
+
+// AddFightBadge adds i to the "fight_badge" field.
+func (m *PlayerMutation) AddFightBadge(i int64) {
+	if m.addfight_badge != nil {
+		*m.addfight_badge += i
+	} else {
+		m.addfight_badge = &i
+	}
+}
+
+// AddedFightBadge returns the value that was added to the "fight_badge" field in this mutation.
+func (m *PlayerMutation) AddedFightBadge() (r int64, exists bool) {
+	v := m.addfight_badge
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetFightBadge resets all changes to the "fight_badge" field.
+func (m *PlayerMutation) ResetFightBadge() {
+	m.fight_badge = nil
+	m.addfight_badge = nil
+}
+
+// SetTimeToday sets the "time_today" field.
+func (m *PlayerMutation) SetTimeToday(i int64) {
+	m.time_today = &i
+	m.addtime_today = nil
+}
+
+// TimeToday returns the value of the "time_today" field in the mutation.
+func (m *PlayerMutation) TimeToday() (r int64, exists bool) {
+	v := m.time_today
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimeToday returns the old "time_today" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldTimeToday(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTimeToday is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTimeToday requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimeToday: %w", err)
+	}
+	return oldValue.TimeToday, nil
+}
+
+// AddTimeToday adds i to the "time_today" field.
+func (m *PlayerMutation) AddTimeToday(i int64) {
+	if m.addtime_today != nil {
+		*m.addtime_today += i
+	} else {
+		m.addtime_today = &i
+	}
+}
+
+// AddedTimeToday returns the value that was added to the "time_today" field in this mutation.
+func (m *PlayerMutation) AddedTimeToday() (r int64, exists bool) {
+	v := m.addtime_today
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTimeToday resets all changes to the "time_today" field.
+func (m *PlayerMutation) ResetTimeToday() {
+	m.time_today = nil
+	m.addtime_today = nil
+}
+
+// SetTimeLimit sets the "time_limit" field.
+func (m *PlayerMutation) SetTimeLimit(i int64) {
+	m.time_limit = &i
+	m.addtime_limit = nil
+}
+
+// TimeLimit returns the value of the "time_limit" field in the mutation.
+func (m *PlayerMutation) TimeLimit() (r int64, exists bool) {
+	v := m.time_limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimeLimit returns the old "time_limit" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldTimeLimit(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTimeLimit is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTimeLimit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimeLimit: %w", err)
+	}
+	return oldValue.TimeLimit, nil
+}
+
+// AddTimeLimit adds i to the "time_limit" field.
+func (m *PlayerMutation) AddTimeLimit(i int64) {
+	if m.addtime_limit != nil {
+		*m.addtime_limit += i
+	} else {
+		m.addtime_limit = &i
+	}
+}
+
+// AddedTimeLimit returns the value that was added to the "time_limit" field in this mutation.
+func (m *PlayerMutation) AddedTimeLimit() (r int64, exists bool) {
+	v := m.addtime_limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTimeLimit resets all changes to the "time_limit" field.
+func (m *PlayerMutation) ResetTimeLimit() {
+	m.time_limit = nil
+	m.addtime_limit = nil
+}
+
+// SetTeacherID sets the "teacher_id" field.
+func (m *PlayerMutation) SetTeacherID(i int64) {
+	m.teacher_id = &i
+	m.addteacher_id = nil
+}
+
+// TeacherID returns the value of the "teacher_id" field in the mutation.
+func (m *PlayerMutation) TeacherID() (r int64, exists bool) {
+	v := m.teacher_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTeacherID returns the old "teacher_id" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldTeacherID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTeacherID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTeacherID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTeacherID: %w", err)
+	}
+	return oldValue.TeacherID, nil
+}
+
+// AddTeacherID adds i to the "teacher_id" field.
+func (m *PlayerMutation) AddTeacherID(i int64) {
+	if m.addteacher_id != nil {
+		*m.addteacher_id += i
+	} else {
+		m.addteacher_id = &i
+	}
+}
+
+// AddedTeacherID returns the value that was added to the "teacher_id" field in this mutation.
+func (m *PlayerMutation) AddedTeacherID() (r int64, exists bool) {
+	v := m.addteacher_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTeacherID resets all changes to the "teacher_id" field.
+func (m *PlayerMutation) ResetTeacherID() {
+	m.teacher_id = nil
+	m.addteacher_id = nil
+}
+
+// SetStudentID sets the "student_id" field.
+func (m *PlayerMutation) SetStudentID(i int64) {
+	m.student_id = &i
+	m.addstudent_id = nil
+}
+
+// StudentID returns the value of the "student_id" field in the mutation.
+func (m *PlayerMutation) StudentID() (r int64, exists bool) {
+	v := m.student_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStudentID returns the old "student_id" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldStudentID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStudentID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStudentID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStudentID: %w", err)
+	}
+	return oldValue.StudentID, nil
+}
+
+// AddStudentID adds i to the "student_id" field.
+func (m *PlayerMutation) AddStudentID(i int64) {
+	if m.addstudent_id != nil {
+		*m.addstudent_id += i
+	} else {
+		m.addstudent_id = &i
+	}
+}
+
+// AddedStudentID returns the value that was added to the "student_id" field in this mutation.
+func (m *PlayerMutation) AddedStudentID() (r int64, exists bool) {
+	v := m.addstudent_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStudentID resets all changes to the "student_id" field.
+func (m *PlayerMutation) ResetStudentID() {
+	m.student_id = nil
+	m.addstudent_id = nil
+}
+
+// SetCurTitle sets the "cur_title" field.
+func (m *PlayerMutation) SetCurTitle(i int64) {
+	m.cur_title = &i
+	m.addcur_title = nil
+}
+
+// CurTitle returns the value of the "cur_title" field in the mutation.
+func (m *PlayerMutation) CurTitle() (r int64, exists bool) {
+	v := m.cur_title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurTitle returns the old "cur_title" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldCurTitle(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurTitle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurTitle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurTitle: %w", err)
+	}
+	return oldValue.CurTitle, nil
+}
+
+// AddCurTitle adds i to the "cur_title" field.
+func (m *PlayerMutation) AddCurTitle(i int64) {
+	if m.addcur_title != nil {
+		*m.addcur_title += i
+	} else {
+		m.addcur_title = &i
+	}
+}
+
+// AddedCurTitle returns the value that was added to the "cur_title" field in this mutation.
+func (m *PlayerMutation) AddedCurTitle() (r int64, exists bool) {
+	v := m.addcur_title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCurTitle resets all changes to the "cur_title" field.
+func (m *PlayerMutation) ResetCurTitle() {
+	m.cur_title = nil
+	m.addcur_title = nil
+}
+
+// SetTaskStatus sets the "task_status" field.
+func (m *PlayerMutation) SetTaskStatus(s string) {
+	m.task_status = &s
+}
+
+// TaskStatus returns the value of the "task_status" field in the mutation.
+func (m *PlayerMutation) TaskStatus() (r string, exists bool) {
+	v := m.task_status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTaskStatus returns the old "task_status" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldTaskStatus(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTaskStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTaskStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTaskStatus: %w", err)
+	}
+	return oldValue.TaskStatus, nil
+}
+
+// ResetTaskStatus resets all changes to the "task_status" field.
+func (m *PlayerMutation) ResetTaskStatus() {
+	m.task_status = nil
+}
+
+// SetTaskBufs sets the "task_bufs" field.
+func (m *PlayerMutation) SetTaskBufs(s string) {
+	m.task_bufs = &s
+}
+
+// TaskBufs returns the value of the "task_bufs" field in the mutation.
+func (m *PlayerMutation) TaskBufs() (r string, exists bool) {
+	v := m.task_bufs
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTaskBufs returns the old "task_bufs" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldTaskBufs(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTaskBufs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTaskBufs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTaskBufs: %w", err)
+	}
+	return oldValue.TaskBufs, nil
+}
+
+// ResetTaskBufs resets all changes to the "task_bufs" field.
+func (m *PlayerMutation) ResetTaskBufs() {
+	m.task_bufs = nil
+}
+
+// SetCurrentPetID sets the "current_pet_id" field.
+func (m *PlayerMutation) SetCurrentPetID(i int64) {
+	m.current_pet_id = &i
+	m.addcurrent_pet_id = nil
+}
+
+// CurrentPetID returns the value of the "current_pet_id" field in the mutation.
+func (m *PlayerMutation) CurrentPetID() (r int64, exists bool) {
+	v := m.current_pet_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrentPetID returns the old "current_pet_id" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldCurrentPetID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrentPetID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrentPetID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrentPetID: %w", err)
+	}
+	return oldValue.CurrentPetID, nil
+}
+
+// AddCurrentPetID adds i to the "current_pet_id" field.
+func (m *PlayerMutation) AddCurrentPetID(i int64) {
+	if m.addcurrent_pet_id != nil {
+		*m.addcurrent_pet_id += i
+	} else {
+		m.addcurrent_pet_id = &i
+	}
+}
+
+// AddedCurrentPetID returns the value that was added to the "current_pet_id" field in this mutation.
+func (m *PlayerMutation) AddedCurrentPetID() (r int64, exists bool) {
+	v := m.addcurrent_pet_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCurrentPetID resets all changes to the "current_pet_id" field.
+func (m *PlayerMutation) ResetCurrentPetID() {
+	m.current_pet_id = nil
+	m.addcurrent_pet_id = nil
+}
+
+// SetCurrentPetCatchTime sets the "current_pet_catch_time" field.
+func (m *PlayerMutation) SetCurrentPetCatchTime(i int64) {
+	m.current_pet_catch_time = &i
+	m.addcurrent_pet_catch_time = nil
+}
+
+// CurrentPetCatchTime returns the value of the "current_pet_catch_time" field in the mutation.
+func (m *PlayerMutation) CurrentPetCatchTime() (r int64, exists bool) {
+	v := m.current_pet_catch_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrentPetCatchTime returns the old "current_pet_catch_time" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldCurrentPetCatchTime(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrentPetCatchTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrentPetCatchTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrentPetCatchTime: %w", err)
+	}
+	return oldValue.CurrentPetCatchTime, nil
+}
+
+// AddCurrentPetCatchTime adds i to the "current_pet_catch_time" field.
+func (m *PlayerMutation) AddCurrentPetCatchTime(i int64) {
+	if m.addcurrent_pet_catch_time != nil {
+		*m.addcurrent_pet_catch_time += i
+	} else {
+		m.addcurrent_pet_catch_time = &i
+	}
+}
+
+// AddedCurrentPetCatchTime returns the value that was added to the "current_pet_catch_time" field in this mutation.
+func (m *PlayerMutation) AddedCurrentPetCatchTime() (r int64, exists bool) {
+	v := m.addcurrent_pet_catch_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCurrentPetCatchTime resets all changes to the "current_pet_catch_time" field.
+func (m *PlayerMutation) ResetCurrentPetCatchTime() {
+	m.current_pet_catch_time = nil
+	m.addcurrent_pet_catch_time = nil
+}
+
+// SetCurrentPetDv sets the "current_pet_dv" field.
+func (m *PlayerMutation) SetCurrentPetDv(i int64) {
+	m.current_pet_dv = &i
+	m.addcurrent_pet_dv = nil
+}
+
+// CurrentPetDv returns the value of the "current_pet_dv" field in the mutation.
+func (m *PlayerMutation) CurrentPetDv() (r int64, exists bool) {
+	v := m.current_pet_dv
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrentPetDv returns the old "current_pet_dv" field's value of the Player entity.
+// If the Player object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlayerMutation) OldCurrentPetDv(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrentPetDv is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrentPetDv requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrentPetDv: %w", err)
+	}
+	return oldValue.CurrentPetDv, nil
+}
+
+// AddCurrentPetDv adds i to the "current_pet_dv" field.
+func (m *PlayerMutation) AddCurrentPetDv(i int64) {
+	if m.addcurrent_pet_dv != nil {
+		*m.addcurrent_pet_dv += i
+	} else {
+		m.addcurrent_pet_dv = &i
+	}
+}
+
+// AddedCurrentPetDv returns the value that was added to the "current_pet_dv" field in this mutation.
+func (m *PlayerMutation) AddedCurrentPetDv() (r int64, exists bool) {
+	v := m.addcurrent_pet_dv
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCurrentPetDv resets all changes to the "current_pet_dv" field.
+func (m *PlayerMutation) ResetCurrentPetDv() {
+	m.current_pet_dv = nil
+	m.addcurrent_pet_dv = nil
 }
 
 // SetLastLoginAt sets the "last_login_at" field.
@@ -6436,7 +7496,7 @@ func (m *PlayerMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PlayerMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 27)
 	if m.account != nil {
 		fields = append(fields, player.FieldAccountID)
 	}
@@ -6455,11 +7515,59 @@ func (m *PlayerMutation) Fields() []string {
 	if m.map_id != nil {
 		fields = append(fields, player.FieldMapID)
 	}
+	if m.map_type != nil {
+		fields = append(fields, player.FieldMapType)
+	}
 	if m.pos_x != nil {
 		fields = append(fields, player.FieldPosX)
 	}
 	if m.pos_y != nil {
 		fields = append(fields, player.FieldPosY)
+	}
+	if m.last_map_id != nil {
+		fields = append(fields, player.FieldLastMapID)
+	}
+	if m.color != nil {
+		fields = append(fields, player.FieldColor)
+	}
+	if m.texture != nil {
+		fields = append(fields, player.FieldTexture)
+	}
+	if m.energy != nil {
+		fields = append(fields, player.FieldEnergy)
+	}
+	if m.fight_badge != nil {
+		fields = append(fields, player.FieldFightBadge)
+	}
+	if m.time_today != nil {
+		fields = append(fields, player.FieldTimeToday)
+	}
+	if m.time_limit != nil {
+		fields = append(fields, player.FieldTimeLimit)
+	}
+	if m.teacher_id != nil {
+		fields = append(fields, player.FieldTeacherID)
+	}
+	if m.student_id != nil {
+		fields = append(fields, player.FieldStudentID)
+	}
+	if m.cur_title != nil {
+		fields = append(fields, player.FieldCurTitle)
+	}
+	if m.task_status != nil {
+		fields = append(fields, player.FieldTaskStatus)
+	}
+	if m.task_bufs != nil {
+		fields = append(fields, player.FieldTaskBufs)
+	}
+	if m.current_pet_id != nil {
+		fields = append(fields, player.FieldCurrentPetID)
+	}
+	if m.current_pet_catch_time != nil {
+		fields = append(fields, player.FieldCurrentPetCatchTime)
+	}
+	if m.current_pet_dv != nil {
+		fields = append(fields, player.FieldCurrentPetDv)
 	}
 	if m.last_login_at != nil {
 		fields = append(fields, player.FieldLastLoginAt)
@@ -6490,10 +7598,42 @@ func (m *PlayerMutation) Field(name string) (ent.Value, bool) {
 		return m.Gold()
 	case player.FieldMapID:
 		return m.MapID()
+	case player.FieldMapType:
+		return m.MapType()
 	case player.FieldPosX:
 		return m.PosX()
 	case player.FieldPosY:
 		return m.PosY()
+	case player.FieldLastMapID:
+		return m.LastMapID()
+	case player.FieldColor:
+		return m.Color()
+	case player.FieldTexture:
+		return m.Texture()
+	case player.FieldEnergy:
+		return m.Energy()
+	case player.FieldFightBadge:
+		return m.FightBadge()
+	case player.FieldTimeToday:
+		return m.TimeToday()
+	case player.FieldTimeLimit:
+		return m.TimeLimit()
+	case player.FieldTeacherID:
+		return m.TeacherID()
+	case player.FieldStudentID:
+		return m.StudentID()
+	case player.FieldCurTitle:
+		return m.CurTitle()
+	case player.FieldTaskStatus:
+		return m.TaskStatus()
+	case player.FieldTaskBufs:
+		return m.TaskBufs()
+	case player.FieldCurrentPetID:
+		return m.CurrentPetID()
+	case player.FieldCurrentPetCatchTime:
+		return m.CurrentPetCatchTime()
+	case player.FieldCurrentPetDv:
+		return m.CurrentPetDv()
 	case player.FieldLastLoginAt:
 		return m.LastLoginAt()
 	case player.FieldCreatedAt:
@@ -6521,10 +7661,42 @@ func (m *PlayerMutation) OldField(ctx context.Context, name string) (ent.Value, 
 		return m.OldGold(ctx)
 	case player.FieldMapID:
 		return m.OldMapID(ctx)
+	case player.FieldMapType:
+		return m.OldMapType(ctx)
 	case player.FieldPosX:
 		return m.OldPosX(ctx)
 	case player.FieldPosY:
 		return m.OldPosY(ctx)
+	case player.FieldLastMapID:
+		return m.OldLastMapID(ctx)
+	case player.FieldColor:
+		return m.OldColor(ctx)
+	case player.FieldTexture:
+		return m.OldTexture(ctx)
+	case player.FieldEnergy:
+		return m.OldEnergy(ctx)
+	case player.FieldFightBadge:
+		return m.OldFightBadge(ctx)
+	case player.FieldTimeToday:
+		return m.OldTimeToday(ctx)
+	case player.FieldTimeLimit:
+		return m.OldTimeLimit(ctx)
+	case player.FieldTeacherID:
+		return m.OldTeacherID(ctx)
+	case player.FieldStudentID:
+		return m.OldStudentID(ctx)
+	case player.FieldCurTitle:
+		return m.OldCurTitle(ctx)
+	case player.FieldTaskStatus:
+		return m.OldTaskStatus(ctx)
+	case player.FieldTaskBufs:
+		return m.OldTaskBufs(ctx)
+	case player.FieldCurrentPetID:
+		return m.OldCurrentPetID(ctx)
+	case player.FieldCurrentPetCatchTime:
+		return m.OldCurrentPetCatchTime(ctx)
+	case player.FieldCurrentPetDv:
+		return m.OldCurrentPetDv(ctx)
 	case player.FieldLastLoginAt:
 		return m.OldLastLoginAt(ctx)
 	case player.FieldCreatedAt:
@@ -6582,6 +7754,13 @@ func (m *PlayerMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetMapID(v)
 		return nil
+	case player.FieldMapType:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMapType(v)
+		return nil
 	case player.FieldPosX:
 		v, ok := value.(int)
 		if !ok {
@@ -6595,6 +7774,111 @@ func (m *PlayerMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPosY(v)
+		return nil
+	case player.FieldLastMapID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLastMapID(v)
+		return nil
+	case player.FieldColor:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetColor(v)
+		return nil
+	case player.FieldTexture:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTexture(v)
+		return nil
+	case player.FieldEnergy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnergy(v)
+		return nil
+	case player.FieldFightBadge:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFightBadge(v)
+		return nil
+	case player.FieldTimeToday:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimeToday(v)
+		return nil
+	case player.FieldTimeLimit:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimeLimit(v)
+		return nil
+	case player.FieldTeacherID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTeacherID(v)
+		return nil
+	case player.FieldStudentID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStudentID(v)
+		return nil
+	case player.FieldCurTitle:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurTitle(v)
+		return nil
+	case player.FieldTaskStatus:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTaskStatus(v)
+		return nil
+	case player.FieldTaskBufs:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTaskBufs(v)
+		return nil
+	case player.FieldCurrentPetID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrentPetID(v)
+		return nil
+	case player.FieldCurrentPetCatchTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrentPetCatchTime(v)
+		return nil
+	case player.FieldCurrentPetDv:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrentPetDv(v)
 		return nil
 	case player.FieldLastLoginAt:
 		v, ok := value.(time.Time)
@@ -6637,11 +7921,53 @@ func (m *PlayerMutation) AddedFields() []string {
 	if m.addmap_id != nil {
 		fields = append(fields, player.FieldMapID)
 	}
+	if m.addmap_type != nil {
+		fields = append(fields, player.FieldMapType)
+	}
 	if m.addpos_x != nil {
 		fields = append(fields, player.FieldPosX)
 	}
 	if m.addpos_y != nil {
 		fields = append(fields, player.FieldPosY)
+	}
+	if m.addlast_map_id != nil {
+		fields = append(fields, player.FieldLastMapID)
+	}
+	if m.addcolor != nil {
+		fields = append(fields, player.FieldColor)
+	}
+	if m.addtexture != nil {
+		fields = append(fields, player.FieldTexture)
+	}
+	if m.addenergy != nil {
+		fields = append(fields, player.FieldEnergy)
+	}
+	if m.addfight_badge != nil {
+		fields = append(fields, player.FieldFightBadge)
+	}
+	if m.addtime_today != nil {
+		fields = append(fields, player.FieldTimeToday)
+	}
+	if m.addtime_limit != nil {
+		fields = append(fields, player.FieldTimeLimit)
+	}
+	if m.addteacher_id != nil {
+		fields = append(fields, player.FieldTeacherID)
+	}
+	if m.addstudent_id != nil {
+		fields = append(fields, player.FieldStudentID)
+	}
+	if m.addcur_title != nil {
+		fields = append(fields, player.FieldCurTitle)
+	}
+	if m.addcurrent_pet_id != nil {
+		fields = append(fields, player.FieldCurrentPetID)
+	}
+	if m.addcurrent_pet_catch_time != nil {
+		fields = append(fields, player.FieldCurrentPetCatchTime)
+	}
+	if m.addcurrent_pet_dv != nil {
+		fields = append(fields, player.FieldCurrentPetDv)
 	}
 	return fields
 }
@@ -6659,10 +7985,38 @@ func (m *PlayerMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedGold()
 	case player.FieldMapID:
 		return m.AddedMapID()
+	case player.FieldMapType:
+		return m.AddedMapType()
 	case player.FieldPosX:
 		return m.AddedPosX()
 	case player.FieldPosY:
 		return m.AddedPosY()
+	case player.FieldLastMapID:
+		return m.AddedLastMapID()
+	case player.FieldColor:
+		return m.AddedColor()
+	case player.FieldTexture:
+		return m.AddedTexture()
+	case player.FieldEnergy:
+		return m.AddedEnergy()
+	case player.FieldFightBadge:
+		return m.AddedFightBadge()
+	case player.FieldTimeToday:
+		return m.AddedTimeToday()
+	case player.FieldTimeLimit:
+		return m.AddedTimeLimit()
+	case player.FieldTeacherID:
+		return m.AddedTeacherID()
+	case player.FieldStudentID:
+		return m.AddedStudentID()
+	case player.FieldCurTitle:
+		return m.AddedCurTitle()
+	case player.FieldCurrentPetID:
+		return m.AddedCurrentPetID()
+	case player.FieldCurrentPetCatchTime:
+		return m.AddedCurrentPetCatchTime()
+	case player.FieldCurrentPetDv:
+		return m.AddedCurrentPetDv()
 	}
 	return nil, false
 }
@@ -6700,6 +8054,13 @@ func (m *PlayerMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddMapID(v)
 		return nil
+	case player.FieldMapType:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMapType(v)
+		return nil
 	case player.FieldPosX:
 		v, ok := value.(int)
 		if !ok {
@@ -6713,6 +8074,97 @@ func (m *PlayerMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddPosY(v)
+		return nil
+	case player.FieldLastMapID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLastMapID(v)
+		return nil
+	case player.FieldColor:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddColor(v)
+		return nil
+	case player.FieldTexture:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTexture(v)
+		return nil
+	case player.FieldEnergy:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddEnergy(v)
+		return nil
+	case player.FieldFightBadge:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddFightBadge(v)
+		return nil
+	case player.FieldTimeToday:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTimeToday(v)
+		return nil
+	case player.FieldTimeLimit:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTimeLimit(v)
+		return nil
+	case player.FieldTeacherID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTeacherID(v)
+		return nil
+	case player.FieldStudentID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStudentID(v)
+		return nil
+	case player.FieldCurTitle:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCurTitle(v)
+		return nil
+	case player.FieldCurrentPetID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCurrentPetID(v)
+		return nil
+	case player.FieldCurrentPetCatchTime:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCurrentPetCatchTime(v)
+		return nil
+	case player.FieldCurrentPetDv:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCurrentPetDv(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Player numeric field %s", name)
@@ -6768,11 +8220,59 @@ func (m *PlayerMutation) ResetField(name string) error {
 	case player.FieldMapID:
 		m.ResetMapID()
 		return nil
+	case player.FieldMapType:
+		m.ResetMapType()
+		return nil
 	case player.FieldPosX:
 		m.ResetPosX()
 		return nil
 	case player.FieldPosY:
 		m.ResetPosY()
+		return nil
+	case player.FieldLastMapID:
+		m.ResetLastMapID()
+		return nil
+	case player.FieldColor:
+		m.ResetColor()
+		return nil
+	case player.FieldTexture:
+		m.ResetTexture()
+		return nil
+	case player.FieldEnergy:
+		m.ResetEnergy()
+		return nil
+	case player.FieldFightBadge:
+		m.ResetFightBadge()
+		return nil
+	case player.FieldTimeToday:
+		m.ResetTimeToday()
+		return nil
+	case player.FieldTimeLimit:
+		m.ResetTimeLimit()
+		return nil
+	case player.FieldTeacherID:
+		m.ResetTeacherID()
+		return nil
+	case player.FieldStudentID:
+		m.ResetStudentID()
+		return nil
+	case player.FieldCurTitle:
+		m.ResetCurTitle()
+		return nil
+	case player.FieldTaskStatus:
+		m.ResetTaskStatus()
+		return nil
+	case player.FieldTaskBufs:
+		m.ResetTaskBufs()
+		return nil
+	case player.FieldCurrentPetID:
+		m.ResetCurrentPetID()
+		return nil
+	case player.FieldCurrentPetCatchTime:
+		m.ResetCurrentPetCatchTime()
+		return nil
+	case player.FieldCurrentPetDv:
+		m.ResetCurrentPetDv()
 		return nil
 	case player.FieldLastLoginAt:
 		m.ResetLastLoginAt()

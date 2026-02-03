@@ -30,10 +30,42 @@ type Player struct {
 	Gold int64 `json:"gold,omitempty"`
 	// MapID holds the value of the "map_id" field.
 	MapID int `json:"map_id,omitempty"`
+	// MapType holds the value of the "map_type" field.
+	MapType int `json:"map_type,omitempty"`
 	// PosX holds the value of the "pos_x" field.
 	PosX int `json:"pos_x,omitempty"`
 	// PosY holds the value of the "pos_y" field.
 	PosY int `json:"pos_y,omitempty"`
+	// LastMapID holds the value of the "last_map_id" field.
+	LastMapID int `json:"last_map_id,omitempty"`
+	// Color holds the value of the "color" field.
+	Color int64 `json:"color,omitempty"`
+	// Texture holds the value of the "texture" field.
+	Texture int64 `json:"texture,omitempty"`
+	// Energy holds the value of the "energy" field.
+	Energy int64 `json:"energy,omitempty"`
+	// FightBadge holds the value of the "fight_badge" field.
+	FightBadge int64 `json:"fight_badge,omitempty"`
+	// TimeToday holds the value of the "time_today" field.
+	TimeToday int64 `json:"time_today,omitempty"`
+	// TimeLimit holds the value of the "time_limit" field.
+	TimeLimit int64 `json:"time_limit,omitempty"`
+	// TeacherID holds the value of the "teacher_id" field.
+	TeacherID int64 `json:"teacher_id,omitempty"`
+	// StudentID holds the value of the "student_id" field.
+	StudentID int64 `json:"student_id,omitempty"`
+	// CurTitle holds the value of the "cur_title" field.
+	CurTitle int64 `json:"cur_title,omitempty"`
+	// TaskStatus holds the value of the "task_status" field.
+	TaskStatus string `json:"task_status,omitempty"`
+	// TaskBufs holds the value of the "task_bufs" field.
+	TaskBufs string `json:"task_bufs,omitempty"`
+	// CurrentPetID holds the value of the "current_pet_id" field.
+	CurrentPetID int64 `json:"current_pet_id,omitempty"`
+	// CurrentPetCatchTime holds the value of the "current_pet_catch_time" field.
+	CurrentPetCatchTime int64 `json:"current_pet_catch_time,omitempty"`
+	// CurrentPetDv holds the value of the "current_pet_dv" field.
+	CurrentPetDv int64 `json:"current_pet_dv,omitempty"`
 	// LastLoginAt holds the value of the "last_login_at" field.
 	LastLoginAt time.Time `json:"last_login_at,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
@@ -93,9 +125,9 @@ func (*Player) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case player.FieldID, player.FieldAccountID, player.FieldLevel, player.FieldCoins, player.FieldGold, player.FieldMapID, player.FieldPosX, player.FieldPosY:
+		case player.FieldID, player.FieldAccountID, player.FieldLevel, player.FieldCoins, player.FieldGold, player.FieldMapID, player.FieldMapType, player.FieldPosX, player.FieldPosY, player.FieldLastMapID, player.FieldColor, player.FieldTexture, player.FieldEnergy, player.FieldFightBadge, player.FieldTimeToday, player.FieldTimeLimit, player.FieldTeacherID, player.FieldStudentID, player.FieldCurTitle, player.FieldCurrentPetID, player.FieldCurrentPetCatchTime, player.FieldCurrentPetDv:
 			values[i] = new(sql.NullInt64)
-		case player.FieldNick:
+		case player.FieldNick, player.FieldTaskStatus, player.FieldTaskBufs:
 			values[i] = new(sql.NullString)
 		case player.FieldLastLoginAt, player.FieldCreatedAt, player.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -156,6 +188,12 @@ func (_m *Player) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.MapID = int(value.Int64)
 			}
+		case player.FieldMapType:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field map_type", values[i])
+			} else if value.Valid {
+				_m.MapType = int(value.Int64)
+			}
 		case player.FieldPosX:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field pos_x", values[i])
@@ -167,6 +205,96 @@ func (_m *Player) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field pos_y", values[i])
 			} else if value.Valid {
 				_m.PosY = int(value.Int64)
+			}
+		case player.FieldLastMapID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field last_map_id", values[i])
+			} else if value.Valid {
+				_m.LastMapID = int(value.Int64)
+			}
+		case player.FieldColor:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field color", values[i])
+			} else if value.Valid {
+				_m.Color = value.Int64
+			}
+		case player.FieldTexture:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field texture", values[i])
+			} else if value.Valid {
+				_m.Texture = value.Int64
+			}
+		case player.FieldEnergy:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field energy", values[i])
+			} else if value.Valid {
+				_m.Energy = value.Int64
+			}
+		case player.FieldFightBadge:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field fight_badge", values[i])
+			} else if value.Valid {
+				_m.FightBadge = value.Int64
+			}
+		case player.FieldTimeToday:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field time_today", values[i])
+			} else if value.Valid {
+				_m.TimeToday = value.Int64
+			}
+		case player.FieldTimeLimit:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field time_limit", values[i])
+			} else if value.Valid {
+				_m.TimeLimit = value.Int64
+			}
+		case player.FieldTeacherID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field teacher_id", values[i])
+			} else if value.Valid {
+				_m.TeacherID = value.Int64
+			}
+		case player.FieldStudentID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field student_id", values[i])
+			} else if value.Valid {
+				_m.StudentID = value.Int64
+			}
+		case player.FieldCurTitle:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field cur_title", values[i])
+			} else if value.Valid {
+				_m.CurTitle = value.Int64
+			}
+		case player.FieldTaskStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field task_status", values[i])
+			} else if value.Valid {
+				_m.TaskStatus = value.String
+			}
+		case player.FieldTaskBufs:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field task_bufs", values[i])
+			} else if value.Valid {
+				_m.TaskBufs = value.String
+			}
+		case player.FieldCurrentPetID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field current_pet_id", values[i])
+			} else if value.Valid {
+				_m.CurrentPetID = value.Int64
+			}
+		case player.FieldCurrentPetCatchTime:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field current_pet_catch_time", values[i])
+			} else if value.Valid {
+				_m.CurrentPetCatchTime = value.Int64
+			}
+		case player.FieldCurrentPetDv:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field current_pet_dv", values[i])
+			} else if value.Valid {
+				_m.CurrentPetDv = value.Int64
 			}
 		case player.FieldLastLoginAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -255,11 +383,59 @@ func (_m *Player) String() string {
 	builder.WriteString("map_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.MapID))
 	builder.WriteString(", ")
+	builder.WriteString("map_type=")
+	builder.WriteString(fmt.Sprintf("%v", _m.MapType))
+	builder.WriteString(", ")
 	builder.WriteString("pos_x=")
 	builder.WriteString(fmt.Sprintf("%v", _m.PosX))
 	builder.WriteString(", ")
 	builder.WriteString("pos_y=")
 	builder.WriteString(fmt.Sprintf("%v", _m.PosY))
+	builder.WriteString(", ")
+	builder.WriteString("last_map_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.LastMapID))
+	builder.WriteString(", ")
+	builder.WriteString("color=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Color))
+	builder.WriteString(", ")
+	builder.WriteString("texture=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Texture))
+	builder.WriteString(", ")
+	builder.WriteString("energy=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Energy))
+	builder.WriteString(", ")
+	builder.WriteString("fight_badge=")
+	builder.WriteString(fmt.Sprintf("%v", _m.FightBadge))
+	builder.WriteString(", ")
+	builder.WriteString("time_today=")
+	builder.WriteString(fmt.Sprintf("%v", _m.TimeToday))
+	builder.WriteString(", ")
+	builder.WriteString("time_limit=")
+	builder.WriteString(fmt.Sprintf("%v", _m.TimeLimit))
+	builder.WriteString(", ")
+	builder.WriteString("teacher_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.TeacherID))
+	builder.WriteString(", ")
+	builder.WriteString("student_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.StudentID))
+	builder.WriteString(", ")
+	builder.WriteString("cur_title=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CurTitle))
+	builder.WriteString(", ")
+	builder.WriteString("task_status=")
+	builder.WriteString(_m.TaskStatus)
+	builder.WriteString(", ")
+	builder.WriteString("task_bufs=")
+	builder.WriteString(_m.TaskBufs)
+	builder.WriteString(", ")
+	builder.WriteString("current_pet_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CurrentPetID))
+	builder.WriteString(", ")
+	builder.WriteString("current_pet_catch_time=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CurrentPetCatchTime))
+	builder.WriteString(", ")
+	builder.WriteString("current_pet_dv=")
+	builder.WriteString(fmt.Sprintf("%v", _m.CurrentPetDv))
 	builder.WriteString(", ")
 	builder.WriteString("last_login_at=")
 	builder.WriteString(_m.LastLoginAt.Format(time.ANSIC))

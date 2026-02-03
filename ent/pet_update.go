@@ -127,6 +127,48 @@ func (_u *PetUpdate) AddHp(v int) *PetUpdate {
 	return _u
 }
 
+// SetCatchTime sets the "catch_time" field.
+func (_u *PetUpdate) SetCatchTime(v int64) *PetUpdate {
+	_u.mutation.ResetCatchTime()
+	_u.mutation.SetCatchTime(v)
+	return _u
+}
+
+// SetNillableCatchTime sets the "catch_time" field if the given value is not nil.
+func (_u *PetUpdate) SetNillableCatchTime(v *int64) *PetUpdate {
+	if v != nil {
+		_u.SetCatchTime(*v)
+	}
+	return _u
+}
+
+// AddCatchTime adds value to the "catch_time" field.
+func (_u *PetUpdate) AddCatchTime(v int64) *PetUpdate {
+	_u.mutation.AddCatchTime(v)
+	return _u
+}
+
+// SetDv sets the "dv" field.
+func (_u *PetUpdate) SetDv(v int) *PetUpdate {
+	_u.mutation.ResetDv()
+	_u.mutation.SetDv(v)
+	return _u
+}
+
+// SetNillableDv sets the "dv" field if the given value is not nil.
+func (_u *PetUpdate) SetNillableDv(v *int) *PetUpdate {
+	if v != nil {
+		_u.SetDv(*v)
+	}
+	return _u
+}
+
+// AddDv adds value to the "dv" field.
+func (_u *PetUpdate) AddDv(v int) *PetUpdate {
+	_u.mutation.AddDv(v)
+	return _u
+}
+
 // SetNature sets the "nature" field.
 func (_u *PetUpdate) SetNature(v string) *PetUpdate {
 	_u.mutation.SetNature(v)
@@ -270,6 +312,18 @@ func (_u *PetUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AddedHp(); ok {
 		_spec.AddField(pet.FieldHp, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.CatchTime(); ok {
+		_spec.SetField(pet.FieldCatchTime, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCatchTime(); ok {
+		_spec.AddField(pet.FieldCatchTime, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.Dv(); ok {
+		_spec.SetField(pet.FieldDv, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedDv(); ok {
+		_spec.AddField(pet.FieldDv, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.Nature(); ok {
 		_spec.SetField(pet.FieldNature, field.TypeString, value)
@@ -427,6 +481,48 @@ func (_u *PetUpdateOne) SetNillableHp(v *int) *PetUpdateOne {
 // AddHp adds value to the "hp" field.
 func (_u *PetUpdateOne) AddHp(v int) *PetUpdateOne {
 	_u.mutation.AddHp(v)
+	return _u
+}
+
+// SetCatchTime sets the "catch_time" field.
+func (_u *PetUpdateOne) SetCatchTime(v int64) *PetUpdateOne {
+	_u.mutation.ResetCatchTime()
+	_u.mutation.SetCatchTime(v)
+	return _u
+}
+
+// SetNillableCatchTime sets the "catch_time" field if the given value is not nil.
+func (_u *PetUpdateOne) SetNillableCatchTime(v *int64) *PetUpdateOne {
+	if v != nil {
+		_u.SetCatchTime(*v)
+	}
+	return _u
+}
+
+// AddCatchTime adds value to the "catch_time" field.
+func (_u *PetUpdateOne) AddCatchTime(v int64) *PetUpdateOne {
+	_u.mutation.AddCatchTime(v)
+	return _u
+}
+
+// SetDv sets the "dv" field.
+func (_u *PetUpdateOne) SetDv(v int) *PetUpdateOne {
+	_u.mutation.ResetDv()
+	_u.mutation.SetDv(v)
+	return _u
+}
+
+// SetNillableDv sets the "dv" field if the given value is not nil.
+func (_u *PetUpdateOne) SetNillableDv(v *int) *PetUpdateOne {
+	if v != nil {
+		_u.SetDv(*v)
+	}
+	return _u
+}
+
+// AddDv adds value to the "dv" field.
+func (_u *PetUpdateOne) AddDv(v int) *PetUpdateOne {
+	_u.mutation.AddDv(v)
 	return _u
 }
 
@@ -603,6 +699,18 @@ func (_u *PetUpdateOne) sqlSave(ctx context.Context) (_node *Pet, err error) {
 	}
 	if value, ok := _u.mutation.AddedHp(); ok {
 		_spec.AddField(pet.FieldHp, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.CatchTime(); ok {
+		_spec.SetField(pet.FieldCatchTime, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedCatchTime(); ok {
+		_spec.AddField(pet.FieldCatchTime, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.Dv(); ok {
+		_spec.SetField(pet.FieldDv, field.TypeInt, value)
+	}
+	if value, ok := _u.mutation.AddedDv(); ok {
+		_spec.AddField(pet.FieldDv, field.TypeInt, value)
 	}
 	if value, ok := _u.mutation.Nature(); ok {
 		_spec.SetField(pet.FieldNature, field.TypeString, value)

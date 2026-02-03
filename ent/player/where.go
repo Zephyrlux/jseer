@@ -85,6 +85,11 @@ func MapID(v int) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldMapID, v))
 }
 
+// MapType applies equality check predicate on the "map_type" field. It's identical to MapTypeEQ.
+func MapType(v int) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldMapType, v))
+}
+
 // PosX applies equality check predicate on the "pos_x" field. It's identical to PosXEQ.
 func PosX(v int) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldPosX, v))
@@ -93,6 +98,81 @@ func PosX(v int) predicate.Player {
 // PosY applies equality check predicate on the "pos_y" field. It's identical to PosYEQ.
 func PosY(v int) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldPosY, v))
+}
+
+// LastMapID applies equality check predicate on the "last_map_id" field. It's identical to LastMapIDEQ.
+func LastMapID(v int) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldLastMapID, v))
+}
+
+// Color applies equality check predicate on the "color" field. It's identical to ColorEQ.
+func Color(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldColor, v))
+}
+
+// Texture applies equality check predicate on the "texture" field. It's identical to TextureEQ.
+func Texture(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTexture, v))
+}
+
+// Energy applies equality check predicate on the "energy" field. It's identical to EnergyEQ.
+func Energy(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldEnergy, v))
+}
+
+// FightBadge applies equality check predicate on the "fight_badge" field. It's identical to FightBadgeEQ.
+func FightBadge(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldFightBadge, v))
+}
+
+// TimeToday applies equality check predicate on the "time_today" field. It's identical to TimeTodayEQ.
+func TimeToday(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTimeToday, v))
+}
+
+// TimeLimit applies equality check predicate on the "time_limit" field. It's identical to TimeLimitEQ.
+func TimeLimit(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTimeLimit, v))
+}
+
+// TeacherID applies equality check predicate on the "teacher_id" field. It's identical to TeacherIDEQ.
+func TeacherID(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTeacherID, v))
+}
+
+// StudentID applies equality check predicate on the "student_id" field. It's identical to StudentIDEQ.
+func StudentID(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldStudentID, v))
+}
+
+// CurTitle applies equality check predicate on the "cur_title" field. It's identical to CurTitleEQ.
+func CurTitle(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldCurTitle, v))
+}
+
+// TaskStatus applies equality check predicate on the "task_status" field. It's identical to TaskStatusEQ.
+func TaskStatus(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTaskStatus, v))
+}
+
+// TaskBufs applies equality check predicate on the "task_bufs" field. It's identical to TaskBufsEQ.
+func TaskBufs(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTaskBufs, v))
+}
+
+// CurrentPetID applies equality check predicate on the "current_pet_id" field. It's identical to CurrentPetIDEQ.
+func CurrentPetID(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldCurrentPetID, v))
+}
+
+// CurrentPetCatchTime applies equality check predicate on the "current_pet_catch_time" field. It's identical to CurrentPetCatchTimeEQ.
+func CurrentPetCatchTime(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldCurrentPetCatchTime, v))
+}
+
+// CurrentPetDv applies equality check predicate on the "current_pet_dv" field. It's identical to CurrentPetDvEQ.
+func CurrentPetDv(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldCurrentPetDv, v))
 }
 
 // LastLoginAt applies equality check predicate on the "last_login_at" field. It's identical to LastLoginAtEQ.
@@ -355,6 +435,46 @@ func MapIDLTE(v int) predicate.Player {
 	return predicate.Player(sql.FieldLTE(FieldMapID, v))
 }
 
+// MapTypeEQ applies the EQ predicate on the "map_type" field.
+func MapTypeEQ(v int) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldMapType, v))
+}
+
+// MapTypeNEQ applies the NEQ predicate on the "map_type" field.
+func MapTypeNEQ(v int) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldMapType, v))
+}
+
+// MapTypeIn applies the In predicate on the "map_type" field.
+func MapTypeIn(vs ...int) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldMapType, vs...))
+}
+
+// MapTypeNotIn applies the NotIn predicate on the "map_type" field.
+func MapTypeNotIn(vs ...int) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldMapType, vs...))
+}
+
+// MapTypeGT applies the GT predicate on the "map_type" field.
+func MapTypeGT(v int) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldMapType, v))
+}
+
+// MapTypeGTE applies the GTE predicate on the "map_type" field.
+func MapTypeGTE(v int) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldMapType, v))
+}
+
+// MapTypeLT applies the LT predicate on the "map_type" field.
+func MapTypeLT(v int) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldMapType, v))
+}
+
+// MapTypeLTE applies the LTE predicate on the "map_type" field.
+func MapTypeLTE(v int) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldMapType, v))
+}
+
 // PosXEQ applies the EQ predicate on the "pos_x" field.
 func PosXEQ(v int) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldPosX, v))
@@ -433,6 +553,656 @@ func PosYLT(v int) predicate.Player {
 // PosYLTE applies the LTE predicate on the "pos_y" field.
 func PosYLTE(v int) predicate.Player {
 	return predicate.Player(sql.FieldLTE(FieldPosY, v))
+}
+
+// LastMapIDEQ applies the EQ predicate on the "last_map_id" field.
+func LastMapIDEQ(v int) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldLastMapID, v))
+}
+
+// LastMapIDNEQ applies the NEQ predicate on the "last_map_id" field.
+func LastMapIDNEQ(v int) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldLastMapID, v))
+}
+
+// LastMapIDIn applies the In predicate on the "last_map_id" field.
+func LastMapIDIn(vs ...int) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldLastMapID, vs...))
+}
+
+// LastMapIDNotIn applies the NotIn predicate on the "last_map_id" field.
+func LastMapIDNotIn(vs ...int) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldLastMapID, vs...))
+}
+
+// LastMapIDGT applies the GT predicate on the "last_map_id" field.
+func LastMapIDGT(v int) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldLastMapID, v))
+}
+
+// LastMapIDGTE applies the GTE predicate on the "last_map_id" field.
+func LastMapIDGTE(v int) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldLastMapID, v))
+}
+
+// LastMapIDLT applies the LT predicate on the "last_map_id" field.
+func LastMapIDLT(v int) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldLastMapID, v))
+}
+
+// LastMapIDLTE applies the LTE predicate on the "last_map_id" field.
+func LastMapIDLTE(v int) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldLastMapID, v))
+}
+
+// ColorEQ applies the EQ predicate on the "color" field.
+func ColorEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldColor, v))
+}
+
+// ColorNEQ applies the NEQ predicate on the "color" field.
+func ColorNEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldColor, v))
+}
+
+// ColorIn applies the In predicate on the "color" field.
+func ColorIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldColor, vs...))
+}
+
+// ColorNotIn applies the NotIn predicate on the "color" field.
+func ColorNotIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldColor, vs...))
+}
+
+// ColorGT applies the GT predicate on the "color" field.
+func ColorGT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldColor, v))
+}
+
+// ColorGTE applies the GTE predicate on the "color" field.
+func ColorGTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldColor, v))
+}
+
+// ColorLT applies the LT predicate on the "color" field.
+func ColorLT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldColor, v))
+}
+
+// ColorLTE applies the LTE predicate on the "color" field.
+func ColorLTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldColor, v))
+}
+
+// TextureEQ applies the EQ predicate on the "texture" field.
+func TextureEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTexture, v))
+}
+
+// TextureNEQ applies the NEQ predicate on the "texture" field.
+func TextureNEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldTexture, v))
+}
+
+// TextureIn applies the In predicate on the "texture" field.
+func TextureIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldTexture, vs...))
+}
+
+// TextureNotIn applies the NotIn predicate on the "texture" field.
+func TextureNotIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldTexture, vs...))
+}
+
+// TextureGT applies the GT predicate on the "texture" field.
+func TextureGT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldTexture, v))
+}
+
+// TextureGTE applies the GTE predicate on the "texture" field.
+func TextureGTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldTexture, v))
+}
+
+// TextureLT applies the LT predicate on the "texture" field.
+func TextureLT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldTexture, v))
+}
+
+// TextureLTE applies the LTE predicate on the "texture" field.
+func TextureLTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldTexture, v))
+}
+
+// EnergyEQ applies the EQ predicate on the "energy" field.
+func EnergyEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldEnergy, v))
+}
+
+// EnergyNEQ applies the NEQ predicate on the "energy" field.
+func EnergyNEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldEnergy, v))
+}
+
+// EnergyIn applies the In predicate on the "energy" field.
+func EnergyIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldEnergy, vs...))
+}
+
+// EnergyNotIn applies the NotIn predicate on the "energy" field.
+func EnergyNotIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldEnergy, vs...))
+}
+
+// EnergyGT applies the GT predicate on the "energy" field.
+func EnergyGT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldEnergy, v))
+}
+
+// EnergyGTE applies the GTE predicate on the "energy" field.
+func EnergyGTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldEnergy, v))
+}
+
+// EnergyLT applies the LT predicate on the "energy" field.
+func EnergyLT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldEnergy, v))
+}
+
+// EnergyLTE applies the LTE predicate on the "energy" field.
+func EnergyLTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldEnergy, v))
+}
+
+// FightBadgeEQ applies the EQ predicate on the "fight_badge" field.
+func FightBadgeEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldFightBadge, v))
+}
+
+// FightBadgeNEQ applies the NEQ predicate on the "fight_badge" field.
+func FightBadgeNEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldFightBadge, v))
+}
+
+// FightBadgeIn applies the In predicate on the "fight_badge" field.
+func FightBadgeIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldFightBadge, vs...))
+}
+
+// FightBadgeNotIn applies the NotIn predicate on the "fight_badge" field.
+func FightBadgeNotIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldFightBadge, vs...))
+}
+
+// FightBadgeGT applies the GT predicate on the "fight_badge" field.
+func FightBadgeGT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldFightBadge, v))
+}
+
+// FightBadgeGTE applies the GTE predicate on the "fight_badge" field.
+func FightBadgeGTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldFightBadge, v))
+}
+
+// FightBadgeLT applies the LT predicate on the "fight_badge" field.
+func FightBadgeLT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldFightBadge, v))
+}
+
+// FightBadgeLTE applies the LTE predicate on the "fight_badge" field.
+func FightBadgeLTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldFightBadge, v))
+}
+
+// TimeTodayEQ applies the EQ predicate on the "time_today" field.
+func TimeTodayEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTimeToday, v))
+}
+
+// TimeTodayNEQ applies the NEQ predicate on the "time_today" field.
+func TimeTodayNEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldTimeToday, v))
+}
+
+// TimeTodayIn applies the In predicate on the "time_today" field.
+func TimeTodayIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldTimeToday, vs...))
+}
+
+// TimeTodayNotIn applies the NotIn predicate on the "time_today" field.
+func TimeTodayNotIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldTimeToday, vs...))
+}
+
+// TimeTodayGT applies the GT predicate on the "time_today" field.
+func TimeTodayGT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldTimeToday, v))
+}
+
+// TimeTodayGTE applies the GTE predicate on the "time_today" field.
+func TimeTodayGTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldTimeToday, v))
+}
+
+// TimeTodayLT applies the LT predicate on the "time_today" field.
+func TimeTodayLT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldTimeToday, v))
+}
+
+// TimeTodayLTE applies the LTE predicate on the "time_today" field.
+func TimeTodayLTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldTimeToday, v))
+}
+
+// TimeLimitEQ applies the EQ predicate on the "time_limit" field.
+func TimeLimitEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTimeLimit, v))
+}
+
+// TimeLimitNEQ applies the NEQ predicate on the "time_limit" field.
+func TimeLimitNEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldTimeLimit, v))
+}
+
+// TimeLimitIn applies the In predicate on the "time_limit" field.
+func TimeLimitIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldTimeLimit, vs...))
+}
+
+// TimeLimitNotIn applies the NotIn predicate on the "time_limit" field.
+func TimeLimitNotIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldTimeLimit, vs...))
+}
+
+// TimeLimitGT applies the GT predicate on the "time_limit" field.
+func TimeLimitGT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldTimeLimit, v))
+}
+
+// TimeLimitGTE applies the GTE predicate on the "time_limit" field.
+func TimeLimitGTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldTimeLimit, v))
+}
+
+// TimeLimitLT applies the LT predicate on the "time_limit" field.
+func TimeLimitLT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldTimeLimit, v))
+}
+
+// TimeLimitLTE applies the LTE predicate on the "time_limit" field.
+func TimeLimitLTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldTimeLimit, v))
+}
+
+// TeacherIDEQ applies the EQ predicate on the "teacher_id" field.
+func TeacherIDEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTeacherID, v))
+}
+
+// TeacherIDNEQ applies the NEQ predicate on the "teacher_id" field.
+func TeacherIDNEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldTeacherID, v))
+}
+
+// TeacherIDIn applies the In predicate on the "teacher_id" field.
+func TeacherIDIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldTeacherID, vs...))
+}
+
+// TeacherIDNotIn applies the NotIn predicate on the "teacher_id" field.
+func TeacherIDNotIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldTeacherID, vs...))
+}
+
+// TeacherIDGT applies the GT predicate on the "teacher_id" field.
+func TeacherIDGT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldTeacherID, v))
+}
+
+// TeacherIDGTE applies the GTE predicate on the "teacher_id" field.
+func TeacherIDGTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldTeacherID, v))
+}
+
+// TeacherIDLT applies the LT predicate on the "teacher_id" field.
+func TeacherIDLT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldTeacherID, v))
+}
+
+// TeacherIDLTE applies the LTE predicate on the "teacher_id" field.
+func TeacherIDLTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldTeacherID, v))
+}
+
+// StudentIDEQ applies the EQ predicate on the "student_id" field.
+func StudentIDEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldStudentID, v))
+}
+
+// StudentIDNEQ applies the NEQ predicate on the "student_id" field.
+func StudentIDNEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldStudentID, v))
+}
+
+// StudentIDIn applies the In predicate on the "student_id" field.
+func StudentIDIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldStudentID, vs...))
+}
+
+// StudentIDNotIn applies the NotIn predicate on the "student_id" field.
+func StudentIDNotIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldStudentID, vs...))
+}
+
+// StudentIDGT applies the GT predicate on the "student_id" field.
+func StudentIDGT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldStudentID, v))
+}
+
+// StudentIDGTE applies the GTE predicate on the "student_id" field.
+func StudentIDGTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldStudentID, v))
+}
+
+// StudentIDLT applies the LT predicate on the "student_id" field.
+func StudentIDLT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldStudentID, v))
+}
+
+// StudentIDLTE applies the LTE predicate on the "student_id" field.
+func StudentIDLTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldStudentID, v))
+}
+
+// CurTitleEQ applies the EQ predicate on the "cur_title" field.
+func CurTitleEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldCurTitle, v))
+}
+
+// CurTitleNEQ applies the NEQ predicate on the "cur_title" field.
+func CurTitleNEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldCurTitle, v))
+}
+
+// CurTitleIn applies the In predicate on the "cur_title" field.
+func CurTitleIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldCurTitle, vs...))
+}
+
+// CurTitleNotIn applies the NotIn predicate on the "cur_title" field.
+func CurTitleNotIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldCurTitle, vs...))
+}
+
+// CurTitleGT applies the GT predicate on the "cur_title" field.
+func CurTitleGT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldCurTitle, v))
+}
+
+// CurTitleGTE applies the GTE predicate on the "cur_title" field.
+func CurTitleGTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldCurTitle, v))
+}
+
+// CurTitleLT applies the LT predicate on the "cur_title" field.
+func CurTitleLT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldCurTitle, v))
+}
+
+// CurTitleLTE applies the LTE predicate on the "cur_title" field.
+func CurTitleLTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldCurTitle, v))
+}
+
+// TaskStatusEQ applies the EQ predicate on the "task_status" field.
+func TaskStatusEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTaskStatus, v))
+}
+
+// TaskStatusNEQ applies the NEQ predicate on the "task_status" field.
+func TaskStatusNEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldTaskStatus, v))
+}
+
+// TaskStatusIn applies the In predicate on the "task_status" field.
+func TaskStatusIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldTaskStatus, vs...))
+}
+
+// TaskStatusNotIn applies the NotIn predicate on the "task_status" field.
+func TaskStatusNotIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldTaskStatus, vs...))
+}
+
+// TaskStatusGT applies the GT predicate on the "task_status" field.
+func TaskStatusGT(v string) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldTaskStatus, v))
+}
+
+// TaskStatusGTE applies the GTE predicate on the "task_status" field.
+func TaskStatusGTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldTaskStatus, v))
+}
+
+// TaskStatusLT applies the LT predicate on the "task_status" field.
+func TaskStatusLT(v string) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldTaskStatus, v))
+}
+
+// TaskStatusLTE applies the LTE predicate on the "task_status" field.
+func TaskStatusLTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldTaskStatus, v))
+}
+
+// TaskStatusContains applies the Contains predicate on the "task_status" field.
+func TaskStatusContains(v string) predicate.Player {
+	return predicate.Player(sql.FieldContains(FieldTaskStatus, v))
+}
+
+// TaskStatusHasPrefix applies the HasPrefix predicate on the "task_status" field.
+func TaskStatusHasPrefix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasPrefix(FieldTaskStatus, v))
+}
+
+// TaskStatusHasSuffix applies the HasSuffix predicate on the "task_status" field.
+func TaskStatusHasSuffix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasSuffix(FieldTaskStatus, v))
+}
+
+// TaskStatusEqualFold applies the EqualFold predicate on the "task_status" field.
+func TaskStatusEqualFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldEqualFold(FieldTaskStatus, v))
+}
+
+// TaskStatusContainsFold applies the ContainsFold predicate on the "task_status" field.
+func TaskStatusContainsFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldContainsFold(FieldTaskStatus, v))
+}
+
+// TaskBufsEQ applies the EQ predicate on the "task_bufs" field.
+func TaskBufsEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTaskBufs, v))
+}
+
+// TaskBufsNEQ applies the NEQ predicate on the "task_bufs" field.
+func TaskBufsNEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldTaskBufs, v))
+}
+
+// TaskBufsIn applies the In predicate on the "task_bufs" field.
+func TaskBufsIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldTaskBufs, vs...))
+}
+
+// TaskBufsNotIn applies the NotIn predicate on the "task_bufs" field.
+func TaskBufsNotIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldTaskBufs, vs...))
+}
+
+// TaskBufsGT applies the GT predicate on the "task_bufs" field.
+func TaskBufsGT(v string) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldTaskBufs, v))
+}
+
+// TaskBufsGTE applies the GTE predicate on the "task_bufs" field.
+func TaskBufsGTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldTaskBufs, v))
+}
+
+// TaskBufsLT applies the LT predicate on the "task_bufs" field.
+func TaskBufsLT(v string) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldTaskBufs, v))
+}
+
+// TaskBufsLTE applies the LTE predicate on the "task_bufs" field.
+func TaskBufsLTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldTaskBufs, v))
+}
+
+// TaskBufsContains applies the Contains predicate on the "task_bufs" field.
+func TaskBufsContains(v string) predicate.Player {
+	return predicate.Player(sql.FieldContains(FieldTaskBufs, v))
+}
+
+// TaskBufsHasPrefix applies the HasPrefix predicate on the "task_bufs" field.
+func TaskBufsHasPrefix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasPrefix(FieldTaskBufs, v))
+}
+
+// TaskBufsHasSuffix applies the HasSuffix predicate on the "task_bufs" field.
+func TaskBufsHasSuffix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasSuffix(FieldTaskBufs, v))
+}
+
+// TaskBufsEqualFold applies the EqualFold predicate on the "task_bufs" field.
+func TaskBufsEqualFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldEqualFold(FieldTaskBufs, v))
+}
+
+// TaskBufsContainsFold applies the ContainsFold predicate on the "task_bufs" field.
+func TaskBufsContainsFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldContainsFold(FieldTaskBufs, v))
+}
+
+// CurrentPetIDEQ applies the EQ predicate on the "current_pet_id" field.
+func CurrentPetIDEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldCurrentPetID, v))
+}
+
+// CurrentPetIDNEQ applies the NEQ predicate on the "current_pet_id" field.
+func CurrentPetIDNEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldCurrentPetID, v))
+}
+
+// CurrentPetIDIn applies the In predicate on the "current_pet_id" field.
+func CurrentPetIDIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldCurrentPetID, vs...))
+}
+
+// CurrentPetIDNotIn applies the NotIn predicate on the "current_pet_id" field.
+func CurrentPetIDNotIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldCurrentPetID, vs...))
+}
+
+// CurrentPetIDGT applies the GT predicate on the "current_pet_id" field.
+func CurrentPetIDGT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldCurrentPetID, v))
+}
+
+// CurrentPetIDGTE applies the GTE predicate on the "current_pet_id" field.
+func CurrentPetIDGTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldCurrentPetID, v))
+}
+
+// CurrentPetIDLT applies the LT predicate on the "current_pet_id" field.
+func CurrentPetIDLT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldCurrentPetID, v))
+}
+
+// CurrentPetIDLTE applies the LTE predicate on the "current_pet_id" field.
+func CurrentPetIDLTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldCurrentPetID, v))
+}
+
+// CurrentPetCatchTimeEQ applies the EQ predicate on the "current_pet_catch_time" field.
+func CurrentPetCatchTimeEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldCurrentPetCatchTime, v))
+}
+
+// CurrentPetCatchTimeNEQ applies the NEQ predicate on the "current_pet_catch_time" field.
+func CurrentPetCatchTimeNEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldCurrentPetCatchTime, v))
+}
+
+// CurrentPetCatchTimeIn applies the In predicate on the "current_pet_catch_time" field.
+func CurrentPetCatchTimeIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldCurrentPetCatchTime, vs...))
+}
+
+// CurrentPetCatchTimeNotIn applies the NotIn predicate on the "current_pet_catch_time" field.
+func CurrentPetCatchTimeNotIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldCurrentPetCatchTime, vs...))
+}
+
+// CurrentPetCatchTimeGT applies the GT predicate on the "current_pet_catch_time" field.
+func CurrentPetCatchTimeGT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldCurrentPetCatchTime, v))
+}
+
+// CurrentPetCatchTimeGTE applies the GTE predicate on the "current_pet_catch_time" field.
+func CurrentPetCatchTimeGTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldCurrentPetCatchTime, v))
+}
+
+// CurrentPetCatchTimeLT applies the LT predicate on the "current_pet_catch_time" field.
+func CurrentPetCatchTimeLT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldCurrentPetCatchTime, v))
+}
+
+// CurrentPetCatchTimeLTE applies the LTE predicate on the "current_pet_catch_time" field.
+func CurrentPetCatchTimeLTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldCurrentPetCatchTime, v))
+}
+
+// CurrentPetDvEQ applies the EQ predicate on the "current_pet_dv" field.
+func CurrentPetDvEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldCurrentPetDv, v))
+}
+
+// CurrentPetDvNEQ applies the NEQ predicate on the "current_pet_dv" field.
+func CurrentPetDvNEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldCurrentPetDv, v))
+}
+
+// CurrentPetDvIn applies the In predicate on the "current_pet_dv" field.
+func CurrentPetDvIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldCurrentPetDv, vs...))
+}
+
+// CurrentPetDvNotIn applies the NotIn predicate on the "current_pet_dv" field.
+func CurrentPetDvNotIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldCurrentPetDv, vs...))
+}
+
+// CurrentPetDvGT applies the GT predicate on the "current_pet_dv" field.
+func CurrentPetDvGT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldCurrentPetDv, v))
+}
+
+// CurrentPetDvGTE applies the GTE predicate on the "current_pet_dv" field.
+func CurrentPetDvGTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldCurrentPetDv, v))
+}
+
+// CurrentPetDvLT applies the LT predicate on the "current_pet_dv" field.
+func CurrentPetDvLT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldCurrentPetDv, v))
+}
+
+// CurrentPetDvLTE applies the LTE predicate on the "current_pet_dv" field.
+func CurrentPetDvLTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldCurrentPetDv, v))
 }
 
 // LastLoginAtEQ applies the EQ predicate on the "last_login_at" field.
