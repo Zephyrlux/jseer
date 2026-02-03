@@ -31,6 +31,23 @@ func handleFriendUnknown() gateway.Handler {
 	}
 }
 
+func handleGetRelationList(state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		user := state.GetOrCreateUser(ctx.UserID)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(len(user.Friends)))
+		for _, friend := range user.Friends {
+			binary.Write(buf, binary.BigEndian, friend.UserID)
+			binary.Write(buf, binary.BigEndian, friend.TimePoke)
+		}
+		binary.Write(buf, binary.BigEndian, uint32(len(user.Blacklist)))
+		for _, id := range user.Blacklist {
+			binary.Write(buf, binary.BigEndian, id)
+		}
+		ctx.Server.SendResponse(ctx.Conn, 2150, ctx.UserID, buf.Bytes())
+	}
+}
+
 func handleFriendAdd(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		reader := NewReader(ctx.Body)

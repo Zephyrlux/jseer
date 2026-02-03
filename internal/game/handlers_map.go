@@ -54,7 +54,7 @@ func handleMapBoss(state *State) gateway.Handler {
 		if reader.Remaining() >= 4 {
 			mapID = int(reader.ReadUint32BE())
 		}
-		body := buildMapBossList(mapID)
+		body := buildMapBossListForUser(user, mapID)
 		ctx.Server.SendResponse(ctx.Conn, 2021, ctx.UserID, body)
 	}
 }
@@ -77,7 +77,7 @@ func handleOfflineExp(state *State) gateway.Handler {
 	}
 }
 
-func buildMapBossList(mapID int) []byte {
+func buildMapBossListForUser(user *User, mapID int) []byte {
 	entries := getMapBossEntries(mapID)
 	if len(entries) == 0 {
 		return make([]byte, 4)
@@ -98,6 +98,11 @@ func buildMapBossList(mapID int) []byte {
 			if boss := GetSPTBossByID(entry.BossPetID); boss != nil && boss.MaxHP > 0 {
 				hp = uint32(boss.MaxHP)
 			}
+			if user != nil && user.BossShield != nil {
+				if stored, ok := user.BossShield[bossShieldKey(uint32(mapID), region)]; ok {
+					hp = stored
+				}
+			}
 		}
 		binary.Write(buf, binary.BigEndian, uint32(entry.BossPetID))
 		binary.Write(buf, binary.BigEndian, region)
@@ -105,6 +110,10 @@ func buildMapBossList(mapID int) []byte {
 		binary.Write(buf, binary.BigEndian, uint32(0))
 	}
 	return buf.Bytes()
+}
+
+func bossShieldKey(mapID uint32, region uint32) uint64 {
+	return uint64(mapID)<<32 | uint64(region)
 }
 
 func handleChangeDoodle(deps *Deps, state *State) gateway.Handler {
@@ -234,22 +243,10 @@ func handleMapOgreList(state *State) gateway.Handler {
 		user := state.GetOrCreateUser(ctx.UserID)
 		mapID := user.MapID
 
-		// mapID -> slot -> [petID, shiny]
-		ogres := map[uint32]map[int][2]uint32{
-			8: {
-				0: {10, 0},
-				1: {58, 0},
-			},
-			301: {
-				0: {1, 0},
-				1: {4, 0},
-				2: {7, 0},
-				3: {10, 0},
-			},
-		}
+		ogres := getMapOgreSlots(mapID)
 		buf := new(bytes.Buffer)
 		for i := 0; i <= 8; i++ {
-			if data, ok := ogres[mapID][i]; ok {
+			if data, ok := ogres[i]; ok {
 				binary.Write(buf, binary.BigEndian, data[0])
 				binary.Write(buf, binary.BigEndian, data[1])
 			} else {
@@ -259,6 +256,26 @@ func handleMapOgreList(state *State) gateway.Handler {
 		}
 		ctx.Server.SendResponse(ctx.Conn, 2004, ctx.UserID, buf.Bytes())
 	}
+}
+
+func getMapOgreSlots(mapID uint32) map[int][2]uint32 {
+	// mapID -> slot -> [petID, shiny]
+	ogres := map[uint32]map[int][2]uint32{
+		8: {
+			0: {10, 0},
+			1: {58, 0},
+		},
+		301: {
+			0: {1, 0},
+			1: {4, 0},
+			2: {7, 0},
+			3: {10, 0},
+		},
+	}
+	if slots, ok := ogres[mapID]; ok {
+		return slots
+	}
+	return map[int][2]uint32{}
 }
 
 func handleGetSimUserInfo(state *State) gateway.Handler {

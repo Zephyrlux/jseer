@@ -7,7 +7,7 @@ cd "$ROOT_DIR"
 echo "== 启动说明 =="
 echo "1) 默认读取 configs/config.yaml，可用 .env 覆盖"
 echo "2) sqlite 必须带 _fk=1（示例: file:jseer.db?_fk=1）"
-echo "3) 端口：登录服1863 / 网关5000 / 资源32401 / GM3001"
+echo "3) 端口：登录服1863 / 网关5000 / 资源32400 / 登录IP32401 / GM3001 / GM前端5173"
 echo ""
 
 check_port() {
@@ -24,8 +24,10 @@ check_port() {
 
 check_port 1863 || exit 1
 check_port 5000 || exit 1
+check_port 32400 || exit 1
 check_port 32401 || exit 1
 check_port 3001 || exit 1
+check_port "${GM_WEB_PORT:-5173}" || exit 1
 
 if [[ -f .env ]]; then
   # 自动导出 .env 里的变量，供子进程读取
@@ -56,11 +58,13 @@ start_service "loginserver" "go run ./cmd/loginserver"
 start_service "gateway" "go run ./cmd/gateway"
 start_service "ressrv" "go run ./cmd/ressrv"
 start_service "gmserver" "go run ./cmd/gmserver"
+start_service "gm-web" "cd gm-web && npm run dev -- --host 0.0.0.0 --port ${GM_WEB_PORT:-5173}"
 
 echo "\nAll services started. PIDs: ${pids[*]}"
-echo "资源地址: http://localhost:32401/ip.txt"
-echo "资源入口: http://localhost:32401/index.html"
+echo "资源地址: http://localhost:32400/index.html"
+echo "登录IP:  http://localhost:32401/ip.txt"
 echo "GM 地址:  http://localhost:3001"
+echo "GM 前端: http://localhost:${GM_WEB_PORT:-5173}"
 
 cleanup() {
   echo "\nStopping services..."

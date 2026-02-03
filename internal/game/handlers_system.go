@@ -73,10 +73,10 @@ func handleLoginIn(deps *Deps, state *State) gateway.Handler {
 					user.Pets = user.Pets[:0]
 					for _, p := range pets {
 						user.Pets = append(user.Pets, Pet{
-							ID:        p.SpeciesID,
+							ID:        uint32(p.SpeciesID),
 							CatchTime: uint32(p.CatchTime),
-							Level:     p.Level,
-							DV:        p.DV,
+							Level:     uint32(p.Level),
+							DV:        uint32(p.DV),
 							Exp:       p.Exp,
 							HP:        p.HP,
 							Skills:    decodePetSkills(p.Skills),

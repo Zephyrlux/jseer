@@ -60,6 +60,26 @@ type Player struct {
 	TaskStatus string `json:"task_status,omitempty"`
 	// TaskBufs holds the value of the "task_bufs" field.
 	TaskBufs string `json:"task_bufs,omitempty"`
+	// Friends holds the value of the "friends" field.
+	Friends string `json:"friends,omitempty"`
+	// Blacklist holds the value of the "blacklist" field.
+	Blacklist string `json:"blacklist,omitempty"`
+	// Achievements holds the value of the "achievements" field.
+	Achievements string `json:"achievements,omitempty"`
+	// Titles holds the value of the "titles" field.
+	Titles string `json:"titles,omitempty"`
+	// TeamInfo holds the value of the "team_info" field.
+	TeamInfo string `json:"team_info,omitempty"`
+	// StudentIds holds the value of the "student_ids" field.
+	StudentIds string `json:"student_ids,omitempty"`
+	// RoomID holds the value of the "room_id" field.
+	RoomID int64 `json:"room_id,omitempty"`
+	// Fitments holds the value of the "fitments" field.
+	Fitments string `json:"fitments,omitempty"`
+	// NonoInfo holds the value of the "nono_info" field.
+	NonoInfo string `json:"nono_info,omitempty"`
+	// Mailbox holds the value of the "mailbox" field.
+	Mailbox string `json:"mailbox,omitempty"`
 	// CurrentPetID holds the value of the "current_pet_id" field.
 	CurrentPetID int64 `json:"current_pet_id,omitempty"`
 	// CurrentPetCatchTime holds the value of the "current_pet_catch_time" field.
@@ -125,9 +145,9 @@ func (*Player) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case player.FieldID, player.FieldAccountID, player.FieldLevel, player.FieldCoins, player.FieldGold, player.FieldMapID, player.FieldMapType, player.FieldPosX, player.FieldPosY, player.FieldLastMapID, player.FieldColor, player.FieldTexture, player.FieldEnergy, player.FieldFightBadge, player.FieldTimeToday, player.FieldTimeLimit, player.FieldTeacherID, player.FieldStudentID, player.FieldCurTitle, player.FieldCurrentPetID, player.FieldCurrentPetCatchTime, player.FieldCurrentPetDv:
+		case player.FieldID, player.FieldAccountID, player.FieldLevel, player.FieldCoins, player.FieldGold, player.FieldMapID, player.FieldMapType, player.FieldPosX, player.FieldPosY, player.FieldLastMapID, player.FieldColor, player.FieldTexture, player.FieldEnergy, player.FieldFightBadge, player.FieldTimeToday, player.FieldTimeLimit, player.FieldTeacherID, player.FieldStudentID, player.FieldCurTitle, player.FieldRoomID, player.FieldCurrentPetID, player.FieldCurrentPetCatchTime, player.FieldCurrentPetDv:
 			values[i] = new(sql.NullInt64)
-		case player.FieldNick, player.FieldTaskStatus, player.FieldTaskBufs:
+		case player.FieldNick, player.FieldTaskStatus, player.FieldTaskBufs, player.FieldFriends, player.FieldBlacklist, player.FieldAchievements, player.FieldTitles, player.FieldTeamInfo, player.FieldStudentIds, player.FieldFitments, player.FieldNonoInfo, player.FieldMailbox:
 			values[i] = new(sql.NullString)
 		case player.FieldLastLoginAt, player.FieldCreatedAt, player.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -278,6 +298,66 @@ func (_m *Player) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.TaskBufs = value.String
 			}
+		case player.FieldFriends:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field friends", values[i])
+			} else if value.Valid {
+				_m.Friends = value.String
+			}
+		case player.FieldBlacklist:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field blacklist", values[i])
+			} else if value.Valid {
+				_m.Blacklist = value.String
+			}
+		case player.FieldAchievements:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field achievements", values[i])
+			} else if value.Valid {
+				_m.Achievements = value.String
+			}
+		case player.FieldTitles:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field titles", values[i])
+			} else if value.Valid {
+				_m.Titles = value.String
+			}
+		case player.FieldTeamInfo:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field team_info", values[i])
+			} else if value.Valid {
+				_m.TeamInfo = value.String
+			}
+		case player.FieldStudentIds:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field student_ids", values[i])
+			} else if value.Valid {
+				_m.StudentIds = value.String
+			}
+		case player.FieldRoomID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field room_id", values[i])
+			} else if value.Valid {
+				_m.RoomID = value.Int64
+			}
+		case player.FieldFitments:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field fitments", values[i])
+			} else if value.Valid {
+				_m.Fitments = value.String
+			}
+		case player.FieldNonoInfo:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field nono_info", values[i])
+			} else if value.Valid {
+				_m.NonoInfo = value.String
+			}
+		case player.FieldMailbox:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mailbox", values[i])
+			} else if value.Valid {
+				_m.Mailbox = value.String
+			}
 		case player.FieldCurrentPetID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field current_pet_id", values[i])
@@ -427,6 +507,36 @@ func (_m *Player) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("task_bufs=")
 	builder.WriteString(_m.TaskBufs)
+	builder.WriteString(", ")
+	builder.WriteString("friends=")
+	builder.WriteString(_m.Friends)
+	builder.WriteString(", ")
+	builder.WriteString("blacklist=")
+	builder.WriteString(_m.Blacklist)
+	builder.WriteString(", ")
+	builder.WriteString("achievements=")
+	builder.WriteString(_m.Achievements)
+	builder.WriteString(", ")
+	builder.WriteString("titles=")
+	builder.WriteString(_m.Titles)
+	builder.WriteString(", ")
+	builder.WriteString("team_info=")
+	builder.WriteString(_m.TeamInfo)
+	builder.WriteString(", ")
+	builder.WriteString("student_ids=")
+	builder.WriteString(_m.StudentIds)
+	builder.WriteString(", ")
+	builder.WriteString("room_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.RoomID))
+	builder.WriteString(", ")
+	builder.WriteString("fitments=")
+	builder.WriteString(_m.Fitments)
+	builder.WriteString(", ")
+	builder.WriteString("nono_info=")
+	builder.WriteString(_m.NonoInfo)
+	builder.WriteString(", ")
+	builder.WriteString("mailbox=")
+	builder.WriteString(_m.Mailbox)
 	builder.WriteString(", ")
 	builder.WriteString("current_pet_id=")
 	builder.WriteString(fmt.Sprintf("%v", _m.CurrentPetID))

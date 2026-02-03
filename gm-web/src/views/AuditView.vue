@@ -3,31 +3,17 @@
     <div class="section-title">
       <div>
         <h1>操作审计</h1>
-        <p style="color: var(--muted);">追踪每一次 GM 修改</p>
+        <div class="muted">追踪每一次 GM 修改</div>
       </div>
-      <button class="button secondary">导出日志</button>
+      <a-space>
+        <a-button>导出日志</a-button>
+        <a-button type="primary" @click="load">刷新</a-button>
+      </a-space>
     </div>
 
-    <div class="card">
-      <table style="width: 100%; border-collapse: collapse;">
-        <thead>
-          <tr style="text-align:left; color: var(--muted);">
-            <th style="padding: 8px 0;">操作人</th>
-            <th>动作</th>
-            <th>资源</th>
-            <th>时间</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in items" :key="item.id">
-            <td style="padding: 8px 0;">{{ item.operator }}</td>
-            <td>{{ item.action }}</td>
-            <td>{{ item.resource }}</td>
-            <td>{{ item.createdAt }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <a-card class="panel-card">
+      <a-table :columns="columns" :data-source="items" row-key="id" />
+    </a-card>
   </div>
 </template>
 
@@ -36,13 +22,23 @@ import { ref, onMounted } from 'vue'
 import api from '../api'
 
 const items = ref<any[]>([])
+const columns = [
+  { title: '操作人', dataIndex: 'operator', key: 'operator' },
+  { title: '动作', dataIndex: 'action', key: 'action' },
+  { title: '资源', dataIndex: 'resource', key: 'resource' },
+  { title: '时间', dataIndex: 'createdAt', key: 'createdAt' }
+]
 
 const load = async () => {
   try {
     const { data } = await api.get('/audit')
     items.value = (data.items || []).map((item: any) => ({
       ...item,
-      createdAt: item.createdAt ? new Date(item.createdAt * 1000).toLocaleString() : '-'
+      createdAt: item.created_at
+        ? new Date(item.created_at * 1000).toLocaleString()
+        : item.CreatedAt
+          ? new Date(item.CreatedAt * 1000).toLocaleString()
+          : '-'
     }))
   } catch {
     items.value = []

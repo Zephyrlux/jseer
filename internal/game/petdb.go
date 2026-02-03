@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 )
 
 type LearnableMove struct {
@@ -34,16 +33,24 @@ type PetBase struct {
 }
 
 type SkillInfo struct {
-	ID            int
-	PP            int
-	Power         int
-	Type          int
-	Category      int
-	Accuracy      int
-	Priority      int
-	SideEffect    int
-	SideEffectArg string
-	MustHit       bool
+	ID             int
+	PP             int
+	Power          int
+	Type           int
+	Category       int
+	Accuracy       int
+	Priority       int
+	CritRate       int
+	SideEffect     int
+	SideEffectArg  string
+	MustHit        bool
+	CritAtkFirst   bool
+	CritAtkSecond  bool
+	CritSelfHalfHp bool
+	CritFoeHalfHp  bool
+	DmgBindLv      bool
+	PwrBindDv      int
+	PwrDouble      bool
 }
 
 type PetDB struct {
@@ -81,17 +88,7 @@ func resolveDataRoot() string {
 	if v := os.Getenv("JSEER_DATA_ROOT"); v != "" {
 		return v
 	}
-	candidates := []string{
-		filepath.Join("..", "Reseer-main", "luvit_version", "data"),
-		filepath.Join("..", "Reseer-main", "data"),
-		filepath.Join("Reseer-main", "luvit_version", "data"),
-	}
-	for _, p := range candidates {
-		if st, err := os.Stat(p); err == nil && st.IsDir() {
-			return p
-		}
-	}
-	return "."
+	return filepath.Join(".", "data")
 }
 
 func loadSkills(path string, out map[int]*SkillInfo) error {
@@ -123,9 +120,17 @@ func loadSkills(path string, out map[int]*SkillInfo) error {
 		category := 0
 		accuracy := 100
 		priority := 0
+		critRate := 1
 		sideEffect := 0
 		sideArg := ""
 		mustHit := false
+		critAtkFirst := false
+		critAtkSecond := false
+		critSelfHalfHp := false
+		critFoeHalfHp := false
+		dmgBindLv := false
+		pwrBindDv := 0
+		pwrDouble := false
 		for _, attr := range se.Attr {
 			switch attr.Name.Local {
 			case "ID":
@@ -140,32 +145,82 @@ func loadSkills(path string, out map[int]*SkillInfo) error {
 				category, _ = strconv.Atoi(attr.Value)
 			case "Accuracy":
 				accuracy, _ = strconv.Atoi(attr.Value)
+			case "CritRate":
+				critRate, _ = strconv.Atoi(attr.Value)
 			case "Priority":
 				priority, _ = strconv.Atoi(attr.Value)
 			case "SideEffect":
-				sideEffect, _ = strconv.Atoi(attr.Value)
+				sideEffect = parseFirstInt(attr.Value)
 			case "SideEffectArg":
 				sideArg = attr.Value
 			case "MustHit":
 				mustHit = attr.Value == "1"
+			case "CritAtkFirst":
+				critAtkFirst = attr.Value == "1"
+			case "CritAtkSecond":
+				critAtkSecond = attr.Value == "1"
+			case "CritSelfHalfHp":
+				critSelfHalfHp = attr.Value == "1"
+			case "CritFoeHalfHp":
+				critFoeHalfHp = attr.Value == "1"
+			case "DmgBindLv":
+				dmgBindLv = attr.Value == "1"
+			case "PwrBindDv":
+				pwrBindDv, _ = strconv.Atoi(attr.Value)
+			case "PwrDouble":
+				pwrDouble = attr.Value == "1"
 			}
+		}
+		if category == 0 {
+			category = 1
+		}
+		if typ == 0 {
+			typ = 8
+		}
+		if accuracy == 0 {
+			accuracy = 100
+		}
+		if critRate == 0 {
+			critRate = 1
 		}
 		if id > 0 {
 			out[id] = &SkillInfo{
-				ID:            id,
-				PP:            pp,
-				Power:         power,
-				Type:          typ,
-				Category:      category,
-				Accuracy:      accuracy,
-				Priority:      priority,
-				SideEffect:    sideEffect,
-				SideEffectArg: sideArg,
-				MustHit:       mustHit,
+				ID:             id,
+				PP:             pp,
+				Power:          power,
+				Type:           typ,
+				Category:       category,
+				Accuracy:       accuracy,
+				Priority:       priority,
+				CritRate:       critRate,
+				SideEffect:     sideEffect,
+				SideEffectArg:  sideArg,
+				MustHit:        mustHit,
+				CritAtkFirst:   critAtkFirst,
+				CritAtkSecond:  critAtkSecond,
+				CritSelfHalfHp: critSelfHalfHp,
+				CritFoeHalfHp:  critFoeHalfHp,
+				DmgBindLv:      dmgBindLv,
+				PwrBindDv:      pwrBindDv,
+				PwrDouble:      pwrDouble,
 			}
 		}
 	}
 	return nil
+}
+
+func parseFirstInt(raw string) int {
+	if raw == "" {
+		return 0
+	}
+	parts := strings.FieldsFunc(raw, func(r rune) bool {
+		return r == ' ' || r == ',' || r == '\t'
+	})
+	if len(parts) == 0 {
+		return 0
+	}
+	val, _ := strconv.Atoi(parts[0])
+	return val
 }
 
 func loadPets(path string, out map[int]*PetBase) error {

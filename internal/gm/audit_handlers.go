@@ -3,10 +3,14 @@ package gm
 import "github.com/kataras/iris/v12"
 
 func (s *Server) handleAuditList(ctx iris.Context) {
-	items, err := s.store.ListAuditLogs(ctx.Request().Context(), 100)
+	limit, _ := ctx.URLParamInt("limit")
+	if limit <= 0 {
+		limit = 100
+	}
+	items, err := s.store.ListAuditLogs(ctx.Request().Context(), limit)
 	if err != nil {
-		ctx.StopWithJSON(iris.StatusInternalServerError, iris.Map{"error": err.Error()})
+		s.fail(ctx, iris.StatusInternalServerError, err.Error())
 		return
 	}
-	ctx.JSON(iris.Map{"items": items})
+	s.ok(ctx, iris.Map{"items": items})
 }

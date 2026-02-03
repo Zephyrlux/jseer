@@ -6,6 +6,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/kataras/iris/v12"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type loginRequest struct {
@@ -21,43 +22,47 @@ type loginResponse struct {
 func (s *Server) handleLogin(ctx iris.Context) {
 	var req loginRequest
 	if err := ctx.ReadJSON(&req); err != nil {
-		ctx.StopWithJSON(iris.StatusBadRequest, iris.Map{"error": "invalid payload"})
+		s.fail(ctx, iris.StatusBadRequest, "invalid payload")
 		return
 	}
-	if req.Username != s.cfg.DefaultAdminUser || req.Password != s.cfg.DefaultAdminPass {
-		ctx.StopWithJSON(iris.StatusUnauthorized, iris.Map{"error": "invalid credentials"})
-		return
-	}
-
-	expires := time.Now().Add(time.Duration(s.cfg.TokenTTLMinutes) * time.Minute)
-	claims := jwt.MapClaims{
-		"sub":   req.Username,
-		"roles": []string{"super_admin"},
-		"exp":   expires.Unix(),
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signed, err := token.SignedString([]byte(s.cfg.JWTSecret))
+	user, err := s.store.GetGMUserByUsername(ctx.Request().Context(), req.Username)
 	if err != nil {
-		ctx.StopWithJSON(iris.StatusInternalServerError, iris.Map{"error": "token sign failed"})
+		s.fail(ctx, iris.StatusUnauthorized, "invalid credentials")
+		return
+	}
+	if user.Status != "" && user.Status != "active" {
+		s.fail(ctx, iris.StatusForbidden, "account disabled")
+		return
+	}
+	if bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)) != nil {
+		s.fail(ctx, iris.StatusUnauthorized, "invalid credentials")
 		return
 	}
 
-	ctx.JSON(loginResponse{Token: signed, ExpiresAt: expires.Unix()})
+	user.LastLoginAt = time.Now().Unix()
+	_, _ = s.store.UpdateGMUser(ctx.Request().Context(), &GMUser{ID: user.ID, LastLoginAt: user.LastLoginAt}, nil)
+
+	signed, expiresAt, err := s.buildToken(user)
+	if err != nil {
+		s.fail(ctx, iris.StatusInternalServerError, "token sign failed")
+		return
+	}
+
+	s.ok(ctx, loginResponse{Token: signed, ExpiresAt: expiresAt})
 }
 
 func (s *Server) jwtMiddleware(ctx iris.Context) {
 	auth := ctx.GetHeader("Authorization")
 	if auth == "" {
-		ctx.StopWithJSON(iris.StatusUnauthorized, iris.Map{"error": "missing token"})
+		s.fail(ctx, iris.StatusUnauthorized, "missing token")
 		return
 	}
 	const prefix = "Bearer "
 	if len(auth) <= len(prefix) || auth[:len(prefix)] != prefix {
-		ctx.StopWithJSON(iris.StatusUnauthorized, iris.Map{"error": "invalid token"})
+		s.fail(ctx, iris.StatusUnauthorized, "invalid token")
 		return
 	}
-	claims := jwt.MapClaims{}
+	claims := &gmClaims{}
 	_, err := jwt.ParseWithClaims(auth[len(prefix):], claims, func(token *jwt.Token) (interface{}, error) {
 		if token.Method != jwt.SigningMethodHS256 {
 			return nil, errors.New("unexpected signing method")
@@ -65,9 +70,23 @@ func (s *Server) jwtMiddleware(ctx iris.Context) {
 		return []byte(s.cfg.JWTSecret), nil
 	})
 	if err != nil {
-		ctx.StopWithJSON(iris.StatusUnauthorized, iris.Map{"error": "token invalid"})
+		s.fail(ctx, iris.StatusUnauthorized, "token invalid")
 		return
 	}
 	ctx.Values().Set("gm_claims", claims)
 	ctx.Next()
+}
+
+func (s *Server) handleProfile(ctx iris.Context) {
+	claims, ok := s.claimsFromCtx(ctx)
+	if !ok {
+		s.fail(ctx, iris.StatusUnauthorized, "unauthorized")
+		return
+	}
+	s.ok(ctx, iris.Map{
+		"id":       claims.UID,
+		"username": claims.Subject,
+		"roles":    claims.Roles,
+		"perms":    claims.Perms,
+	})
 }

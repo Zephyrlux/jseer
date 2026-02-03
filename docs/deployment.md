@@ -15,6 +15,7 @@
 - `LOGIN_ADDRESS`
 - `GATEWAY_ADDRESS`
 - `HTTP_ADDRESS`
+- `HTTP_LOGIN_IP_ADDRESS`
 - `GM_ADDRESS`
 
 ### 2.2 配置文件
@@ -22,7 +23,8 @@
 - `database.driver`: `mysql` / `sqlite` / `postgres`
 - `database.dsn`: 连接串
 - `gateway.address`: TCP 网关端口
-- `http.address`: 资源服务端口
+- `http.address`: 资源服务端口（默认 32400）
+- `http.login_ip_address`: 登录IP服务端口（默认 32401）
 - `http.static_root`: 本地资源根目录
 - `http.proxy_root`: 资源覆盖目录
 - `gm.address`: GM 服务端口
@@ -40,7 +42,7 @@ go run ./cmd/loginserver
 # TCP 网关 (5000)
 go run ./cmd/gateway
 
-# 资源服务 (32401)
+# 资源服务 (32400)
 go run ./cmd/ressrv
 
 # GM 服务 (3001)

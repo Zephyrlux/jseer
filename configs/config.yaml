@@ -33,12 +33,13 @@ game:
   server_id: 1
 
 http:
-  address: ":32401"
+  address: ":32400"
+  login_ip_address: ":32401"
   enable_pprof: false
   allow_origins: "*"
   ip_txt: "127.0.0.1:1863"
-  static_root: "../Reseer-main/gameres/root"
-  proxy_root: "../Reseer-main/gameres_proxy/root"
+  static_root: "./resources/root"
+  proxy_root: "./resources_proxy/root"
   upstream: ""
 
 gm:

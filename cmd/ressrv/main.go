@@ -38,20 +38,45 @@ func main() {
 	}
 
 	app := iris.New()
-	app.Get("/ip.txt", func(ctx iris.Context) {
-		current := cfgVal.Load().(*config.Config)
-		_, _ = ctx.WriteString(current.HTTP.IPTxt)
-	})
 	app.Get("/healthz", func(ctx iris.Context) { ctx.JSON(iris.Map{"status": "ok"}) })
 	app.Get("/{path:path}", func(ctx iris.Context) {
 		current := cfgVal.Load().(*config.Config)
 		serveResource(ctx, current.HTTP.StaticRoot, current.HTTP.ProxyRoot, current.HTTP.Upstream)
 	})
 
+	if cfg.HTTP.LoginIPAddress != "" {
+		startLoginIPServer(cfg.HTTP.LoginIPAddress, &cfgVal, logger)
+	}
+
 	if err := app.Listen(cfg.HTTP.Address); err != nil {
 		logger.Error("resource server stopped", zap.Error(err))
 		os.Exit(1)
 	}
+}
+
+func startLoginIPServer(addr string, cfgVal *atomic.Value, logger *zap.Logger) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/ip.txt", func(w http.ResponseWriter, r *http.Request) {
+		current := cfgVal.Load().(*config.Config)
+		w.Header().Set("Content-Type", "text/plain")
+		_, _ = w.Write([]byte(current.HTTP.IPTxt))
+	})
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte("{\"status\":\"ok\"}"))
+	})
+
+	server := &http.Server{
+		Addr:    addr,
+		Handler: mux,
+	}
+
+	go func() {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.Error("login ip server stopped", zap.Error(err))
+			os.Exit(1)
+		}
+	}()
 }
 
 func serveResource(ctx iris.Context, staticRoot, proxyRoot, upstream string) {

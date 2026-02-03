@@ -18,20 +18,20 @@ type configPayload struct {
 func (s *Server) handleConfigKeys(ctx iris.Context) {
 	keys, err := s.store.ListConfigKeys(ctx.Request().Context())
 	if err != nil {
-		ctx.StopWithJSON(iris.StatusInternalServerError, iris.Map{"error": err.Error()})
+		s.fail(ctx, iris.StatusInternalServerError, err.Error())
 		return
 	}
-	ctx.JSON(iris.Map{"keys": keys})
+	s.ok(ctx, iris.Map{"keys": keys})
 }
 
 func (s *Server) handleConfigGet(ctx iris.Context) {
 	key := ctx.Params().Get("key")
 	entry, err := s.store.GetConfig(ctx.Request().Context(), key)
 	if err != nil {
-		ctx.StopWithJSON(iris.StatusNotFound, iris.Map{"error": "not found"})
+		s.fail(ctx, iris.StatusNotFound, "not found")
 		return
 	}
-	ctx.JSON(iris.Map{
+	s.ok(ctx, iris.Map{
 		"key":      entry.Key,
 		"value":    json.RawMessage(entry.Value),
 		"version":  entry.Version,
@@ -43,7 +43,7 @@ func (s *Server) handleConfigSave(ctx iris.Context) {
 	key := ctx.Params().Get("key")
 	var payload configPayload
 	if err := ctx.ReadJSON(&payload); err != nil {
-		ctx.StopWithJSON(iris.StatusBadRequest, iris.Map{"error": "invalid payload"})
+		s.fail(ctx, iris.StatusBadRequest, "invalid payload")
 		return
 	}
 	checksum := sha256.Sum256(payload.Value)
@@ -55,13 +55,13 @@ func (s *Server) handleConfigSave(ctx iris.Context) {
 	operator := s.operatorFromCtx(ctx)
 	version, err := s.store.SaveConfig(ctx.Request().Context(), entry, operator)
 	if err != nil {
-		ctx.StopWithJSON(iris.StatusInternalServerError, iris.Map{"error": err.Error()})
+		s.fail(ctx, iris.StatusInternalServerError, err.Error())
 		return
 	}
-	ctx.JSON(iris.Map{
-		"key":       key,
-		"version":   version.Version,
-		"operator":  version.Operator,
+	s.ok(ctx, iris.Map{
+		"key":        key,
+		"version":    version.Version,
+		"operator":   version.Operator,
 		"created_at": time.Unix(version.CreatedAt, 0).UTC(),
 	})
 }
@@ -70,21 +70,62 @@ func (s *Server) handleConfigVersions(ctx iris.Context) {
 	key := ctx.Params().Get("key")
 	versions, err := s.store.ListConfigVersions(ctx.Request().Context(), key, 50)
 	if err != nil {
-		ctx.StopWithJSON(iris.StatusInternalServerError, iris.Map{"error": err.Error()})
+		s.fail(ctx, iris.StatusInternalServerError, err.Error())
 		return
 	}
-	ctx.JSON(iris.Map{"versions": versions})
+	s.ok(ctx, iris.Map{"versions": versions})
+}
+
+func (s *Server) handleConfigVersionGet(ctx iris.Context) {
+	key := ctx.Params().Get("key")
+	version, err := ctx.Params().GetInt64("version")
+	if err != nil {
+		s.fail(ctx, iris.StatusBadRequest, "invalid version")
+		return
+	}
+	entry, err := s.store.GetConfigVersion(ctx.Request().Context(), key, version)
+	if err != nil {
+		s.fail(ctx, iris.StatusNotFound, "not found")
+		return
+	}
+	s.ok(ctx, iris.Map{
+		"key":        entry.Key,
+		"value":      json.RawMessage(entry.Value),
+		"version":    entry.Version,
+		"checksum":   entry.Checksum,
+		"operator":   entry.Operator,
+		"created_at": entry.CreatedAt,
+	})
+}
+
+func (s *Server) handleConfigRollback(ctx iris.Context) {
+	key := ctx.Params().Get("key")
+	version, err := ctx.Params().GetInt64("version")
+	if err != nil {
+		s.fail(ctx, iris.StatusBadRequest, "invalid version")
+		return
+	}
+	operator := s.operatorFromCtx(ctx)
+	cv, err := s.store.RollbackConfig(ctx.Request().Context(), key, version, operator)
+	if err != nil {
+		s.fail(ctx, iris.StatusInternalServerError, err.Error())
+		return
+	}
+	s.ok(ctx, iris.Map{
+		"key":        key,
+		"version":    cv.Version,
+		"operator":   cv.Operator,
+		"created_at": time.Unix(cv.CreatedAt, 0).UTC(),
+	})
 }
 
 func (s *Server) operatorFromCtx(ctx iris.Context) string {
-	claims := ctx.Values().Get("gm_claims")
-	if claims == nil {
+	claims, ok := s.claimsFromCtx(ctx)
+	if !ok {
 		return "unknown"
 	}
-	if m, ok := claims.(map[string]any); ok {
-		if sub, ok := m["sub"].(string); ok {
-			return sub
-		}
+	if claims.Subject != "" {
+		return claims.Subject
 	}
 	return "unknown"
 }

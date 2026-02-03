@@ -56,6 +56,26 @@ const (
 	FieldTaskStatus = "task_status"
 	// FieldTaskBufs holds the string denoting the task_bufs field in the database.
 	FieldTaskBufs = "task_bufs"
+	// FieldFriends holds the string denoting the friends field in the database.
+	FieldFriends = "friends"
+	// FieldBlacklist holds the string denoting the blacklist field in the database.
+	FieldBlacklist = "blacklist"
+	// FieldAchievements holds the string denoting the achievements field in the database.
+	FieldAchievements = "achievements"
+	// FieldTitles holds the string denoting the titles field in the database.
+	FieldTitles = "titles"
+	// FieldTeamInfo holds the string denoting the team_info field in the database.
+	FieldTeamInfo = "team_info"
+	// FieldStudentIds holds the string denoting the student_ids field in the database.
+	FieldStudentIds = "student_ids"
+	// FieldRoomID holds the string denoting the room_id field in the database.
+	FieldRoomID = "room_id"
+	// FieldFitments holds the string denoting the fitments field in the database.
+	FieldFitments = "fitments"
+	// FieldNonoInfo holds the string denoting the nono_info field in the database.
+	FieldNonoInfo = "nono_info"
+	// FieldMailbox holds the string denoting the mailbox field in the database.
+	FieldMailbox = "mailbox"
 	// FieldCurrentPetID holds the string denoting the current_pet_id field in the database.
 	FieldCurrentPetID = "current_pet_id"
 	// FieldCurrentPetCatchTime holds the string denoting the current_pet_catch_time field in the database.
@@ -123,6 +143,16 @@ var Columns = []string{
 	FieldCurTitle,
 	FieldTaskStatus,
 	FieldTaskBufs,
+	FieldFriends,
+	FieldBlacklist,
+	FieldAchievements,
+	FieldTitles,
+	FieldTeamInfo,
+	FieldStudentIds,
+	FieldRoomID,
+	FieldFitments,
+	FieldNonoInfo,
+	FieldMailbox,
 	FieldCurrentPetID,
 	FieldCurrentPetCatchTime,
 	FieldCurrentPetDv,
@@ -182,6 +212,26 @@ var (
 	DefaultTaskStatus string
 	// DefaultTaskBufs holds the default value on creation for the "task_bufs" field.
 	DefaultTaskBufs string
+	// DefaultFriends holds the default value on creation for the "friends" field.
+	DefaultFriends string
+	// DefaultBlacklist holds the default value on creation for the "blacklist" field.
+	DefaultBlacklist string
+	// DefaultAchievements holds the default value on creation for the "achievements" field.
+	DefaultAchievements string
+	// DefaultTitles holds the default value on creation for the "titles" field.
+	DefaultTitles string
+	// DefaultTeamInfo holds the default value on creation for the "team_info" field.
+	DefaultTeamInfo string
+	// DefaultStudentIds holds the default value on creation for the "student_ids" field.
+	DefaultStudentIds string
+	// DefaultRoomID holds the default value on creation for the "room_id" field.
+	DefaultRoomID int64
+	// DefaultFitments holds the default value on creation for the "fitments" field.
+	DefaultFitments string
+	// DefaultNonoInfo holds the default value on creation for the "nono_info" field.
+	DefaultNonoInfo string
+	// DefaultMailbox holds the default value on creation for the "mailbox" field.
+	DefaultMailbox string
 	// DefaultCurrentPetID holds the default value on creation for the "current_pet_id" field.
 	DefaultCurrentPetID int64
 	// DefaultCurrentPetCatchTime holds the default value on creation for the "current_pet_catch_time" field.
@@ -307,6 +357,56 @@ func ByTaskStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByTaskBufs orders the results by the task_bufs field.
 func ByTaskBufs(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTaskBufs, opts...).ToFunc()
+}
+
+// ByFriends orders the results by the friends field.
+func ByFriends(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFriends, opts...).ToFunc()
+}
+
+// ByBlacklist orders the results by the blacklist field.
+func ByBlacklist(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBlacklist, opts...).ToFunc()
+}
+
+// ByAchievements orders the results by the achievements field.
+func ByAchievements(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAchievements, opts...).ToFunc()
+}
+
+// ByTitles orders the results by the titles field.
+func ByTitles(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTitles, opts...).ToFunc()
+}
+
+// ByTeamInfo orders the results by the team_info field.
+func ByTeamInfo(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTeamInfo, opts...).ToFunc()
+}
+
+// ByStudentIds orders the results by the student_ids field.
+func ByStudentIds(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStudentIds, opts...).ToFunc()
+}
+
+// ByRoomID orders the results by the room_id field.
+func ByRoomID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRoomID, opts...).ToFunc()
+}
+
+// ByFitments orders the results by the fitments field.
+func ByFitments(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFitments, opts...).ToFunc()
+}
+
+// ByNonoInfo orders the results by the nono_info field.
+func ByNonoInfo(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldNonoInfo, opts...).ToFunc()
+}
+
+// ByMailbox orders the results by the mailbox field.
+func ByMailbox(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMailbox, opts...).ToFunc()
 }
 
 // ByCurrentPetID orders the results by the current_pet_id field.

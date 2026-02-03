@@ -160,6 +160,56 @@ func TaskBufs(v string) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldTaskBufs, v))
 }
 
+// Friends applies equality check predicate on the "friends" field. It's identical to FriendsEQ.
+func Friends(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldFriends, v))
+}
+
+// Blacklist applies equality check predicate on the "blacklist" field. It's identical to BlacklistEQ.
+func Blacklist(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldBlacklist, v))
+}
+
+// Achievements applies equality check predicate on the "achievements" field. It's identical to AchievementsEQ.
+func Achievements(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldAchievements, v))
+}
+
+// Titles applies equality check predicate on the "titles" field. It's identical to TitlesEQ.
+func Titles(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTitles, v))
+}
+
+// TeamInfo applies equality check predicate on the "team_info" field. It's identical to TeamInfoEQ.
+func TeamInfo(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTeamInfo, v))
+}
+
+// StudentIds applies equality check predicate on the "student_ids" field. It's identical to StudentIdsEQ.
+func StudentIds(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldStudentIds, v))
+}
+
+// RoomID applies equality check predicate on the "room_id" field. It's identical to RoomIDEQ.
+func RoomID(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldRoomID, v))
+}
+
+// Fitments applies equality check predicate on the "fitments" field. It's identical to FitmentsEQ.
+func Fitments(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldFitments, v))
+}
+
+// NonoInfo applies equality check predicate on the "nono_info" field. It's identical to NonoInfoEQ.
+func NonoInfo(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldNonoInfo, v))
+}
+
+// Mailbox applies equality check predicate on the "mailbox" field. It's identical to MailboxEQ.
+func Mailbox(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldMailbox, v))
+}
+
 // CurrentPetID applies equality check predicate on the "current_pet_id" field. It's identical to CurrentPetIDEQ.
 func CurrentPetID(v int64) predicate.Player {
 	return predicate.Player(sql.FieldEQ(FieldCurrentPetID, v))
@@ -1083,6 +1133,631 @@ func TaskBufsEqualFold(v string) predicate.Player {
 // TaskBufsContainsFold applies the ContainsFold predicate on the "task_bufs" field.
 func TaskBufsContainsFold(v string) predicate.Player {
 	return predicate.Player(sql.FieldContainsFold(FieldTaskBufs, v))
+}
+
+// FriendsEQ applies the EQ predicate on the "friends" field.
+func FriendsEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldFriends, v))
+}
+
+// FriendsNEQ applies the NEQ predicate on the "friends" field.
+func FriendsNEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldFriends, v))
+}
+
+// FriendsIn applies the In predicate on the "friends" field.
+func FriendsIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldFriends, vs...))
+}
+
+// FriendsNotIn applies the NotIn predicate on the "friends" field.
+func FriendsNotIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldFriends, vs...))
+}
+
+// FriendsGT applies the GT predicate on the "friends" field.
+func FriendsGT(v string) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldFriends, v))
+}
+
+// FriendsGTE applies the GTE predicate on the "friends" field.
+func FriendsGTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldFriends, v))
+}
+
+// FriendsLT applies the LT predicate on the "friends" field.
+func FriendsLT(v string) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldFriends, v))
+}
+
+// FriendsLTE applies the LTE predicate on the "friends" field.
+func FriendsLTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldFriends, v))
+}
+
+// FriendsContains applies the Contains predicate on the "friends" field.
+func FriendsContains(v string) predicate.Player {
+	return predicate.Player(sql.FieldContains(FieldFriends, v))
+}
+
+// FriendsHasPrefix applies the HasPrefix predicate on the "friends" field.
+func FriendsHasPrefix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasPrefix(FieldFriends, v))
+}
+
+// FriendsHasSuffix applies the HasSuffix predicate on the "friends" field.
+func FriendsHasSuffix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasSuffix(FieldFriends, v))
+}
+
+// FriendsEqualFold applies the EqualFold predicate on the "friends" field.
+func FriendsEqualFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldEqualFold(FieldFriends, v))
+}
+
+// FriendsContainsFold applies the ContainsFold predicate on the "friends" field.
+func FriendsContainsFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldContainsFold(FieldFriends, v))
+}
+
+// BlacklistEQ applies the EQ predicate on the "blacklist" field.
+func BlacklistEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldBlacklist, v))
+}
+
+// BlacklistNEQ applies the NEQ predicate on the "blacklist" field.
+func BlacklistNEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldBlacklist, v))
+}
+
+// BlacklistIn applies the In predicate on the "blacklist" field.
+func BlacklistIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldBlacklist, vs...))
+}
+
+// BlacklistNotIn applies the NotIn predicate on the "blacklist" field.
+func BlacklistNotIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldBlacklist, vs...))
+}
+
+// BlacklistGT applies the GT predicate on the "blacklist" field.
+func BlacklistGT(v string) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldBlacklist, v))
+}
+
+// BlacklistGTE applies the GTE predicate on the "blacklist" field.
+func BlacklistGTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldBlacklist, v))
+}
+
+// BlacklistLT applies the LT predicate on the "blacklist" field.
+func BlacklistLT(v string) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldBlacklist, v))
+}
+
+// BlacklistLTE applies the LTE predicate on the "blacklist" field.
+func BlacklistLTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldBlacklist, v))
+}
+
+// BlacklistContains applies the Contains predicate on the "blacklist" field.
+func BlacklistContains(v string) predicate.Player {
+	return predicate.Player(sql.FieldContains(FieldBlacklist, v))
+}
+
+// BlacklistHasPrefix applies the HasPrefix predicate on the "blacklist" field.
+func BlacklistHasPrefix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasPrefix(FieldBlacklist, v))
+}
+
+// BlacklistHasSuffix applies the HasSuffix predicate on the "blacklist" field.
+func BlacklistHasSuffix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasSuffix(FieldBlacklist, v))
+}
+
+// BlacklistEqualFold applies the EqualFold predicate on the "blacklist" field.
+func BlacklistEqualFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldEqualFold(FieldBlacklist, v))
+}
+
+// BlacklistContainsFold applies the ContainsFold predicate on the "blacklist" field.
+func BlacklistContainsFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldContainsFold(FieldBlacklist, v))
+}
+
+// AchievementsEQ applies the EQ predicate on the "achievements" field.
+func AchievementsEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldAchievements, v))
+}
+
+// AchievementsNEQ applies the NEQ predicate on the "achievements" field.
+func AchievementsNEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldAchievements, v))
+}
+
+// AchievementsIn applies the In predicate on the "achievements" field.
+func AchievementsIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldAchievements, vs...))
+}
+
+// AchievementsNotIn applies the NotIn predicate on the "achievements" field.
+func AchievementsNotIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldAchievements, vs...))
+}
+
+// AchievementsGT applies the GT predicate on the "achievements" field.
+func AchievementsGT(v string) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldAchievements, v))
+}
+
+// AchievementsGTE applies the GTE predicate on the "achievements" field.
+func AchievementsGTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldAchievements, v))
+}
+
+// AchievementsLT applies the LT predicate on the "achievements" field.
+func AchievementsLT(v string) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldAchievements, v))
+}
+
+// AchievementsLTE applies the LTE predicate on the "achievements" field.
+func AchievementsLTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldAchievements, v))
+}
+
+// AchievementsContains applies the Contains predicate on the "achievements" field.
+func AchievementsContains(v string) predicate.Player {
+	return predicate.Player(sql.FieldContains(FieldAchievements, v))
+}
+
+// AchievementsHasPrefix applies the HasPrefix predicate on the "achievements" field.
+func AchievementsHasPrefix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasPrefix(FieldAchievements, v))
+}
+
+// AchievementsHasSuffix applies the HasSuffix predicate on the "achievements" field.
+func AchievementsHasSuffix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasSuffix(FieldAchievements, v))
+}
+
+// AchievementsEqualFold applies the EqualFold predicate on the "achievements" field.
+func AchievementsEqualFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldEqualFold(FieldAchievements, v))
+}
+
+// AchievementsContainsFold applies the ContainsFold predicate on the "achievements" field.
+func AchievementsContainsFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldContainsFold(FieldAchievements, v))
+}
+
+// TitlesEQ applies the EQ predicate on the "titles" field.
+func TitlesEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTitles, v))
+}
+
+// TitlesNEQ applies the NEQ predicate on the "titles" field.
+func TitlesNEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldTitles, v))
+}
+
+// TitlesIn applies the In predicate on the "titles" field.
+func TitlesIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldTitles, vs...))
+}
+
+// TitlesNotIn applies the NotIn predicate on the "titles" field.
+func TitlesNotIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldTitles, vs...))
+}
+
+// TitlesGT applies the GT predicate on the "titles" field.
+func TitlesGT(v string) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldTitles, v))
+}
+
+// TitlesGTE applies the GTE predicate on the "titles" field.
+func TitlesGTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldTitles, v))
+}
+
+// TitlesLT applies the LT predicate on the "titles" field.
+func TitlesLT(v string) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldTitles, v))
+}
+
+// TitlesLTE applies the LTE predicate on the "titles" field.
+func TitlesLTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldTitles, v))
+}
+
+// TitlesContains applies the Contains predicate on the "titles" field.
+func TitlesContains(v string) predicate.Player {
+	return predicate.Player(sql.FieldContains(FieldTitles, v))
+}
+
+// TitlesHasPrefix applies the HasPrefix predicate on the "titles" field.
+func TitlesHasPrefix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasPrefix(FieldTitles, v))
+}
+
+// TitlesHasSuffix applies the HasSuffix predicate on the "titles" field.
+func TitlesHasSuffix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasSuffix(FieldTitles, v))
+}
+
+// TitlesEqualFold applies the EqualFold predicate on the "titles" field.
+func TitlesEqualFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldEqualFold(FieldTitles, v))
+}
+
+// TitlesContainsFold applies the ContainsFold predicate on the "titles" field.
+func TitlesContainsFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldContainsFold(FieldTitles, v))
+}
+
+// TeamInfoEQ applies the EQ predicate on the "team_info" field.
+func TeamInfoEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldTeamInfo, v))
+}
+
+// TeamInfoNEQ applies the NEQ predicate on the "team_info" field.
+func TeamInfoNEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldTeamInfo, v))
+}
+
+// TeamInfoIn applies the In predicate on the "team_info" field.
+func TeamInfoIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldTeamInfo, vs...))
+}
+
+// TeamInfoNotIn applies the NotIn predicate on the "team_info" field.
+func TeamInfoNotIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldTeamInfo, vs...))
+}
+
+// TeamInfoGT applies the GT predicate on the "team_info" field.
+func TeamInfoGT(v string) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldTeamInfo, v))
+}
+
+// TeamInfoGTE applies the GTE predicate on the "team_info" field.
+func TeamInfoGTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldTeamInfo, v))
+}
+
+// TeamInfoLT applies the LT predicate on the "team_info" field.
+func TeamInfoLT(v string) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldTeamInfo, v))
+}
+
+// TeamInfoLTE applies the LTE predicate on the "team_info" field.
+func TeamInfoLTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldTeamInfo, v))
+}
+
+// TeamInfoContains applies the Contains predicate on the "team_info" field.
+func TeamInfoContains(v string) predicate.Player {
+	return predicate.Player(sql.FieldContains(FieldTeamInfo, v))
+}
+
+// TeamInfoHasPrefix applies the HasPrefix predicate on the "team_info" field.
+func TeamInfoHasPrefix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasPrefix(FieldTeamInfo, v))
+}
+
+// TeamInfoHasSuffix applies the HasSuffix predicate on the "team_info" field.
+func TeamInfoHasSuffix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasSuffix(FieldTeamInfo, v))
+}
+
+// TeamInfoEqualFold applies the EqualFold predicate on the "team_info" field.
+func TeamInfoEqualFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldEqualFold(FieldTeamInfo, v))
+}
+
+// TeamInfoContainsFold applies the ContainsFold predicate on the "team_info" field.
+func TeamInfoContainsFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldContainsFold(FieldTeamInfo, v))
+}
+
+// StudentIdsEQ applies the EQ predicate on the "student_ids" field.
+func StudentIdsEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldStudentIds, v))
+}
+
+// StudentIdsNEQ applies the NEQ predicate on the "student_ids" field.
+func StudentIdsNEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldStudentIds, v))
+}
+
+// StudentIdsIn applies the In predicate on the "student_ids" field.
+func StudentIdsIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldStudentIds, vs...))
+}
+
+// StudentIdsNotIn applies the NotIn predicate on the "student_ids" field.
+func StudentIdsNotIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldStudentIds, vs...))
+}
+
+// StudentIdsGT applies the GT predicate on the "student_ids" field.
+func StudentIdsGT(v string) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldStudentIds, v))
+}
+
+// StudentIdsGTE applies the GTE predicate on the "student_ids" field.
+func StudentIdsGTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldStudentIds, v))
+}
+
+// StudentIdsLT applies the LT predicate on the "student_ids" field.
+func StudentIdsLT(v string) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldStudentIds, v))
+}
+
+// StudentIdsLTE applies the LTE predicate on the "student_ids" field.
+func StudentIdsLTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldStudentIds, v))
+}
+
+// StudentIdsContains applies the Contains predicate on the "student_ids" field.
+func StudentIdsContains(v string) predicate.Player {
+	return predicate.Player(sql.FieldContains(FieldStudentIds, v))
+}
+
+// StudentIdsHasPrefix applies the HasPrefix predicate on the "student_ids" field.
+func StudentIdsHasPrefix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasPrefix(FieldStudentIds, v))
+}
+
+// StudentIdsHasSuffix applies the HasSuffix predicate on the "student_ids" field.
+func StudentIdsHasSuffix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasSuffix(FieldStudentIds, v))
+}
+
+// StudentIdsEqualFold applies the EqualFold predicate on the "student_ids" field.
+func StudentIdsEqualFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldEqualFold(FieldStudentIds, v))
+}
+
+// StudentIdsContainsFold applies the ContainsFold predicate on the "student_ids" field.
+func StudentIdsContainsFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldContainsFold(FieldStudentIds, v))
+}
+
+// RoomIDEQ applies the EQ predicate on the "room_id" field.
+func RoomIDEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldRoomID, v))
+}
+
+// RoomIDNEQ applies the NEQ predicate on the "room_id" field.
+func RoomIDNEQ(v int64) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldRoomID, v))
+}
+
+// RoomIDIn applies the In predicate on the "room_id" field.
+func RoomIDIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldRoomID, vs...))
+}
+
+// RoomIDNotIn applies the NotIn predicate on the "room_id" field.
+func RoomIDNotIn(vs ...int64) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldRoomID, vs...))
+}
+
+// RoomIDGT applies the GT predicate on the "room_id" field.
+func RoomIDGT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldRoomID, v))
+}
+
+// RoomIDGTE applies the GTE predicate on the "room_id" field.
+func RoomIDGTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldRoomID, v))
+}
+
+// RoomIDLT applies the LT predicate on the "room_id" field.
+func RoomIDLT(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldRoomID, v))
+}
+
+// RoomIDLTE applies the LTE predicate on the "room_id" field.
+func RoomIDLTE(v int64) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldRoomID, v))
+}
+
+// FitmentsEQ applies the EQ predicate on the "fitments" field.
+func FitmentsEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldFitments, v))
+}
+
+// FitmentsNEQ applies the NEQ predicate on the "fitments" field.
+func FitmentsNEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldFitments, v))
+}
+
+// FitmentsIn applies the In predicate on the "fitments" field.
+func FitmentsIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldFitments, vs...))
+}
+
+// FitmentsNotIn applies the NotIn predicate on the "fitments" field.
+func FitmentsNotIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldFitments, vs...))
+}
+
+// FitmentsGT applies the GT predicate on the "fitments" field.
+func FitmentsGT(v string) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldFitments, v))
+}
+
+// FitmentsGTE applies the GTE predicate on the "fitments" field.
+func FitmentsGTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldFitments, v))
+}
+
+// FitmentsLT applies the LT predicate on the "fitments" field.
+func FitmentsLT(v string) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldFitments, v))
+}
+
+// FitmentsLTE applies the LTE predicate on the "fitments" field.
+func FitmentsLTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldFitments, v))
+}
+
+// FitmentsContains applies the Contains predicate on the "fitments" field.
+func FitmentsContains(v string) predicate.Player {
+	return predicate.Player(sql.FieldContains(FieldFitments, v))
+}
+
+// FitmentsHasPrefix applies the HasPrefix predicate on the "fitments" field.
+func FitmentsHasPrefix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasPrefix(FieldFitments, v))
+}
+
+// FitmentsHasSuffix applies the HasSuffix predicate on the "fitments" field.
+func FitmentsHasSuffix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasSuffix(FieldFitments, v))
+}
+
+// FitmentsEqualFold applies the EqualFold predicate on the "fitments" field.
+func FitmentsEqualFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldEqualFold(FieldFitments, v))
+}
+
+// FitmentsContainsFold applies the ContainsFold predicate on the "fitments" field.
+func FitmentsContainsFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldContainsFold(FieldFitments, v))
+}
+
+// NonoInfoEQ applies the EQ predicate on the "nono_info" field.
+func NonoInfoEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldNonoInfo, v))
+}
+
+// NonoInfoNEQ applies the NEQ predicate on the "nono_info" field.
+func NonoInfoNEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldNonoInfo, v))
+}
+
+// NonoInfoIn applies the In predicate on the "nono_info" field.
+func NonoInfoIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldNonoInfo, vs...))
+}
+
+// NonoInfoNotIn applies the NotIn predicate on the "nono_info" field.
+func NonoInfoNotIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldNonoInfo, vs...))
+}
+
+// NonoInfoGT applies the GT predicate on the "nono_info" field.
+func NonoInfoGT(v string) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldNonoInfo, v))
+}
+
+// NonoInfoGTE applies the GTE predicate on the "nono_info" field.
+func NonoInfoGTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldNonoInfo, v))
+}
+
+// NonoInfoLT applies the LT predicate on the "nono_info" field.
+func NonoInfoLT(v string) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldNonoInfo, v))
+}
+
+// NonoInfoLTE applies the LTE predicate on the "nono_info" field.
+func NonoInfoLTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldNonoInfo, v))
+}
+
+// NonoInfoContains applies the Contains predicate on the "nono_info" field.
+func NonoInfoContains(v string) predicate.Player {
+	return predicate.Player(sql.FieldContains(FieldNonoInfo, v))
+}
+
+// NonoInfoHasPrefix applies the HasPrefix predicate on the "nono_info" field.
+func NonoInfoHasPrefix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasPrefix(FieldNonoInfo, v))
+}
+
+// NonoInfoHasSuffix applies the HasSuffix predicate on the "nono_info" field.
+func NonoInfoHasSuffix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasSuffix(FieldNonoInfo, v))
+}
+
+// NonoInfoEqualFold applies the EqualFold predicate on the "nono_info" field.
+func NonoInfoEqualFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldEqualFold(FieldNonoInfo, v))
+}
+
+// NonoInfoContainsFold applies the ContainsFold predicate on the "nono_info" field.
+func NonoInfoContainsFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldContainsFold(FieldNonoInfo, v))
+}
+
+// MailboxEQ applies the EQ predicate on the "mailbox" field.
+func MailboxEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldEQ(FieldMailbox, v))
+}
+
+// MailboxNEQ applies the NEQ predicate on the "mailbox" field.
+func MailboxNEQ(v string) predicate.Player {
+	return predicate.Player(sql.FieldNEQ(FieldMailbox, v))
+}
+
+// MailboxIn applies the In predicate on the "mailbox" field.
+func MailboxIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldIn(FieldMailbox, vs...))
+}
+
+// MailboxNotIn applies the NotIn predicate on the "mailbox" field.
+func MailboxNotIn(vs ...string) predicate.Player {
+	return predicate.Player(sql.FieldNotIn(FieldMailbox, vs...))
+}
+
+// MailboxGT applies the GT predicate on the "mailbox" field.
+func MailboxGT(v string) predicate.Player {
+	return predicate.Player(sql.FieldGT(FieldMailbox, v))
+}
+
+// MailboxGTE applies the GTE predicate on the "mailbox" field.
+func MailboxGTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldGTE(FieldMailbox, v))
+}
+
+// MailboxLT applies the LT predicate on the "mailbox" field.
+func MailboxLT(v string) predicate.Player {
+	return predicate.Player(sql.FieldLT(FieldMailbox, v))
+}
+
+// MailboxLTE applies the LTE predicate on the "mailbox" field.
+func MailboxLTE(v string) predicate.Player {
+	return predicate.Player(sql.FieldLTE(FieldMailbox, v))
+}
+
+// MailboxContains applies the Contains predicate on the "mailbox" field.
+func MailboxContains(v string) predicate.Player {
+	return predicate.Player(sql.FieldContains(FieldMailbox, v))
+}
+
+// MailboxHasPrefix applies the HasPrefix predicate on the "mailbox" field.
+func MailboxHasPrefix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasPrefix(FieldMailbox, v))
+}
+
+// MailboxHasSuffix applies the HasSuffix predicate on the "mailbox" field.
+func MailboxHasSuffix(v string) predicate.Player {
+	return predicate.Player(sql.FieldHasSuffix(FieldMailbox, v))
+}
+
+// MailboxEqualFold applies the EqualFold predicate on the "mailbox" field.
+func MailboxEqualFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldEqualFold(FieldMailbox, v))
+}
+
+// MailboxContainsFold applies the ContainsFold predicate on the "mailbox" field.
+func MailboxContainsFold(v string) predicate.Player {
+	return predicate.Player(sql.FieldContainsFold(FieldMailbox, v))
 }
 
 // CurrentPetIDEQ applies the EQ predicate on the "current_pet_id" field.

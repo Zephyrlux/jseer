@@ -275,24 +275,64 @@ func init() {
 	playerDescTaskBufs := playerFields[20].Descriptor()
 	// player.DefaultTaskBufs holds the default value on creation for the task_bufs field.
 	player.DefaultTaskBufs = playerDescTaskBufs.Default.(string)
+	// playerDescFriends is the schema descriptor for friends field.
+	playerDescFriends := playerFields[21].Descriptor()
+	// player.DefaultFriends holds the default value on creation for the friends field.
+	player.DefaultFriends = playerDescFriends.Default.(string)
+	// playerDescBlacklist is the schema descriptor for blacklist field.
+	playerDescBlacklist := playerFields[22].Descriptor()
+	// player.DefaultBlacklist holds the default value on creation for the blacklist field.
+	player.DefaultBlacklist = playerDescBlacklist.Default.(string)
+	// playerDescAchievements is the schema descriptor for achievements field.
+	playerDescAchievements := playerFields[23].Descriptor()
+	// player.DefaultAchievements holds the default value on creation for the achievements field.
+	player.DefaultAchievements = playerDescAchievements.Default.(string)
+	// playerDescTitles is the schema descriptor for titles field.
+	playerDescTitles := playerFields[24].Descriptor()
+	// player.DefaultTitles holds the default value on creation for the titles field.
+	player.DefaultTitles = playerDescTitles.Default.(string)
+	// playerDescTeamInfo is the schema descriptor for team_info field.
+	playerDescTeamInfo := playerFields[25].Descriptor()
+	// player.DefaultTeamInfo holds the default value on creation for the team_info field.
+	player.DefaultTeamInfo = playerDescTeamInfo.Default.(string)
+	// playerDescStudentIds is the schema descriptor for student_ids field.
+	playerDescStudentIds := playerFields[26].Descriptor()
+	// player.DefaultStudentIds holds the default value on creation for the student_ids field.
+	player.DefaultStudentIds = playerDescStudentIds.Default.(string)
+	// playerDescRoomID is the schema descriptor for room_id field.
+	playerDescRoomID := playerFields[27].Descriptor()
+	// player.DefaultRoomID holds the default value on creation for the room_id field.
+	player.DefaultRoomID = playerDescRoomID.Default.(int64)
+	// playerDescFitments is the schema descriptor for fitments field.
+	playerDescFitments := playerFields[28].Descriptor()
+	// player.DefaultFitments holds the default value on creation for the fitments field.
+	player.DefaultFitments = playerDescFitments.Default.(string)
+	// playerDescNonoInfo is the schema descriptor for nono_info field.
+	playerDescNonoInfo := playerFields[29].Descriptor()
+	// player.DefaultNonoInfo holds the default value on creation for the nono_info field.
+	player.DefaultNonoInfo = playerDescNonoInfo.Default.(string)
+	// playerDescMailbox is the schema descriptor for mailbox field.
+	playerDescMailbox := playerFields[30].Descriptor()
+	// player.DefaultMailbox holds the default value on creation for the mailbox field.
+	player.DefaultMailbox = playerDescMailbox.Default.(string)
 	// playerDescCurrentPetID is the schema descriptor for current_pet_id field.
-	playerDescCurrentPetID := playerFields[21].Descriptor()
+	playerDescCurrentPetID := playerFields[31].Descriptor()
 	// player.DefaultCurrentPetID holds the default value on creation for the current_pet_id field.
 	player.DefaultCurrentPetID = playerDescCurrentPetID.Default.(int64)
 	// playerDescCurrentPetCatchTime is the schema descriptor for current_pet_catch_time field.
-	playerDescCurrentPetCatchTime := playerFields[22].Descriptor()
+	playerDescCurrentPetCatchTime := playerFields[32].Descriptor()
 	// player.DefaultCurrentPetCatchTime holds the default value on creation for the current_pet_catch_time field.
 	player.DefaultCurrentPetCatchTime = playerDescCurrentPetCatchTime.Default.(int64)
 	// playerDescCurrentPetDv is the schema descriptor for current_pet_dv field.
-	playerDescCurrentPetDv := playerFields[23].Descriptor()
+	playerDescCurrentPetDv := playerFields[33].Descriptor()
 	// player.DefaultCurrentPetDv holds the default value on creation for the current_pet_dv field.
 	player.DefaultCurrentPetDv = playerDescCurrentPetDv.Default.(int64)
 	// playerDescCreatedAt is the schema descriptor for created_at field.
-	playerDescCreatedAt := playerFields[25].Descriptor()
+	playerDescCreatedAt := playerFields[35].Descriptor()
 	// player.DefaultCreatedAt holds the default value on creation for the created_at field.
 	player.DefaultCreatedAt = playerDescCreatedAt.Default.(func() time.Time)
 	// playerDescUpdatedAt is the schema descriptor for updated_at field.
-	playerDescUpdatedAt := playerFields[26].Descriptor()
+	playerDescUpdatedAt := playerFields[36].Descriptor()
 	// player.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	player.DefaultUpdatedAt = playerDescUpdatedAt.Default.(func() time.Time)
 	// player.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

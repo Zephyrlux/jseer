@@ -153,22 +153,25 @@ type User struct {
 	ExpireTm        uint32
 	FuseTimes       uint32
 
-	FlyMode      uint32
-	CurrentPetID uint32
-	CatchID      uint32
-	PetDV        uint32
-	Clothes      []Cloth
-	Pets         []Pet
-	Friends      []FriendInfo
-	Blacklist    []uint32
-	Achievements []uint32
-	Titles       []uint32
-	CurTitle     uint32
-	TaskStatus   map[int]byte
-	TaskBufs     map[int]map[int]uint32
-	Nono         NonoInfo
-	Team         TeamInfo
-	Mailbox      []Mail
+	FlyMode           uint32
+	CurrentPetID      uint32
+	CatchID           uint32
+	PetDV             uint32
+	Clothes           []Cloth
+	Pets              []Pet
+	Friends           []FriendInfo
+	Blacklist         []uint32
+	Achievements      []uint32
+	Titles            []uint32
+	CurTitle          uint32
+	TaskStatus        map[int]byte
+	TaskBufs          map[int]map[int]uint32
+	Nono              NonoInfo
+	Team              TeamInfo
+	Mailbox           []Mail
+	BossShield        map[uint64]uint32
+	PendingInviteTo   uint32
+	PendingInviteMode uint32
 
 	LastMapID     uint32
 	NonoFollowing bool
@@ -182,6 +185,7 @@ type User struct {
 
 type State struct {
 	mu       sync.RWMutex
+	fightMu  sync.Mutex
 	users    map[uint32]*User
 	conns    map[uint32]net.Conn
 	mapUsers map[uint32]map[uint32]struct{}
@@ -243,6 +247,7 @@ func (s *State) GetOrCreateUser(userID uint32) *User {
 		Achievements: make([]uint32, 0),
 		Titles:       make([]uint32, 0),
 		Mailbox:      make([]Mail, 0),
+		BossShield:   make(map[uint64]uint32),
 		StudentIDs:   make([]uint32, 0),
 		Nono: NonoInfo{
 			HasNono:    true,
@@ -315,12 +320,6 @@ func (s *State) GetMapCounts() map[uint32]int {
 		out[id] = len(set)
 	}
 	return out
-}
-
-func (s *State) OnlineCount() int {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	return len(s.conns)
 }
 
 func (s *State) BroadcastToMap(mapID uint32, payload []byte) {

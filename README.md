@@ -45,7 +45,8 @@
 | --- | --- | --- |
 | loginserver | 1863 | 登录服（TCP） |
 | gateway | 5000 | 游戏网关（TCP） |
-| ressrv | 32401 | 资源服务（HTTP） |
+| ressrv | 32400 | 资源服务（HTTP） |
+| loginip | 32401 | 登录 IP（ip.txt） |
 | gmserver | 3001 | GM API（HTTP） |
 
 ## 目录结构
@@ -76,11 +77,10 @@ go run ./cmd/gmserver
 | `DATABASE_DSN` | 数据库连接串 | `file:jseer.db?_fk=1` |
 | `LOGIN_ADDRESS` | 登录服地址 | `:1863` |
 | `GATEWAY_ADDRESS` | 网关地址 | `:5000` |
-| `HTTP_ADDRESS` | 资源服地址 | `:32401` |
+| `HTTP_ADDRESS` | 资源服地址 | `:32400` |
+| `HTTP_LOGIN_IP_ADDRESS` | 登录IP服务器地址 | `:32401` |
 | `GM_ADDRESS` | GM API 地址 | `:3001` |
-| `JSEER_DATA_ROOT` | 数据文件目录（skills.xml / spt.xml） | 自动探测 |
-| `JSEER_ELEMENTS_PATH` | 属性相克表路径（seer_elements.lua） | 自动探测 |
-| `JSEER_GAME_ROOT` | Lua 目录（包含 seer_elements.lua） | 空 |
+| `JSEER_DATA_ROOT` | 数据文件目录（items.xml / skills.xml / spt.xml / skill_effects.xml） | `./data` |
 
 配置支持 `.env` 覆盖（参考 `.env.example`），也可使用 `JSEER_CONFIG` 指定配置文件路径。
 

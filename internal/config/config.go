@@ -22,10 +22,10 @@ type Config struct {
 }
 
 type AppConfig struct {
-	Env     string `mapstructure:"env"`
-	Name    string `mapstructure:"name"`
-	Version string `mapstructure:"version"`
-	ReloadIntervalS int `mapstructure:"reload_interval_s"`
+	Env             string `mapstructure:"env"`
+	Name            string `mapstructure:"name"`
+	Version         string `mapstructure:"version"`
+	ReloadIntervalS int    `mapstructure:"reload_interval_s"`
 }
 
 type LogConfig struct {
@@ -62,13 +62,14 @@ type GameConfig struct {
 }
 
 type HTTPConfig struct {
-	Address      string `mapstructure:"address"`
-	EnablePprof  bool   `mapstructure:"enable_pprof"`
-	AllowOrigins string `mapstructure:"allow_origins"`
-	IPTxt        string `mapstructure:"ip_txt"`
-	StaticRoot   string `mapstructure:"static_root"`
-	ProxyRoot    string `mapstructure:"proxy_root"`
-	Upstream     string `mapstructure:"upstream"`
+	Address        string `mapstructure:"address"`
+	LoginIPAddress string `mapstructure:"login_ip_address"`
+	EnablePprof    bool   `mapstructure:"enable_pprof"`
+	AllowOrigins   string `mapstructure:"allow_origins"`
+	IPTxt          string `mapstructure:"ip_txt"`
+	StaticRoot     string `mapstructure:"static_root"`
+	ProxyRoot      string `mapstructure:"proxy_root"`
+	Upstream       string `mapstructure:"upstream"`
 }
 
 type GMConfig struct {
@@ -143,12 +144,13 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("game.public_ip", "127.0.0.1")
 	v.SetDefault("game.port", 5000)
 	v.SetDefault("game.server_id", 1)
-	v.SetDefault("http.address", ":32401")
+	v.SetDefault("http.address", ":32400")
+	v.SetDefault("http.login_ip_address", ":32401")
 	v.SetDefault("http.enable_pprof", false)
 	v.SetDefault("http.allow_origins", "*")
 	v.SetDefault("http.ip_txt", "127.0.0.1:1863")
-	v.SetDefault("http.static_root", "../Reseer-main/gameres/root")
-	v.SetDefault("http.proxy_root", "../Reseer-main/gameres_proxy/root")
+	v.SetDefault("http.static_root", "./resources/root")
+	v.SetDefault("http.proxy_root", "./resources_proxy/root")
 	v.SetDefault("http.upstream", "")
 	v.SetDefault("gm.address", ":3001")
 	v.SetDefault("gm.jwt_secret", "change-me")

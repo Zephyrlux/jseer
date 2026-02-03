@@ -39,8 +39,8 @@ func handleGetPetInfo(state *State) gateway.Handler {
 			for _, p := range user.Pets {
 				if uint32(p.CatchTime) == targetCatch {
 					petID = uint32(p.ID)
-					level = p.Level
-					dv = p.DV
+					level = int(p.Level)
+					dv = int(p.DV)
 					exp = p.Exp
 					skills = append([]int{}, p.Skills...)
 					break

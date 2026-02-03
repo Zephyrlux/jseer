@@ -444,6 +444,153 @@ func (_u *PlayerUpdate) SetNillableTaskBufs(v *string) *PlayerUpdate {
 	return _u
 }
 
+// SetFriends sets the "friends" field.
+func (_u *PlayerUpdate) SetFriends(v string) *PlayerUpdate {
+	_u.mutation.SetFriends(v)
+	return _u
+}
+
+// SetNillableFriends sets the "friends" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableFriends(v *string) *PlayerUpdate {
+	if v != nil {
+		_u.SetFriends(*v)
+	}
+	return _u
+}
+
+// SetBlacklist sets the "blacklist" field.
+func (_u *PlayerUpdate) SetBlacklist(v string) *PlayerUpdate {
+	_u.mutation.SetBlacklist(v)
+	return _u
+}
+
+// SetNillableBlacklist sets the "blacklist" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableBlacklist(v *string) *PlayerUpdate {
+	if v != nil {
+		_u.SetBlacklist(*v)
+	}
+	return _u
+}
+
+// SetAchievements sets the "achievements" field.
+func (_u *PlayerUpdate) SetAchievements(v string) *PlayerUpdate {
+	_u.mutation.SetAchievements(v)
+	return _u
+}
+
+// SetNillableAchievements sets the "achievements" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableAchievements(v *string) *PlayerUpdate {
+	if v != nil {
+		_u.SetAchievements(*v)
+	}
+	return _u
+}
+
+// SetTitles sets the "titles" field.
+func (_u *PlayerUpdate) SetTitles(v string) *PlayerUpdate {
+	_u.mutation.SetTitles(v)
+	return _u
+}
+
+// SetNillableTitles sets the "titles" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableTitles(v *string) *PlayerUpdate {
+	if v != nil {
+		_u.SetTitles(*v)
+	}
+	return _u
+}
+
+// SetTeamInfo sets the "team_info" field.
+func (_u *PlayerUpdate) SetTeamInfo(v string) *PlayerUpdate {
+	_u.mutation.SetTeamInfo(v)
+	return _u
+}
+
+// SetNillableTeamInfo sets the "team_info" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableTeamInfo(v *string) *PlayerUpdate {
+	if v != nil {
+		_u.SetTeamInfo(*v)
+	}
+	return _u
+}
+
+// SetStudentIds sets the "student_ids" field.
+func (_u *PlayerUpdate) SetStudentIds(v string) *PlayerUpdate {
+	_u.mutation.SetStudentIds(v)
+	return _u
+}
+
+// SetNillableStudentIds sets the "student_ids" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableStudentIds(v *string) *PlayerUpdate {
+	if v != nil {
+		_u.SetStudentIds(*v)
+	}
+	return _u
+}
+
+// SetRoomID sets the "room_id" field.
+func (_u *PlayerUpdate) SetRoomID(v int64) *PlayerUpdate {
+	_u.mutation.ResetRoomID()
+	_u.mutation.SetRoomID(v)
+	return _u
+}
+
+// SetNillableRoomID sets the "room_id" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableRoomID(v *int64) *PlayerUpdate {
+	if v != nil {
+		_u.SetRoomID(*v)
+	}
+	return _u
+}
+
+// AddRoomID adds value to the "room_id" field.
+func (_u *PlayerUpdate) AddRoomID(v int64) *PlayerUpdate {
+	_u.mutation.AddRoomID(v)
+	return _u
+}
+
+// SetFitments sets the "fitments" field.
+func (_u *PlayerUpdate) SetFitments(v string) *PlayerUpdate {
+	_u.mutation.SetFitments(v)
+	return _u
+}
+
+// SetNillableFitments sets the "fitments" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableFitments(v *string) *PlayerUpdate {
+	if v != nil {
+		_u.SetFitments(*v)
+	}
+	return _u
+}
+
+// SetNonoInfo sets the "nono_info" field.
+func (_u *PlayerUpdate) SetNonoInfo(v string) *PlayerUpdate {
+	_u.mutation.SetNonoInfo(v)
+	return _u
+}
+
+// SetNillableNonoInfo sets the "nono_info" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableNonoInfo(v *string) *PlayerUpdate {
+	if v != nil {
+		_u.SetNonoInfo(*v)
+	}
+	return _u
+}
+
+// SetMailbox sets the "mailbox" field.
+func (_u *PlayerUpdate) SetMailbox(v string) *PlayerUpdate {
+	_u.mutation.SetMailbox(v)
+	return _u
+}
+
+// SetNillableMailbox sets the "mailbox" field if the given value is not nil.
+func (_u *PlayerUpdate) SetNillableMailbox(v *string) *PlayerUpdate {
+	if v != nil {
+		_u.SetMailbox(*v)
+	}
+	return _u
+}
+
 // SetCurrentPetID sets the "current_pet_id" field.
 func (_u *PlayerUpdate) SetCurrentPetID(v int64) *PlayerUpdate {
 	_u.mutation.ResetCurrentPetID()
@@ -806,6 +953,39 @@ func (_u *PlayerUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.TaskBufs(); ok {
 		_spec.SetField(player.FieldTaskBufs, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Friends(); ok {
+		_spec.SetField(player.FieldFriends, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Blacklist(); ok {
+		_spec.SetField(player.FieldBlacklist, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Achievements(); ok {
+		_spec.SetField(player.FieldAchievements, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Titles(); ok {
+		_spec.SetField(player.FieldTitles, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.TeamInfo(); ok {
+		_spec.SetField(player.FieldTeamInfo, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.StudentIds(); ok {
+		_spec.SetField(player.FieldStudentIds, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.RoomID(); ok {
+		_spec.SetField(player.FieldRoomID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedRoomID(); ok {
+		_spec.AddField(player.FieldRoomID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.Fitments(); ok {
+		_spec.SetField(player.FieldFitments, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.NonoInfo(); ok {
+		_spec.SetField(player.FieldNonoInfo, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Mailbox(); ok {
+		_spec.SetField(player.FieldMailbox, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.CurrentPetID(); ok {
 		_spec.SetField(player.FieldCurrentPetID, field.TypeInt64, value)
@@ -1389,6 +1569,153 @@ func (_u *PlayerUpdateOne) SetNillableTaskBufs(v *string) *PlayerUpdateOne {
 	return _u
 }
 
+// SetFriends sets the "friends" field.
+func (_u *PlayerUpdateOne) SetFriends(v string) *PlayerUpdateOne {
+	_u.mutation.SetFriends(v)
+	return _u
+}
+
+// SetNillableFriends sets the "friends" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableFriends(v *string) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetFriends(*v)
+	}
+	return _u
+}
+
+// SetBlacklist sets the "blacklist" field.
+func (_u *PlayerUpdateOne) SetBlacklist(v string) *PlayerUpdateOne {
+	_u.mutation.SetBlacklist(v)
+	return _u
+}
+
+// SetNillableBlacklist sets the "blacklist" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableBlacklist(v *string) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetBlacklist(*v)
+	}
+	return _u
+}
+
+// SetAchievements sets the "achievements" field.
+func (_u *PlayerUpdateOne) SetAchievements(v string) *PlayerUpdateOne {
+	_u.mutation.SetAchievements(v)
+	return _u
+}
+
+// SetNillableAchievements sets the "achievements" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableAchievements(v *string) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetAchievements(*v)
+	}
+	return _u
+}
+
+// SetTitles sets the "titles" field.
+func (_u *PlayerUpdateOne) SetTitles(v string) *PlayerUpdateOne {
+	_u.mutation.SetTitles(v)
+	return _u
+}
+
+// SetNillableTitles sets the "titles" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableTitles(v *string) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetTitles(*v)
+	}
+	return _u
+}
+
+// SetTeamInfo sets the "team_info" field.
+func (_u *PlayerUpdateOne) SetTeamInfo(v string) *PlayerUpdateOne {
+	_u.mutation.SetTeamInfo(v)
+	return _u
+}
+
+// SetNillableTeamInfo sets the "team_info" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableTeamInfo(v *string) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetTeamInfo(*v)
+	}
+	return _u
+}
+
+// SetStudentIds sets the "student_ids" field.
+func (_u *PlayerUpdateOne) SetStudentIds(v string) *PlayerUpdateOne {
+	_u.mutation.SetStudentIds(v)
+	return _u
+}
+
+// SetNillableStudentIds sets the "student_ids" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableStudentIds(v *string) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetStudentIds(*v)
+	}
+	return _u
+}
+
+// SetRoomID sets the "room_id" field.
+func (_u *PlayerUpdateOne) SetRoomID(v int64) *PlayerUpdateOne {
+	_u.mutation.ResetRoomID()
+	_u.mutation.SetRoomID(v)
+	return _u
+}
+
+// SetNillableRoomID sets the "room_id" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableRoomID(v *int64) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetRoomID(*v)
+	}
+	return _u
+}
+
+// AddRoomID adds value to the "room_id" field.
+func (_u *PlayerUpdateOne) AddRoomID(v int64) *PlayerUpdateOne {
+	_u.mutation.AddRoomID(v)
+	return _u
+}
+
+// SetFitments sets the "fitments" field.
+func (_u *PlayerUpdateOne) SetFitments(v string) *PlayerUpdateOne {
+	_u.mutation.SetFitments(v)
+	return _u
+}
+
+// SetNillableFitments sets the "fitments" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableFitments(v *string) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetFitments(*v)
+	}
+	return _u
+}
+
+// SetNonoInfo sets the "nono_info" field.
+func (_u *PlayerUpdateOne) SetNonoInfo(v string) *PlayerUpdateOne {
+	_u.mutation.SetNonoInfo(v)
+	return _u
+}
+
+// SetNillableNonoInfo sets the "nono_info" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableNonoInfo(v *string) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetNonoInfo(*v)
+	}
+	return _u
+}
+
+// SetMailbox sets the "mailbox" field.
+func (_u *PlayerUpdateOne) SetMailbox(v string) *PlayerUpdateOne {
+	_u.mutation.SetMailbox(v)
+	return _u
+}
+
+// SetNillableMailbox sets the "mailbox" field if the given value is not nil.
+func (_u *PlayerUpdateOne) SetNillableMailbox(v *string) *PlayerUpdateOne {
+	if v != nil {
+		_u.SetMailbox(*v)
+	}
+	return _u
+}
+
 // SetCurrentPetID sets the "current_pet_id" field.
 func (_u *PlayerUpdateOne) SetCurrentPetID(v int64) *PlayerUpdateOne {
 	_u.mutation.ResetCurrentPetID()
@@ -1781,6 +2108,39 @@ func (_u *PlayerUpdateOne) sqlSave(ctx context.Context) (_node *Player, err erro
 	}
 	if value, ok := _u.mutation.TaskBufs(); ok {
 		_spec.SetField(player.FieldTaskBufs, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Friends(); ok {
+		_spec.SetField(player.FieldFriends, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Blacklist(); ok {
+		_spec.SetField(player.FieldBlacklist, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Achievements(); ok {
+		_spec.SetField(player.FieldAchievements, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Titles(); ok {
+		_spec.SetField(player.FieldTitles, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.TeamInfo(); ok {
+		_spec.SetField(player.FieldTeamInfo, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.StudentIds(); ok {
+		_spec.SetField(player.FieldStudentIds, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.RoomID(); ok {
+		_spec.SetField(player.FieldRoomID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedRoomID(); ok {
+		_spec.AddField(player.FieldRoomID, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.Fitments(); ok {
+		_spec.SetField(player.FieldFitments, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.NonoInfo(); ok {
+		_spec.SetField(player.FieldNonoInfo, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.Mailbox(); ok {
+		_spec.SetField(player.FieldMailbox, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.CurrentPetID(); ok {
 		_spec.SetField(player.FieldCurrentPetID, field.TypeInt64, value)
