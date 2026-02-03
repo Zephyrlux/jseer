@@ -74,7 +74,16 @@ func LoadPetDB() *PetDB {
 	globalPetDB.names = make(map[string]int)
 	dataRoot := resolveDataRoot()
 	_ = loadSkills(filepath.Join(dataRoot, "skills.xml"), globalPetDB.skills)
-	_ = loadPets(filepath.Join(dataRoot, "spt.xml"), globalPetDB.pets)
+	// Try loading pets.xml first (full database)
+	if err := loadPets(filepath.Join(dataRoot, "pets.xml"), globalPetDB.pets); err != nil {
+		// Fallback to spt.xml if pets.xml fails or is missing
+		_ = loadPets(filepath.Join(dataRoot, "spt.xml"), globalPetDB.pets)
+	} else {
+		// If pets.xml loaded, optionally load spt.xml to override/add specific entries
+		// But if they are duplicates, this might be redundant.
+		// For safety, let's load spt.xml as well in case it has updates.
+		_ = loadPets(filepath.Join(dataRoot, "spt.xml"), globalPetDB.pets)
+	}
 	for id, pet := range globalPetDB.pets {
 		if pet != nil && pet.Name != "" {
 			globalPetDB.names[pet.Name] = id

@@ -90,6 +90,7 @@ func handleLoginIn(deps *Deps, state *State) gateway.Handler {
 				}
 			}
 		}
+		ensureStarterPet(deps, user)
 		applySpawnOverride(deps, user, user.LoginCnt == 0)
 		if user.LoginCnt == 0 {
 			user.LoginCnt = 1
@@ -143,6 +144,44 @@ func applySpawnOverride(deps *Deps, user *User, isFirstLogin bool) {
 			user.PosY = 270
 		}
 	}
+}
+
+func ensureStarterPet(deps *Deps, user *User) {
+	if user == nil {
+		return
+	}
+	if len(user.Pets) > 0 {
+		if user.CurrentPetID == 0 {
+			user.CurrentPetID = user.Pets[0].ID
+			user.CatchID = user.Pets[0].CatchTime
+			user.PetDV = user.Pets[0].DV
+		}
+		return
+	}
+
+	const starterPetID = 7
+	const starterLevel = 5
+	const starterDV = 31
+	catchTime := ensureCatchTime(0, starterPetID)
+
+	base := LoadPetDB().pets[starterPetID]
+	stats := getStats(base, starterLevel, starterDV, evSet{})
+	pet := Pet{
+		ID:        uint32(starterPetID),
+		CatchTime: catchTime,
+		Level:     uint32(starterLevel),
+		DV:        uint32(starterDV),
+		Exp:       0,
+		HP:        stats.MaxHP,
+		Skills:    getSkillsForLevel(base, starterLevel),
+	}
+	user.Pets = append(user.Pets, pet)
+	user.CurrentPetID = pet.ID
+	user.CatchID = pet.CatchTime
+	user.PetDV = pet.DV
+	user.PetAllNum = uint32(len(user.Pets))
+
+	upsertPet(deps, user, pet)
 }
 
 func pushInitialMapEnter(deps *Deps, state *State, ctx *gateway.Context) {

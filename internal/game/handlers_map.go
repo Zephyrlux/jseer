@@ -199,6 +199,22 @@ func handleEnterMap(deps *Deps, state *State) gateway.Handler {
 		body := buildPeopleInfo(ctx.UserID, user, uint32(time.Now().Unix()))
 		ctx.Server.SendResponse(ctx.Conn, 2001, ctx.UserID, body)
 
+		// Push LIST_MAP_PLAYER (2003) for self (to self or all?)
+		// Lua implementation pushes only self (count=1) to self immediately after 2001
+		selfListBuf := new(bytes.Buffer)
+		binary.Write(selfListBuf, binary.BigEndian, uint32(1))
+		selfListBuf.Write(body)
+		ctx.Server.SendResponse(ctx.Conn, 2003, ctx.UserID, selfListBuf.Bytes())
+
+		// Home Logic (Base)
+		if mapID > 10000 || mapID == ctx.UserID {
+			isFlying := (user.FlyMode > 0)
+			if !isFlying {
+				nonoBody := buildNonoInfo(ctx.UserID, &user.Nono)
+				ctx.Server.SendResponse(ctx.Conn, 9003, ctx.UserID, nonoBody)
+			}
+		}
+
 		// Send map player list (including self)
 		listBuf := new(bytes.Buffer)
 		players := state.GetPlayersInMap(mapID)

@@ -65,36 +65,40 @@ func handleNonoChangeName(deps *Deps, state *State) gateway.Handler {
 func handleNonoInfo(state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		user := state.GetOrCreateUser(ctx.UserID)
-		n := &user.Nono
-		buf := new(bytes.Buffer)
-		binary.Write(buf, binary.BigEndian, ctx.UserID)
-		binary.Write(buf, binary.BigEndian, n.Flag)
-		binary.Write(buf, binary.BigEndian, n.State)
-		protocol.WriteFixedString(buf, pickString(n.Nick, "NONO"), 16)
-		binary.Write(buf, binary.BigEndian, n.SuperNono)
-		binary.Write(buf, binary.BigEndian, pickNonZero(n.Color, 0xFFFFFF))
-		binary.Write(buf, binary.BigEndian, pickNonZero(n.Power, 10000))
-		binary.Write(buf, binary.BigEndian, pickNonZero(n.Mate, 10000))
-		binary.Write(buf, binary.BigEndian, n.IQ)
-		protocol.WriteUint16BE(buf, n.AI)
-		binary.Write(buf, binary.BigEndian, pickNonZero(n.Birth, uint32(time.Now().Unix())))
-		binary.Write(buf, binary.BigEndian, n.ChargeTime)
-		for i := 0; i < 20; i++ {
-			b := n.Func[i]
-			if b == 0 {
-				b = 0xFF
-			}
-			buf.WriteByte(b)
-		}
-		binary.Write(buf, binary.BigEndian, n.SuperEnergy)
-		binary.Write(buf, binary.BigEndian, pickNonZero(n.SuperLevel, 0))
-		stage := n.SuperStage
-		if stage == 0 {
-			stage = 1
-		}
-		binary.Write(buf, binary.BigEndian, stage)
-		ctx.Server.SendResponse(ctx.Conn, 9003, ctx.UserID, buf.Bytes())
+		body := buildNonoInfo(ctx.UserID, &user.Nono)
+		ctx.Server.SendResponse(ctx.Conn, 9003, ctx.UserID, body)
 	}
+}
+
+func buildNonoInfo(userID uint32, n *NonoInfo) []byte {
+	buf := new(bytes.Buffer)
+	binary.Write(buf, binary.BigEndian, userID)
+	binary.Write(buf, binary.BigEndian, n.Flag)
+	binary.Write(buf, binary.BigEndian, n.State)
+	protocol.WriteFixedString(buf, pickString(n.Nick, "NONO"), 16)
+	binary.Write(buf, binary.BigEndian, n.SuperNono)
+	binary.Write(buf, binary.BigEndian, pickNonZero(n.Color, 0xFFFFFF))
+	binary.Write(buf, binary.BigEndian, pickNonZero(n.Power, 10000))
+	binary.Write(buf, binary.BigEndian, pickNonZero(n.Mate, 10000))
+	binary.Write(buf, binary.BigEndian, n.IQ)
+	protocol.WriteUint16BE(buf, n.AI)
+	binary.Write(buf, binary.BigEndian, pickNonZero(n.Birth, uint32(time.Now().Unix())))
+	binary.Write(buf, binary.BigEndian, n.ChargeTime)
+	for i := 0; i < 20; i++ {
+		b := n.Func[i]
+		if b == 0 {
+			b = 0xFF
+		}
+		buf.WriteByte(b)
+	}
+	binary.Write(buf, binary.BigEndian, n.SuperEnergy)
+	binary.Write(buf, binary.BigEndian, pickNonZero(n.SuperLevel, 0))
+	stage := n.SuperStage
+	if stage == 0 {
+		stage = 1
+	}
+	binary.Write(buf, binary.BigEndian, stage)
+	return buf.Bytes()
 }
 
 func handleNonoChipMixture() gateway.Handler {

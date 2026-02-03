@@ -10,6 +10,8 @@ import (
 
 	"jseer/internal/gateway"
 	"jseer/internal/protocol"
+
+	"go.uber.org/zap"
 )
 
 const noviceBossID = 13
@@ -124,7 +126,7 @@ func handleChallengeBoss(state *State) gateway.Handler {
 		binary.Write(buf, binary.BigEndian, uint32(1))
 		buf.Write(buildSimpleFightPetInfo(int(enemy.ID), int(enemy.Level), enemy.CurrentHP, enemy.Stats.MaxHP, int(enemy.CatchTime), enemy.Skills, 301, int(enemy.ID)))
 		ctx.Server.SendResponse(ctx.Conn, 2503, ctx.UserID, buf.Bytes())
-		sendPveFightStart(ctx, user, user.Fight)
+		// sendPveFightStart(ctx, user, user.Fight) // Removed: Should not send 2504 here, wait for 2404
 	}
 }
 
@@ -132,7 +134,8 @@ func handleReadyToFight(state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		user := state.GetOrCreateUser(ctx.UserID)
 		if user.Fight == nil {
-			handleChallengeBoss(state)(ctx)
+			// handleChallengeBoss(state)(ctx) // Removed: Don't auto-challenge if state missing
+			return
 		}
 		f := user.Fight
 		if f == nil {
@@ -164,6 +167,8 @@ func handleUseSkill(deps *Deps, state *State) gateway.Handler {
 		reader := NewReader(ctx.Body)
 		reqSkillID := int(reader.ReadUint32BE())
 		ctx.Server.SendResponse(ctx.Conn, 2405, ctx.UserID, []byte{})
+
+		deps.Logger.Info("fight_use_skill", zap.Uint32("uid", ctx.UserID), zap.Int("skill_id", reqSkillID))
 
 		user := state.GetOrCreateUser(ctx.UserID)
 		f := user.Fight
@@ -764,19 +769,8 @@ func handleFightNpcMonster(state *State) gateway.Handler {
 }
 
 func sendPveFightStart(ctx *gateway.Context, user *User, f *FightState) {
-	if user == nil || f == nil {
-		return
-	}
-	ensureFightStats(user, f)
-	ensureFightSkillPP(f)
-	ensureFightStatus(f)
-	user.InFight = true
-	buf := new(bytes.Buffer)
-	binary.Write(buf, binary.BigEndian, uint32(0))
-	buf.Write(buildFightPetInfo(ctx.UserID, f.PlayerPetID, f.PlayerCatch, f.PlayerHP, f.PlayerMaxHP, f.PlayerLevel, 0))
-	buf.Write(buildFightPetInfo(0, f.EnemyPetID, f.EnemyCatch, f.EnemyHP, f.EnemyMaxHP, f.EnemyLevel, 1))
-	ctx.Server.SendResponse(ctx.Conn, 2504, ctx.UserID, buf.Bytes())
-	sendFightPetInfo(ctx, user, f)
+	// Deprecated: Logic moved to handleReadyToFight (CMD 2404)
+	// Do not send 2504 or 2301 here. Client will request 2404 when ready.
 }
 
 func sendFightPetInfo(ctx *gateway.Context, user *User, f *FightState) {
@@ -1019,11 +1013,14 @@ func buildSimpleFightPetInfo(petID int, level int, hp int, maxHP int, catchTime 
 		binary.Write(buf, binary.BigEndian, uint32(pp))
 	}
 	binary.Write(buf, binary.BigEndian, uint32(catchTime))
-	// 对齐 Lua：catchMap/catchRect/catchLevel/skinID 默认 0
+	// 对齐 Lua：catchMap/catchRect/catchLevel/skinID
+	if catchMap == 0 {
+		catchMap = 301
+	}
+	binary.Write(buf, binary.BigEndian, uint32(catchMap))
 	binary.Write(buf, binary.BigEndian, uint32(0))
-	binary.Write(buf, binary.BigEndian, uint32(0))
-	binary.Write(buf, binary.BigEndian, uint32(0))
-	binary.Write(buf, binary.BigEndian, uint32(0))
+	binary.Write(buf, binary.BigEndian, uint32(level))
+	binary.Write(buf, binary.BigEndian, uint32(skinID))
 	return buf.Bytes()
 }
 
@@ -1031,7 +1028,13 @@ func buildFightPetInfo(userID uint32, petID uint32, catchTime uint32, hp int, ma
 	buf := new(bytes.Buffer)
 	binary.Write(buf, binary.BigEndian, userID)
 	binary.Write(buf, binary.BigEndian, petID)
-	protocol.WriteFixedString(buf, "", 16)
+
+	name := ""
+	if base := LoadPetDB().pets[int(petID)]; base != nil {
+		name = base.Name
+	}
+	protocol.WriteFixedString(buf, name, 16)
+
 	binary.Write(buf, binary.BigEndian, catchTime)
 	binary.Write(buf, binary.BigEndian, uint32(hp))
 	binary.Write(buf, binary.BigEndian, uint32(maxHP))
@@ -1267,7 +1270,21 @@ func checkHit(baseAccuracy int, attackerAcc int, defenderEva int) bool {
 func resolveUserFightPet(user *User, catchTime uint32, petID uint32) fightPetSnapshot {
 	var picked *Pet
 	if user != nil {
-		if catchTime != 0 {
+		// Priority:
+		// 1) Explicit petID
+		// 2) Explicit catchTime
+		// 3) CatchID (Last captured/selected)
+		// 4) CurrentPetID
+		// 5) First pet in bag
+		if petID > 0 {
+			for i := range user.Pets {
+				if user.Pets[i].ID == petID {
+					picked = &user.Pets[i]
+					break
+				}
+			}
+		}
+		if picked == nil && catchTime > 0 {
 			for i := range user.Pets {
 				if user.Pets[i].CatchTime == catchTime {
 					picked = &user.Pets[i]
@@ -1275,9 +1292,17 @@ func resolveUserFightPet(user *User, catchTime uint32, petID uint32) fightPetSna
 				}
 			}
 		}
-		if picked == nil && petID != 0 {
+		if picked == nil && user.CatchID > 0 {
 			for i := range user.Pets {
-				if user.Pets[i].ID == petID {
+				if user.Pets[i].CatchTime == user.CatchID {
+					picked = &user.Pets[i]
+					break
+				}
+			}
+		}
+		if picked == nil && user.CurrentPetID > 0 {
+			for i := range user.Pets {
+				if user.Pets[i].ID == user.CurrentPetID {
 					picked = &user.Pets[i]
 					break
 				}
