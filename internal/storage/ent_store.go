@@ -96,10 +96,14 @@ func (s *EntStore) CreatePlayer(ctx context.Context, in *Player) (*Player, error
 		SetTaskBufs(normalizeJSON(in.TaskBufs)).
 		SetFriends(normalizeJSONArray(in.Friends)).
 		SetBlacklist(normalizeJSONArray(in.Blacklist)).
+		SetAchievements(normalizeJSONArray(in.Achievements)).
+		SetTitles(normalizeJSONArray(in.Titles)).
 		SetTeamInfo(normalizeJSON(in.TeamInfo)).
 		SetStudentIDs(normalizeJSONArray(in.StudentIDs)).
 		SetRoomID(in.RoomID).
 		SetFitments(normalizeJSONArray(in.Fitments)).
+		SetNonoInfo(normalizeJSON(in.NonoInfo)).
+		SetMailbox(normalizeJSONArray(in.Mailbox)).
 		SetCurrentPetID(in.CurrentPetID).
 		SetCurrentPetCatchTime(in.CurrentPetCatchTime).
 		SetCurrentPetDV(in.CurrentPetDV).
@@ -134,10 +138,14 @@ func (s *EntStore) UpdatePlayer(ctx context.Context, in *Player) (*Player, error
 		SetTaskBufs(normalizeJSON(in.TaskBufs)).
 		SetFriends(normalizeJSONArray(in.Friends)).
 		SetBlacklist(normalizeJSONArray(in.Blacklist)).
+		SetAchievements(normalizeJSONArray(in.Achievements)).
+		SetTitles(normalizeJSONArray(in.Titles)).
 		SetTeamInfo(normalizeJSON(in.TeamInfo)).
 		SetStudentIDs(normalizeJSONArray(in.StudentIDs)).
 		SetRoomID(in.RoomID).
 		SetFitments(normalizeJSONArray(in.Fitments)).
+		SetNonoInfo(normalizeJSON(in.NonoInfo)).
+		SetMailbox(normalizeJSONArray(in.Mailbox)).
 		SetCurrentPetID(in.CurrentPetID).
 		SetCurrentPetCatchTime(in.CurrentPetCatchTime).
 		SetCurrentPetDV(in.CurrentPetDV).
@@ -412,6 +420,28 @@ func (s *EntStore) ListAuditLogs(ctx context.Context, limit int) ([]*AuditLog, e
 	return out, nil
 }
 
+func (s *EntStore) CreateAuditLog(ctx context.Context, in *AuditLog) (*AuditLog, error) {
+	row, err := s.client.AuditLog.Create().
+		SetOperator(in.Operator).
+		SetAction(in.Action).
+		SetResource(in.Resource).
+		SetResourceID(in.ResourceID).
+		SetDetail(in.Detail).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &AuditLog{
+		ID:         int64(row.ID),
+		Operator:   row.Operator,
+		Action:     row.Action,
+		Resource:   row.Resource,
+		ResourceID: row.ResourceID,
+		Detail:     row.Detail,
+		CreatedAt:  row.CreatedAt.Unix(),
+	}, nil
+}
+
 var _ Store = (*EntStore)(nil)
 
 func normalizeJSON(s string) string {
@@ -457,10 +487,14 @@ func mapPlayer(row *ent.Player) *Player {
 		TaskBufs:            row.TaskBufs,
 		Friends:             row.Friends,
 		Blacklist:           row.Blacklist,
+		Achievements:        row.Achievements,
+		Titles:              row.Titles,
 		TeamInfo:            row.TeamInfo,
 		StudentIDs:          row.StudentIDs,
 		RoomID:              row.RoomID,
 		Fitments:            row.Fitments,
+		NonoInfo:            row.NonoInfo,
+		Mailbox:             row.Mailbox,
 		CurrentPetID:        row.CurrentPetID,
 		CurrentPetCatchTime: row.CurrentPetCatchTime,
 		CurrentPetDV:        row.CurrentPetDV,

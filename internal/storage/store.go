@@ -28,6 +28,7 @@ type Store interface {
 	ListConfigVersions(ctx context.Context, key string, limit int) ([]*ConfigVersion, error)
 
 	// Audit logs
+	CreateAuditLog(ctx context.Context, in *AuditLog) (*AuditLog, error)
 	ListAuditLogs(ctx context.Context, limit int) ([]*AuditLog, error)
 }
 
@@ -40,37 +41,41 @@ type Account struct {
 }
 
 type Player struct {
-	ID       int64
-	Account  int64
-	Nick     string
-	Level    int
-	Coins    int64
-	Gold     int64
-	MapID    int
-	PosX     int
-	PosY     int
-	MapType  int
-	Color    int64
-	Texture  int64
-	Energy   int64
-	FightBadge int64
-	TimeToday int64
-	TimeLimit int64
-	TeacherID int64
-	StudentID int64
-	CurTitle  int64
-	LastMapID int
+	ID                  int64
+	Account             int64
+	Nick                string
+	Level               int
+	Coins               int64
+	Gold                int64
+	MapID               int
+	PosX                int
+	PosY                int
+	MapType             int
+	Color               int64
+	Texture             int64
+	Energy              int64
+	FightBadge          int64
+	TimeToday           int64
+	TimeLimit           int64
+	TeacherID           int64
+	StudentID           int64
+	CurTitle            int64
+	LastMapID           int
 	CurrentPetID        int64
 	CurrentPetCatchTime int64
 	CurrentPetDV        int64
-	TaskStatus string
-	TaskBufs   string
-	Friends    string
-	Blacklist  string
-	TeamInfo   string
-	StudentIDs string
-	RoomID     int64
-	Fitments   string
+	TaskStatus          string
+	TaskBufs            string
+	Friends             string
+	Blacklist           string
+	Achievements        string
+	Titles              string
+	TeamInfo            string
+	StudentIDs          string
+	RoomID              int64
+	Fitments            string
+	NonoInfo            string
+	Mailbox             string
 }
 
 type Item struct {
@@ -110,11 +115,11 @@ type ConfigVersion struct {
 }
 
 type AuditLog struct {
-	ID        int64
-	Operator  string
-	Action    string
-	Resource  string
+	ID         int64
+	Operator   string
+	Action     string
+	Resource   string
 	ResourceID string
-	Detail    string
-	CreatedAt int64
+	Detail     string
+	CreatedAt  int64
 }

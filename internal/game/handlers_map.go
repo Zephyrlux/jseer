@@ -312,7 +312,7 @@ func handleGetMoreUserInfo(state *State) gateway.Handler {
 		binary.Write(buf, binary.BigEndian, user.RegTime)
 		binary.Write(buf, binary.BigEndian, user.PetAllNum)
 		binary.Write(buf, binary.BigEndian, pickNonZero(user.PetMaxLev, 100))
-		protocol.WriteFixedString(buf, "", 200)
+		buf.Write(buildAchievementBytes(user.Achievements))
 		binary.Write(buf, binary.BigEndian, user.GraduationCount)
 		binary.Write(buf, binary.BigEndian, user.MonKingWin)
 		binary.Write(buf, binary.BigEndian, uint32(0)) // messWin

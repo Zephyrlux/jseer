@@ -110,6 +110,18 @@ func handleLoginIn(deps *Deps, state *State) gateway.Handler {
 		}
 		body := buildLoginResponse(user)
 		ctx.Server.SendResponse(ctx.Conn, 1001, ctx.UserID, body)
+		if user.Nono.SuperNono > 0 {
+			vipBuf := new(bytes.Buffer)
+			binary.Write(vipBuf, binary.BigEndian, ctx.UserID)
+			binary.Write(vipBuf, binary.BigEndian, uint32(2))
+			binary.Write(vipBuf, binary.BigEndian, user.Nono.AutoCharge)
+			endTime := user.Nono.VipEndTime
+			if endTime == 0 {
+				endTime = 0x7FFFFFFF
+			}
+			binary.Write(vipBuf, binary.BigEndian, endTime)
+			ctx.Server.SendResponse(ctx.Conn, 8006, ctx.UserID, vipBuf.Bytes())
+		}
 		if deps != nil && deps.Logger != nil {
 			deps.Logger.Info("LOGIN_IN response", zap.Uint32("uid", ctx.UserID))
 		}

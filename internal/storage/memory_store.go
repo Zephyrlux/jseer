@@ -37,6 +37,16 @@ func (s *memoryStore) Ping(ctx context.Context) error { return nil }
 
 func (s *memoryStore) Close() error { return nil }
 
+func (s *memoryStore) CreateAuditLog(ctx context.Context, in *AuditLog) (*AuditLog, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	copy := *in
+	copy.ID = time.Now().UnixNano()
+	copy.CreatedAt = time.Now().Unix()
+	s.audit = append(s.audit, &copy)
+	return &copy, nil
+}
+
 func (s *memoryStore) GetAccountByEmail(ctx context.Context, email string) (*Account, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()

@@ -10,44 +10,45 @@ import (
 )
 
 func registerNonoHandlers(s *gateway.Server, deps *Deps, state *State) {
-	s.Register(9001, handleNonoOpen(state))
-	s.Register(9002, handleNonoChangeName(state))
+	s.Register(9001, handleNonoOpen(deps, state))
+	s.Register(9002, handleNonoChangeName(deps, state))
 	s.Register(9003, handleNonoInfo(state))
 	s.Register(9004, handleNonoChipMixture())
-	s.Register(9007, handleNonoCure(state))
+	s.Register(9007, handleNonoCure(deps, state))
 	s.Register(9008, handleNonoExpadm())
 	s.Register(9010, handleNonoImplementTool())
-	s.Register(9012, handleNonoChangeColor(state))
-	s.Register(9013, handleNonoPlay(state))
-	s.Register(9014, handleNonoCloseOpen(state))
+	s.Register(9012, handleNonoChangeColor(deps, state))
+	s.Register(9013, handleNonoPlay(deps, state))
+	s.Register(9014, handleNonoCloseOpen(deps, state))
 	s.Register(9015, handleNonoExeList())
-	s.Register(9016, handleNonoCharge(state))
+	s.Register(9016, handleNonoCharge(deps, state))
 	s.Register(9017, handleNonoStartExe())
 	s.Register(9018, handleNonoEndExe())
-	s.Register(9019, handleNonoFollowOrHoom(state))
-	s.Register(9020, handleNonoOpenSuper(state))
+	s.Register(9019, handleNonoFollowOrHoom(deps, state))
+	s.Register(9020, handleNonoOpenSuper(deps, state))
 	s.Register(9021, handleNonoHelpExp())
 	s.Register(9022, handleNonoMateChange())
 	s.Register(9023, handleNonoGetChip())
-	s.Register(9024, handleNonoAddEnergyMate(state))
+	s.Register(9024, handleNonoAddEnergyMate(deps, state))
 	s.Register(9025, handleGetDiamond())
-	s.Register(9026, handleNonoAddExp())
-	s.Register(9027, handleNonoIsInfo())
-	s.Register(80001, handleNieoLogin(state))
+	s.Register(9026, handleNonoAddExp(deps, state))
+	s.Register(9027, handleNonoIsInfo(deps, state))
+	s.Register(80001, handleNieoLogin(deps, state))
 }
 
-func handleNonoOpen(state *State) gateway.Handler {
+func handleNonoOpen(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		user := state.GetOrCreateUser(ctx.UserID)
 		user.Nono.HasNono = true
 		user.Nono.Flag = 1
+		savePlayer(deps, ctx.UserID, user)
 		buf := new(bytes.Buffer)
 		binary.Write(buf, binary.BigEndian, uint32(0))
 		ctx.Server.SendResponse(ctx.Conn, 9001, ctx.UserID, buf.Bytes())
 	}
 }
 
-func handleNonoChangeName(state *State) gateway.Handler {
+func handleNonoChangeName(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		reader := NewReader(ctx.Body)
 		name := reader.ReadFixedString(16)
@@ -56,6 +57,7 @@ func handleNonoChangeName(state *State) gateway.Handler {
 		}
 		user := state.GetOrCreateUser(ctx.UserID)
 		user.Nono.Nick = name
+		savePlayer(deps, ctx.UserID, user)
 		ctx.Server.SendResponse(ctx.Conn, 9002, ctx.UserID, []byte{})
 	}
 }
@@ -103,13 +105,14 @@ func handleNonoChipMixture() gateway.Handler {
 	}
 }
 
-func handleNonoCure(state *State) gateway.Handler {
+func handleNonoCure(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		user := state.GetOrCreateUser(ctx.UserID)
 		if user.Nono.MaxHP == 0 {
 			user.Nono.MaxHP = 10000
 		}
 		user.Nono.HP = user.Nono.MaxHP
+		savePlayer(deps, ctx.UserID, user)
 		buf := new(bytes.Buffer)
 		binary.Write(buf, binary.BigEndian, uint32(0))
 		ctx.Server.SendResponse(ctx.Conn, 9007, ctx.UserID, buf.Bytes())
@@ -132,7 +135,7 @@ func handleNonoImplementTool() gateway.Handler {
 	}
 }
 
-func handleNonoChangeColor(state *State) gateway.Handler {
+func handleNonoChangeColor(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		reader := NewReader(ctx.Body)
 		color := reader.ReadUint32BE()
@@ -141,11 +144,12 @@ func handleNonoChangeColor(state *State) gateway.Handler {
 		}
 		user := state.GetOrCreateUser(ctx.UserID)
 		user.Nono.Color = color
+		savePlayer(deps, ctx.UserID, user)
 		ctx.Server.SendResponse(ctx.Conn, 9012, ctx.UserID, []byte{})
 	}
 }
 
-func handleNonoPlay(state *State) gateway.Handler {
+func handleNonoPlay(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		user := state.GetOrCreateUser(ctx.UserID)
 		n := &user.Nono
@@ -165,16 +169,18 @@ func handleNonoPlay(state *State) gateway.Handler {
 		protocol.WriteUint16BE(buf, n.AI)
 		binary.Write(buf, binary.BigEndian, n.Mate)
 		binary.Write(buf, binary.BigEndian, n.IQ)
+		savePlayer(deps, ctx.UserID, user)
 		ctx.Server.SendResponse(ctx.Conn, 9013, ctx.UserID, buf.Bytes())
 	}
 }
 
-func handleNonoCloseOpen(state *State) gateway.Handler {
+func handleNonoCloseOpen(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		reader := NewReader(ctx.Body)
 		action := reader.ReadUint32BE()
 		user := state.GetOrCreateUser(ctx.UserID)
 		user.Nono.State = action
+		savePlayer(deps, ctx.UserID, user)
 		ctx.Server.SendResponse(ctx.Conn, 9014, ctx.UserID, []byte{})
 	}
 }
@@ -187,7 +193,7 @@ func handleNonoExeList() gateway.Handler {
 	}
 }
 
-func handleNonoCharge(state *State) gateway.Handler {
+func handleNonoCharge(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		user := state.GetOrCreateUser(ctx.UserID)
 		if user.Nono.SuperEnergy < 99999 {
@@ -196,6 +202,7 @@ func handleNonoCharge(state *State) gateway.Handler {
 				user.Nono.SuperEnergy = 99999
 			}
 		}
+		savePlayer(deps, ctx.UserID, user)
 		ctx.Server.SendResponse(ctx.Conn, 9016, ctx.UserID, []byte{})
 	}
 }
@@ -212,12 +219,13 @@ func handleNonoEndExe() gateway.Handler {
 	}
 }
 
-func handleNonoFollowOrHoom(state *State) gateway.Handler {
+func handleNonoFollowOrHoom(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		reader := NewReader(ctx.Body)
 		action := reader.ReadUint32BE()
 		user := state.GetOrCreateUser(ctx.UserID)
 		user.NonoFollowing = action == 1
+		savePlayer(deps, ctx.UserID, user)
 		buf := new(bytes.Buffer)
 		binary.Write(buf, binary.BigEndian, ctx.UserID)
 		stage := user.Nono.SuperStage
@@ -241,7 +249,7 @@ func handleNonoFollowOrHoom(state *State) gateway.Handler {
 	}
 }
 
-func handleNonoOpenSuper(state *State) gateway.Handler {
+func handleNonoOpenSuper(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		user := state.GetOrCreateUser(ctx.UserID)
 		user.Nono.SuperNono = 1
@@ -251,6 +259,7 @@ func handleNonoOpenSuper(state *State) gateway.Handler {
 		if user.Nono.SuperStage == 0 {
 			user.Nono.SuperStage = 1
 		}
+		savePlayer(deps, ctx.UserID, user)
 		ctx.Server.SendResponse(ctx.Conn, 9020, ctx.UserID, []byte{})
 	}
 }
@@ -285,7 +294,7 @@ func handleNonoGetChip() gateway.Handler {
 	}
 }
 
-func handleNonoAddEnergyMate(state *State) gateway.Handler {
+func handleNonoAddEnergyMate(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		user := state.GetOrCreateUser(ctx.UserID)
 		if user.Nono.Power < 100000 {
@@ -300,6 +309,7 @@ func handleNonoAddEnergyMate(state *State) gateway.Handler {
 				user.Nono.Mate = 100000
 			}
 		}
+		savePlayer(deps, ctx.UserID, user)
 		ctx.Server.SendResponse(ctx.Conn, 9024, ctx.UserID, []byte{})
 	}
 }
@@ -312,21 +322,33 @@ func handleGetDiamond() gateway.Handler {
 	}
 }
 
-func handleNonoAddExp() gateway.Handler {
+func handleNonoAddExp(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
+		user := state.GetOrCreateUser(ctx.UserID)
+		if user.Nono.SuperLevel < 100 {
+			user.Nono.SuperLevel++
+		}
+		savePlayer(deps, ctx.UserID, user)
 		ctx.Server.SendResponse(ctx.Conn, 9026, ctx.UserID, []byte{})
 	}
 }
 
-func handleNonoIsInfo() gateway.Handler {
+func handleNonoIsInfo(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
+		user := state.GetOrCreateUser(ctx.UserID)
+		n := &user.Nono
+		now := uint32(time.Now().Unix())
+		if n.VipEndTime > 0 && n.VipEndTime < now {
+			n.SuperNono = 0
+		}
+		savePlayer(deps, ctx.UserID, user)
 		buf := new(bytes.Buffer)
 		binary.Write(buf, binary.BigEndian, uint32(1))
 		ctx.Server.SendResponse(ctx.Conn, 9027, ctx.UserID, buf.Bytes())
 	}
 }
 
-func handleNieoLogin(state *State) gateway.Handler {
+func handleNieoLogin(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		user := state.GetOrCreateUser(ctx.UserID)
 		n := &user.Nono
@@ -356,6 +378,7 @@ func handleNieoLogin(state *State) gateway.Handler {
 			binary.Write(vipBuf, binary.BigEndian, endTime)
 			ctx.Server.SendResponse(ctx.Conn, 8006, ctx.UserID, vipBuf.Bytes())
 		}
+		savePlayer(deps, ctx.UserID, user)
 
 		statusBuf := new(bytes.Buffer)
 		binary.Write(statusBuf, binary.BigEndian, uint32(0))

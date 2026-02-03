@@ -49,6 +49,16 @@ func syncUserFromPlayer(userID uint32, u *User, p *storage.Player) *User {
 	} else if u.Blacklist == nil {
 		u.Blacklist = make([]uint32, 0)
 	}
+	if p.Achievements != "" {
+		u.Achievements = decodeUint32List(p.Achievements)
+	} else if u.Achievements == nil {
+		u.Achievements = make([]uint32, 0)
+	}
+	if p.Titles != "" {
+		u.Titles = decodeUint32List(p.Titles)
+	} else if u.Titles == nil {
+		u.Titles = make([]uint32, 0)
+	}
 	if p.TeamInfo != "" {
 		u.Team = decodeTeamInfo(p.TeamInfo)
 	}
@@ -62,6 +72,16 @@ func syncUserFromPlayer(userID uint32, u *User, p *storage.Player) *User {
 	}
 	if p.Fitments != "" {
 		u.Fitments = decodeFitments(p.Fitments)
+	}
+	if p.NonoInfo != "" {
+		if n := decodeNonoInfo(p.NonoInfo); n != nil {
+			u.Nono = *n
+		}
+	}
+	if p.Mailbox != "" {
+		u.Mailbox = decodeMailbox(p.Mailbox)
+	} else if u.Mailbox == nil {
+		u.Mailbox = make([]Mail, 0)
 	}
 	u.CurrentPetID = uint32(p.CurrentPetID)
 	u.CatchID = uint32(p.CurrentPetCatchTime)
@@ -98,10 +118,14 @@ func buildPlayerUpdate(u *User, accountID int64) *storage.Player {
 		TaskBufs:            encodeTaskBufs(u.TaskBufs),
 		Friends:             encodeFriends(u.Friends),
 		Blacklist:           encodeBlacklist(u.Blacklist),
+		Achievements:        encodeUint32List(u.Achievements),
+		Titles:              encodeUint32List(u.Titles),
 		TeamInfo:            encodeTeamInfo(u.Team),
 		StudentIDs:          encodeStudentIDs(u.StudentIDs),
 		RoomID:              int64(u.RoomID),
 		Fitments:            encodeFitments(u.Fitments),
+		NonoInfo:            encodeNonoInfo(u.Nono),
+		Mailbox:             encodeMailbox(u.Mailbox),
 		CurrentPetID:        int64(u.CurrentPetID),
 		CurrentPetCatchTime: int64(u.CatchID),
 		CurrentPetDV:        int64(u.PetDV),

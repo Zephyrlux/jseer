@@ -29,6 +29,16 @@ type FriendInfo struct {
 	TimePoke uint32
 }
 
+type Mail struct {
+	ID         uint32
+	SenderID   uint32
+	SenderName string
+	Title      string
+	Content    string
+	CreatedAt  uint32
+	Read       bool
+}
+
 type Pet struct {
 	ID        uint32
 	CatchTime uint32
@@ -41,78 +51,78 @@ type Pet struct {
 }
 
 type NonoInfo struct {
-	HasNono    bool
-	Flag       uint32
-	State      uint32
-	Color      uint32
-	SuperNono  uint32
-	VipStage   uint32
-	VipLevel   uint32
-	VipValue   uint32
-	AutoCharge uint32
-	VipEndTime uint32
-	Nick       string
+	HasNono       bool
+	Flag          uint32
+	State         uint32
+	Color         uint32
+	SuperNono     uint32
+	VipStage      uint32
+	VipLevel      uint32
+	VipValue      uint32
+	AutoCharge    uint32
+	VipEndTime    uint32
+	Nick          string
 	FreshManBonus uint32
 	SuperEnergy   uint32
 	SuperLevel    uint32
 	SuperStage    uint32
-	Power      uint32
-	Mate       uint32
-	IQ         uint32
-	AI         uint16
-	HP         uint32
-	MaxHP      uint32
-	Energy     uint32
-	Birth      uint32
-	ChargeTime uint32
-	Expire     uint32
-	Chip       uint32
-	Grow       uint32
-	Func       [20]byte
+	Power         uint32
+	Mate          uint32
+	IQ            uint32
+	AI            uint16
+	HP            uint32
+	MaxHP         uint32
+	Energy        uint32
+	Birth         uint32
+	ChargeTime    uint32
+	Expire        uint32
+	Chip          uint32
+	Grow          uint32
+	Func          [20]byte
 }
 
 type TeamInfo struct {
-	ID               uint32
-	Priv             uint32
-	SuperCore        uint32
-	IsShow           bool
-	AllContribution  uint32
+	ID                uint32
+	Priv              uint32
+	SuperCore         uint32
+	IsShow            bool
+	AllContribution   uint32
 	CanExContribution uint32
-	CoreCount        uint32
-	Name             string
-	MemberCount      uint32
-	Interest         uint32
-	JoinFlag         uint32
-	Exp              uint32
-	Score            uint32
-	Slogan           string
-	Notice           string
-	LogoBg           uint16
-	LogoIcon         uint16
-	LogoColor        uint16
-	TxtColor         uint16
-	LogoWord         string
+	CoreCount         uint32
+	Name              string
+	MemberCount       uint32
+	Interest          uint32
+	JoinFlag          uint32
+	Exp               uint32
+	Score             uint32
+	Slogan            string
+	Notice            string
+	LogoBg            uint16
+	LogoIcon          uint16
+	LogoColor         uint16
+	TxtColor          uint16
+	LogoWord          string
 }
 
 type User struct {
-	PlayerID int64
-	ID        uint32
-	Nick      string
-	Level     int
-	RegTime   uint32
-	Color     uint32
-	Texture   uint32
-	Energy    uint32
-	Coins     uint32
-	Gold      uint32
+	PlayerID   int64
+	ID         uint32
+	Nick       string
+	Level      int
+	RegTime    uint32
+	Color      uint32
+	Texture    uint32
+	Energy     uint32
+	Coins      uint32
+	Gold       uint32
 	FightBadge uint32
-	MapID     uint32
-	MapType   uint32
-	PosX      uint32
-	PosY      uint32
-	TimeToday uint32
-	TimeLimit uint32
-	LoginCnt  uint32
+	MapID      uint32
+	MapType    uint32
+	PosX       uint32
+	PosY       uint32
+	TimeToday  uint32
+	TimeLimit  uint32
+	LoginCnt   uint32
 
 	VipFlags uint32
 	VipStage uint32
@@ -143,28 +153,31 @@ type User struct {
 	ExpireTm        uint32
 	FuseTimes       uint32
 
-	FlyMode       uint32
-	CurrentPetID  uint32
-	CatchID       uint32
-	PetDV         uint32
-	Clothes       []Cloth
-	Pets          []Pet
-	Friends       []FriendInfo
-	Blacklist     []uint32
-	CurTitle      uint32
-	TaskStatus    map[int]byte
-	TaskBufs      map[int]map[int]uint32
-	Nono          NonoInfo
-	Team          TeamInfo
+	FlyMode      uint32
+	CurrentPetID uint32
+	CatchID      uint32
+	PetDV        uint32
+	Clothes      []Cloth
+	Pets         []Pet
+	Friends      []FriendInfo
+	Blacklist    []uint32
+	Achievements []uint32
+	Titles       []uint32
+	CurTitle     uint32
+	TaskStatus   map[int]byte
+	TaskBufs     map[int]map[int]uint32
+	Nono         NonoInfo
+	Team         TeamInfo
+	Mailbox      []Mail
 
-	LastMapID uint32
+	LastMapID     uint32
 	NonoFollowing bool
-	ExpPool   uint32
-	Items     map[int]*ItemInfo
-	Fight     *FightState
-	InFight   bool
-	RoomID    uint32
-	Fitments  []Fitment
+	ExpPool       uint32
+	Items         map[int]*ItemInfo
+	Fight         *FightState
+	InFight       bool
+	RoomID        uint32
+	Fitments      []Fitment
 }
 
 type State struct {
@@ -195,6 +208,12 @@ func (s *State) GetConn(userID uint32) (net.Conn, bool) {
 	return conn, ok
 }
 
+func (s *State) OnlineCount() int {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	return len(s.conns)
+}
+
 func (s *State) GetOrCreateUser(userID uint32) *User {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -203,39 +222,42 @@ func (s *State) GetOrCreateUser(userID uint32) *User {
 	}
 	now := uint32(time.Now().Unix())
 	u := &User{
-		ID:        userID,
-		Nick:      "Seer" + itoa(userID),
-		RegTime:   now - 86400*365,
-		Color:     0x66CCFF,
-		Texture:   1,
-		Energy:    100,
-		Coins:     2000,
-		MapID:     1,
-		PosX:      300,
-		PosY:      270,
-		TimeLimit: 86400,
-		LoginCnt:  0,
-		PetDV:     31,
-		TaskStatus: make(map[int]byte),
-		TaskBufs:  make(map[int]map[int]uint32),
-		Items:     make(map[int]*ItemInfo),
-		Friends:   make([]FriendInfo, 0),
-		Blacklist: make([]uint32, 0),
-		StudentIDs: make([]uint32, 0),
+		ID:           userID,
+		Nick:         "Seer" + itoa(userID),
+		RegTime:      now - 86400*365,
+		Color:        0x66CCFF,
+		Texture:      1,
+		Energy:       100,
+		Coins:        2000,
+		MapID:        1,
+		PosX:         300,
+		PosY:         270,
+		TimeLimit:    86400,
+		LoginCnt:     0,
+		PetDV:        31,
+		TaskStatus:   make(map[int]byte),
+		TaskBufs:     make(map[int]map[int]uint32),
+		Items:        make(map[int]*ItemInfo),
+		Friends:      make([]FriendInfo, 0),
+		Blacklist:    make([]uint32, 0),
+		Achievements: make([]uint32, 0),
+		Titles:       make([]uint32, 0),
+		Mailbox:      make([]Mail, 0),
+		StudentIDs:   make([]uint32, 0),
 		Nono: NonoInfo{
-			HasNono: true,
-			Color: 0xFFFFFF,
-			Flag:  1,
-			State: 0,
-			Nick:  "NoNo",
-			Power: 10000,
-			Mate:  10000,
-			AI:    0,
-			IQ:    0,
-			HP:    10000,
-			MaxHP: 10000,
-			Energy: 100,
-			Birth: now,
+			HasNono:    true,
+			Color:      0xFFFFFF,
+			Flag:       1,
+			State:      0,
+			Nick:       "NoNo",
+			Power:      10000,
+			Mate:       10000,
+			AI:         0,
+			IQ:         0,
+			HP:         10000,
+			MaxHP:      10000,
+			Energy:     100,
+			Birth:      now,
 			SuperStage: 1,
 		},
 	}

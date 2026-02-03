@@ -237,7 +237,7 @@ func buildLoginResponse(u *User) []byte {
 
 	// 15. Title & achievements
 	binary.Write(buf, binary.BigEndian, u.CurTitle)
-	protocol.WriteFixedString(buf, "", 200)
+	buf.Write(buildAchievementBytes(u.Achievements))
 
 	return buf.Bytes()
 }
@@ -254,4 +254,15 @@ func pickNonZero(v uint32, fallback uint32) uint32 {
 		return fallback
 	}
 	return v
+}
+
+func buildAchievementBytes(list []uint32) []byte {
+	out := make([]byte, 200)
+	for _, id := range list {
+		if id == 0 || id > 200 {
+			continue
+		}
+		out[id-1] = 1
+	}
+	return out
 }

@@ -14,22 +14,22 @@ func registerTeamHandlers(s *gateway.Server, deps *Deps, state *State) {
 	s.Register(2912, handleTeamAnswer())
 	s.Register(2913, handleTeamInform())
 	s.Register(2914, handleTeamQuit(deps, state))
-	s.Register(2915, handleTeamStub4Zero())
-	s.Register(2916, handleTeamStub4Zero())
+	s.Register(2915, handleTeamChangeAdmin())
+	s.Register(2916, handleTeamDeleteMember(deps, state))
 	s.Register(2917, handleTeamGetInfo(state))
 	s.Register(2918, handleTeamGetMemberList())
-	s.Register(2920, handleTeamStub4Zero())
-	s.Register(2921, handleTeamStub4Zero())
-	s.Register(2922, handleTeamStub4Zero())
+	s.Register(2920, handleTeamSetJoinFlag(deps, state))
+	s.Register(2921, handleTeamSetSlogan(deps, state))
+	s.Register(2922, handleTeamModifyLogo(deps, state))
 	s.Register(2923, handleTeamStub4Zero())
 	s.Register(2924, handleTeamStub4Zero())
 	s.Register(2925, handleTeamStub4Zero())
 	s.Register(2926, handleTeamStub4Zero())
-	s.Register(2927, handleTeamStub4Zero())
+	s.Register(2927, handleTeamShowLogo(deps, state))
 	s.Register(2928, handleTeamGetLogoInfo())
 	s.Register(2929, handleTeamChat())
 	s.Register(2930, handleTeamStub4Zero())
-	s.Register(2931, handleTeamStub4Zero())
+	s.Register(2931, handleTeamSetNotice(deps, state))
 	s.Register(2932, handleTeamStub4Zero())
 	s.Register(2933, handleTeamStub4Zero())
 	s.Register(2934, handleTeamStub4Zero())
@@ -172,6 +172,102 @@ func handleTeamGetLogoInfo() gateway.Handler {
 func handleTeamChat() gateway.Handler {
 	return func(ctx *gateway.Context) {
 		ctx.Server.SendResponse(ctx.Conn, 2929, ctx.UserID, []byte{})
+	}
+}
+
+func handleTeamChangeAdmin() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2915, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleTeamDeleteMember(deps *Deps, state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		targetID := reader.ReadUint32BE()
+		if targetID == ctx.UserID {
+			user := state.GetOrCreateUser(ctx.UserID)
+			user.Team = TeamInfo{}
+			savePlayer(deps, ctx.UserID, user)
+		}
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, targetID)
+		ctx.Server.SendResponse(ctx.Conn, 2916, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleTeamSetJoinFlag(deps *Deps, state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		joinFlag := reader.ReadUint32BE()
+		user := state.GetOrCreateUser(ctx.UserID)
+		user.Team.JoinFlag = joinFlag
+		savePlayer(deps, ctx.UserID, user)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2920, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleTeamSetSlogan(deps *Deps, state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		slogan := reader.ReadFixedString(60)
+		user := state.GetOrCreateUser(ctx.UserID)
+		user.Team.Slogan = slogan
+		savePlayer(deps, ctx.UserID, user)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2921, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleTeamModifyLogo(deps *Deps, state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		logoBg := reader.ReadUint16BE()
+		logoIcon := reader.ReadUint16BE()
+		logoColor := reader.ReadUint16BE()
+		txtColor := reader.ReadUint16BE()
+		logoWord := reader.ReadFixedString(4)
+		user := state.GetOrCreateUser(ctx.UserID)
+		user.Team.LogoBg = logoBg
+		user.Team.LogoIcon = logoIcon
+		user.Team.LogoColor = logoColor
+		user.Team.TxtColor = txtColor
+		user.Team.LogoWord = logoWord
+		savePlayer(deps, ctx.UserID, user)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2922, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleTeamShowLogo(deps *Deps, state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		flag := reader.ReadUint32BE()
+		user := state.GetOrCreateUser(ctx.UserID)
+		user.Team.IsShow = flag != 0
+		savePlayer(deps, ctx.UserID, user)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2927, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleTeamSetNotice(deps *Deps, state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		notice := reader.ReadFixedString(60)
+		user := state.GetOrCreateUser(ctx.UserID)
+		user.Team.Notice = notice
+		savePlayer(deps, ctx.UserID, user)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2931, ctx.UserID, buf.Bytes())
 	}
 }
 
