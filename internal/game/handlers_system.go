@@ -90,6 +90,7 @@ func handleLoginIn(deps *Deps, state *State) gateway.Handler {
 				}
 			}
 		}
+		applySpawnOverride(deps, user, user.LoginCnt == 0)
 		if user.LoginCnt == 0 {
 			user.LoginCnt = 1
 		} else {
@@ -119,6 +120,31 @@ func handleLoginIn(deps *Deps, state *State) gateway.Handler {
 	}
 }
 
+func applySpawnOverride(deps *Deps, user *User, isFirstLogin bool) {
+	if deps == nil || user == nil {
+		return
+	}
+	if deps.SpawnMap == 0 {
+		deps.SpawnMap = 1
+	}
+	force := deps.ForceSpawn || isFirstLogin
+	if force || user.MapID == 0 {
+		user.MapID = deps.SpawnMap
+		if deps.SpawnX > 0 {
+			user.PosX = deps.SpawnX
+		}
+		if deps.SpawnY > 0 {
+			user.PosY = deps.SpawnY
+		}
+		if user.PosX == 0 {
+			user.PosX = 300
+		}
+		if user.PosY == 0 {
+			user.PosY = 270
+		}
+	}
+}
+
 func pushInitialMapEnter(deps *Deps, state *State, ctx *gateway.Context) {
 	if state == nil {
 		return
@@ -129,11 +155,24 @@ func pushInitialMapEnter(deps *Deps, state *State, ctx *gateway.Context) {
 	if mapID == 0 {
 		mapID = cfg.Player.MapID
 	}
+	if deps != nil && deps.SpawnMap != 0 {
+		if deps.ForceSpawn || user.LoginCnt <= 1 {
+			mapID = deps.SpawnMap
+		}
+	}
 	if mapID == 0 {
 		mapID = 1
 	}
 	x := user.PosX
 	y := user.PosY
+	if deps != nil && (deps.ForceSpawn || user.LoginCnt <= 1) {
+		if deps.SpawnX > 0 {
+			x = deps.SpawnX
+		}
+		if deps.SpawnY > 0 {
+			y = deps.SpawnY
+		}
+	}
 	if x == 0 && y == 0 {
 		x = cfg.Player.PosX
 		y = cfg.Player.PosY

@@ -31,6 +31,10 @@ game:
   public_ip: "127.0.0.1"
   port: 5000
   server_id: 1
+  force_spawn: true
+  spawn_map: 1
+  spawn_x: 300
+  spawn_y: 270
 
 http:
   address: ":32400"

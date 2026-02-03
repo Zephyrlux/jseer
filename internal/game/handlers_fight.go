@@ -54,6 +54,13 @@ func handleChallengeBoss(state *State) gateway.Handler {
 		if user.CurrentPetID == 0 {
 			user.CurrentPetID = player.ID
 		}
+		player.CatchTime = ensureCatchTime(player.CatchTime, player.ID)
+		if user.CatchID == 0 {
+			user.CatchID = player.CatchTime
+		}
+		if user.CurrentPetID == 0 {
+			user.CurrentPetID = player.ID
+		}
 		bossLevel := 1
 		bossHP := 0
 		bossRewardID := 0
@@ -117,6 +124,7 @@ func handleChallengeBoss(state *State) gateway.Handler {
 		binary.Write(buf, binary.BigEndian, uint32(1))
 		buf.Write(buildSimpleFightPetInfo(int(enemy.ID), int(enemy.Level), enemy.CurrentHP, enemy.Stats.MaxHP, int(enemy.CatchTime), enemy.Skills, 301, int(enemy.ID)))
 		ctx.Server.SendResponse(ctx.Conn, 2503, ctx.UserID, buf.Bytes())
+		sendPveFightStart(ctx, user, user.Fight)
 	}
 }
 
@@ -147,6 +155,7 @@ func handleReadyToFight(state *State) gateway.Handler {
 		buf.Write(buildFightPetInfo(ctx.UserID, f.PlayerPetID, f.PlayerCatch, f.PlayerHP, f.PlayerMaxHP, f.PlayerLevel, 0))
 		buf.Write(buildFightPetInfo(0, f.EnemyPetID, f.EnemyCatch, f.EnemyHP, f.EnemyMaxHP, f.EnemyLevel, 1))
 		ctx.Server.SendResponse(ctx.Conn, 2504, ctx.UserID, buf.Bytes())
+		sendFightPetInfo(ctx, user, f)
 	}
 }
 
@@ -721,6 +730,7 @@ func handleFightNpcMonster(state *State) gateway.Handler {
 			UserID:       ctx.UserID,
 			PlayerPetID:  player.ID,
 			PlayerLevel:  player.Level,
+			PlayerDV:     player.DV,
 			PlayerHP:     player.CurrentHP,
 			PlayerMaxHP:  player.Stats.MaxHP,
 			PlayerCatch:  player.CatchTime,
@@ -749,6 +759,38 @@ func handleFightNpcMonster(state *State) gateway.Handler {
 		binary.Write(buf, binary.BigEndian, uint32(1))
 		buf.Write(buildSimpleFightPetInfo(int(enemy.ID), int(enemy.Level), enemy.CurrentHP, enemy.Stats.MaxHP, int(enemy.CatchTime), enemy.Skills, int(mapID), int(enemy.ID)))
 		ctx.Server.SendResponse(ctx.Conn, 2503, ctx.UserID, buf.Bytes())
+		sendPveFightStart(ctx, user, user.Fight)
+	}
+}
+
+func sendPveFightStart(ctx *gateway.Context, user *User, f *FightState) {
+	if user == nil || f == nil {
+		return
+	}
+	ensureFightStats(user, f)
+	ensureFightSkillPP(f)
+	ensureFightStatus(f)
+	user.InFight = true
+	buf := new(bytes.Buffer)
+	binary.Write(buf, binary.BigEndian, uint32(0))
+	buf.Write(buildFightPetInfo(ctx.UserID, f.PlayerPetID, f.PlayerCatch, f.PlayerHP, f.PlayerMaxHP, f.PlayerLevel, 0))
+	buf.Write(buildFightPetInfo(0, f.EnemyPetID, f.EnemyCatch, f.EnemyHP, f.EnemyMaxHP, f.EnemyLevel, 1))
+	ctx.Server.SendResponse(ctx.Conn, 2504, ctx.UserID, buf.Bytes())
+	sendFightPetInfo(ctx, user, f)
+}
+
+func sendFightPetInfo(ctx *gateway.Context, user *User, f *FightState) {
+	if ctx == nil || user == nil || f == nil {
+		return
+	}
+	var body []byte
+	if pet := findPetByCatchTime(user, f.PlayerCatch); pet != nil {
+		body = buildFullPetInfo(int(pet.ID), int(pet.CatchTime), int(pet.Level), int(pet.DV), pet.Exp, pet.Skills)
+	} else {
+		body = buildFullPetInfo(int(f.PlayerPetID), int(f.PlayerCatch), int(f.PlayerLevel), int(f.PlayerDV), 0, f.PlayerSkills)
+	}
+	if len(body) > 0 {
+		ctx.Server.SendResponse(ctx.Conn, 2301, ctx.UserID, body)
 	}
 }
 
@@ -977,16 +1019,11 @@ func buildSimpleFightPetInfo(petID int, level int, hp int, maxHP int, catchTime 
 		binary.Write(buf, binary.BigEndian, uint32(pp))
 	}
 	binary.Write(buf, binary.BigEndian, uint32(catchTime))
-	if catchMap <= 0 {
-		catchMap = 301
-	}
-	binary.Write(buf, binary.BigEndian, uint32(catchMap))
+	// 对齐 Lua：catchMap/catchRect/catchLevel/skinID 默认 0
 	binary.Write(buf, binary.BigEndian, uint32(0))
-	binary.Write(buf, binary.BigEndian, uint32(level))
-	if skinID == 0 {
-		skinID = petID
-	}
-	binary.Write(buf, binary.BigEndian, uint32(skinID))
+	binary.Write(buf, binary.BigEndian, uint32(0))
+	binary.Write(buf, binary.BigEndian, uint32(0))
+	binary.Write(buf, binary.BigEndian, uint32(0))
 	return buf.Bytes()
 }
 

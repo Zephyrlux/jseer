@@ -36,10 +36,14 @@ func main() {
 	gw := gateway.New(cfg.Gateway, logger)
 	ops.StartAdminServer(cfg.Gateway.AdminAddress, cfg.Gateway.AdminPprof, logger)
 	game.RegisterHandlers(gw, &game.Deps{
-		Logger:   logger,
-		GameIP:   cfg.Game.PublicIP,
-		GamePort: cfg.Game.Port,
-		Store:    store,
+		Logger:     logger,
+		GameIP:     cfg.Game.PublicIP,
+		GamePort:   cfg.Game.Port,
+		Store:      store,
+		SpawnMap:   uint32(cfg.Game.SpawnMap),
+		SpawnX:     uint32(cfg.Game.SpawnX),
+		SpawnY:     uint32(cfg.Game.SpawnY),
+		ForceSpawn: cfg.Game.ForceSpawn,
 	})
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
