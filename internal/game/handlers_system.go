@@ -22,9 +22,17 @@ func registerSystemHandlers(s *gateway.Server, deps *Deps, state *State) {
 	s.Register(1004, handleMapHot(state))
 	s.Register(1005, handleGetImageAddress(deps))
 	s.Register(1006, handleGetSessionKey())
+	s.Register(1007, handleReadCount())
+	s.Register(1101, handleMoneyCheckPassword())
 	s.Register(1102, handleMoneyBuyProduct(state))
+	s.Register(1103, handleMoneyCheckRemain(state))
 	s.Register(1104, handleGoldBuyProduct(state))
+	s.Register(1105, handleGoldCheckRemain(state))
 	s.Register(1106, handleGoldOnlineCheckRemain(state))
+	s.Register(1108, handleNewYearRedpackets())
+	s.Register(1110, handleGetYuanxiaoGift())
+	s.Register(1111, handleNameplateExchangePet())
+	s.Register(1112, handleGetNameplate())
 }
 
 func handleLoginIn(deps *Deps, state *State) gateway.Handler {
@@ -164,6 +172,22 @@ func handleGetSessionKey() gateway.Handler {
 	}
 }
 
+func handleReadCount() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 1007, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleMoneyCheckPassword() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(1))
+		ctx.Server.SendResponse(ctx.Conn, 1101, ctx.UserID, buf.Bytes())
+	}
+}
+
 func handleMoneyBuyProduct(state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		user := state.GetOrCreateUser(ctx.UserID)
@@ -172,6 +196,15 @@ func handleMoneyBuyProduct(state *State) gateway.Handler {
 		binary.Write(buf, binary.BigEndian, uint32(0))
 		binary.Write(buf, binary.BigEndian, user.Coins*100)
 		ctx.Server.SendResponse(ctx.Conn, 1102, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleMoneyCheckRemain(state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		user := state.GetOrCreateUser(ctx.UserID)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, user.Coins*100)
+		ctx.Server.SendResponse(ctx.Conn, 1103, ctx.UserID, buf.Bytes())
 	}
 }
 
@@ -186,11 +219,48 @@ func handleGoldBuyProduct(state *State) gateway.Handler {
 	}
 }
 
+func handleGoldCheckRemain(state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		user := state.GetOrCreateUser(ctx.UserID)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, user.Gold*100)
+		ctx.Server.SendResponse(ctx.Conn, 1105, ctx.UserID, buf.Bytes())
+	}
+}
+
 func handleGoldOnlineCheckRemain(state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		user := state.GetOrCreateUser(ctx.UserID)
 		buf := new(bytes.Buffer)
 		binary.Write(buf, binary.BigEndian, user.Gold)
 		ctx.Server.SendResponse(ctx.Conn, 1106, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleNewYearRedpackets() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 1108, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleGetYuanxiaoGift() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 1110, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleNameplateExchangePet() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		ctx.Server.SendResponse(ctx.Conn, 1111, ctx.UserID, []byte{})
+	}
+}
+
+func handleGetNameplate() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		ctx.Server.SendResponse(ctx.Conn, 1112, ctx.UserID, []byte{})
 	}
 }

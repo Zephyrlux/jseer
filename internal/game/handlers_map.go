@@ -25,8 +25,14 @@ func registerMapHandlers(s *gateway.Server, deps *Deps, state *State) {
 	s.Register(2102, handleChat(state))
 	s.Register(2103, handleDanceAction(state))
 	s.Register(2104, handleAimat(state))
+	s.Register(2105, handleHitStone())
+	s.Register(2106, handlePrizeOfAtresiaSpace())
+	s.Register(2107, handleTransformUser(state))
+	s.Register(2109, handleAttackBailuen())
+	s.Register(2110, handleGetTimePoke())
 	s.Register(2111, handlePeopleTransform(state))
 	s.Register(2112, handleOnOrOffFlying(deps, state))
+	s.Register(2113, handleRemoveCoins(deps, state))
 }
 
 func handleChangeDoodle(deps *Deps, state *State) gateway.Handler {
@@ -364,6 +370,77 @@ func handleOnOrOffFlying(deps *Deps, state *State) gateway.Handler {
 		} else {
 			ctx.Server.SendResponse(ctx.Conn, 2112, ctx.UserID, buf.Bytes())
 		}
+	}
+}
+
+func handleHitStone() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0)) // bonusID
+		binary.Write(buf, binary.BigEndian, uint32(0)) // petID
+		binary.Write(buf, binary.BigEndian, uint32(0)) // captureTm
+		binary.Write(buf, binary.BigEndian, uint32(0)) // item count
+		ctx.Server.SendResponse(ctx.Conn, 2105, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handlePrizeOfAtresiaSpace() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0)) // bonusID
+		binary.Write(buf, binary.BigEndian, uint32(0)) // petID
+		binary.Write(buf, binary.BigEndian, uint32(0)) // captureTm
+		binary.Write(buf, binary.BigEndian, uint32(0)) // item count
+		ctx.Server.SendResponse(ctx.Conn, 2106, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleTransformUser(state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		targetID := reader.ReadUint32BE()
+		tranID := reader.ReadUint32BE()
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, targetID)
+		binary.Write(buf, binary.BigEndian, tranID)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		resp := protocol.BuildResponse(2108, ctx.UserID, 0, buf.Bytes())
+		user := state.GetOrCreateUser(ctx.UserID)
+		if user.MapID > 0 {
+			state.BroadcastToMap(user.MapID, resp)
+		} else {
+			ctx.Server.SendResponse(ctx.Conn, 2108, ctx.UserID, buf.Bytes())
+		}
+		ctx.Server.SendResponse(ctx.Conn, 2107, ctx.UserID, []byte{})
+	}
+}
+
+func handleAttackBailuen() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		ctx.Server.SendResponse(ctx.Conn, 2109, ctx.UserID, []byte{})
+	}
+}
+
+func handleGetTimePoke() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2110, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleRemoveCoins(deps *Deps, state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		delta := reader.ReadUint32BE()
+		user := state.GetOrCreateUser(ctx.UserID)
+		if delta > 0 && user.Coins >= delta {
+			user.Coins -= delta
+		}
+		savePlayer(deps, ctx.UserID, user)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, user.Coins)
+		ctx.Server.SendResponse(ctx.Conn, 2113, ctx.UserID, buf.Bytes())
 	}
 }
 
