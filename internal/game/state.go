@@ -16,6 +16,11 @@ type ItemInfo struct {
 	ExpireTime uint32
 }
 
+type FriendInfo struct {
+	UserID   uint32
+	TimePoke uint32
+}
+
 type Pet struct {
 	ID        uint32
 	CatchTime uint32
@@ -66,6 +71,14 @@ type TeamInfo struct {
 	AllContribution  uint32
 	CanExContribution uint32
 	CoreCount        uint32
+	Name             string
+	MemberCount      uint32
+	Interest         uint32
+	JoinFlag         uint32
+	Exp              uint32
+	Score            uint32
+	Slogan           string
+	Notice           string
 	LogoBg           uint16
 	LogoIcon         uint16
 	LogoColor        uint16
@@ -83,6 +96,7 @@ type User struct {
 	Texture   uint32
 	Energy    uint32
 	Coins     uint32
+	Gold      uint32
 	FightBadge uint32
 	MapID     uint32
 	MapType   uint32
@@ -97,6 +111,7 @@ type User struct {
 
 	TeacherID       uint32
 	StudentID       uint32
+	StudentIDs      []uint32
 	GraduationCount uint32
 	MaxPuniLv       uint32
 	PetMaxLev       uint32
@@ -126,6 +141,8 @@ type User struct {
 	PetDV         uint32
 	Clothes       []Cloth
 	Pets          []Pet
+	Friends       []FriendInfo
+	Blacklist     []uint32
 	CurTitle      uint32
 	TaskStatus    map[int]byte
 	TaskBufs      map[int]map[int]uint32
@@ -136,6 +153,8 @@ type User struct {
 	NonoFollowing bool
 	ExpPool   uint32
 	Items     map[int]*ItemInfo
+	Fight     *FightState
+	InFight   bool
 }
 
 type State struct {
@@ -190,6 +209,9 @@ func (s *State) GetOrCreateUser(userID uint32) *User {
 		TaskStatus: make(map[int]byte),
 		TaskBufs:  make(map[int]map[int]uint32),
 		Items:     make(map[int]*ItemInfo),
+		Friends:   make([]FriendInfo, 0),
+		Blacklist: make([]uint32, 0),
+		StudentIDs: make([]uint32, 0),
 		Nono: NonoInfo{
 			HasNono: true,
 			Color: 0xFFFFFF,

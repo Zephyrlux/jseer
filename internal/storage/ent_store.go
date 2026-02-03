@@ -94,6 +94,10 @@ func (s *EntStore) CreatePlayer(ctx context.Context, in *Player) (*Player, error
 		SetCurTitle(in.CurTitle).
 		SetTaskStatus(normalizeJSON(in.TaskStatus)).
 		SetTaskBufs(normalizeJSON(in.TaskBufs)).
+		SetFriends(normalizeJSONArray(in.Friends)).
+		SetBlacklist(normalizeJSONArray(in.Blacklist)).
+		SetTeamInfo(normalizeJSON(in.TeamInfo)).
+		SetStudentIDs(normalizeJSONArray(in.StudentIDs)).
 		SetCurrentPetID(in.CurrentPetID).
 		SetCurrentPetCatchTime(in.CurrentPetCatchTime).
 		SetCurrentPetDV(in.CurrentPetDV).
@@ -126,6 +130,10 @@ func (s *EntStore) UpdatePlayer(ctx context.Context, in *Player) (*Player, error
 		SetCurTitle(in.CurTitle).
 		SetTaskStatus(normalizeJSON(in.TaskStatus)).
 		SetTaskBufs(normalizeJSON(in.TaskBufs)).
+		SetFriends(normalizeJSONArray(in.Friends)).
+		SetBlacklist(normalizeJSONArray(in.Blacklist)).
+		SetTeamInfo(normalizeJSON(in.TeamInfo)).
+		SetStudentIDs(normalizeJSONArray(in.StudentIDs)).
 		SetCurrentPetID(in.CurrentPetID).
 		SetCurrentPetCatchTime(in.CurrentPetCatchTime).
 		SetCurrentPetDV(in.CurrentPetDV).
@@ -359,6 +367,13 @@ func normalizeJSON(s string) string {
 	return s
 }
 
+func normalizeJSONArray(s string) string {
+	if s == "" {
+		return "[]"
+	}
+	return s
+}
+
 func mapPlayer(row *ent.Player) *Player {
 	if row == nil {
 		return nil
@@ -386,6 +401,10 @@ func mapPlayer(row *ent.Player) *Player {
 		CurTitle:            row.CurTitle,
 		TaskStatus:          row.TaskStatus,
 		TaskBufs:            row.TaskBufs,
+		Friends:             row.Friends,
+		Blacklist:           row.Blacklist,
+		TeamInfo:            row.TeamInfo,
+		StudentIDs:          row.StudentIDs,
 		CurrentPetID:        row.CurrentPetID,
 		CurrentPetCatchTime: row.CurrentPetCatchTime,
 		CurrentPetDV:        row.CurrentPetDV,

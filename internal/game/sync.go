@@ -14,6 +14,7 @@ func syncUserFromPlayer(userID uint32, u *User, p *storage.Player) *User {
 	u.Nick = p.Nick
 	u.Level = int(p.Level)
 	u.Coins = uint32(p.Coins)
+	u.Gold = uint32(p.Gold)
 	u.MapID = uint32(p.MapID)
 	u.MapType = uint32(p.MapType)
 	u.PosX = uint32(p.PosX)
@@ -38,6 +39,24 @@ func syncUserFromPlayer(userID uint32, u *User, p *storage.Player) *User {
 	} else if u.TaskBufs == nil {
 		u.TaskBufs = make(map[int]map[int]uint32)
 	}
+	if p.Friends != "" {
+		u.Friends = decodeFriends(p.Friends)
+	} else if u.Friends == nil {
+		u.Friends = make([]FriendInfo, 0)
+	}
+	if p.Blacklist != "" {
+		u.Blacklist = decodeBlacklist(p.Blacklist)
+	} else if u.Blacklist == nil {
+		u.Blacklist = make([]uint32, 0)
+	}
+	if p.TeamInfo != "" {
+		u.Team = decodeTeamInfo(p.TeamInfo)
+	}
+	if p.StudentIDs != "" {
+		u.StudentIDs = decodeStudentIDs(p.StudentIDs)
+	} else if u.StudentIDs == nil {
+		u.StudentIDs = make([]uint32, 0)
+	}
 	u.CurrentPetID = uint32(p.CurrentPetID)
 	u.CatchID = uint32(p.CurrentPetCatchTime)
 	u.PetDV = uint32(p.CurrentPetDV)
@@ -54,7 +73,7 @@ func buildPlayerUpdate(u *User, accountID int64) *storage.Player {
 		Nick:                u.Nick,
 		Level:               u.Level,
 		Coins:               int64(u.Coins),
-		Gold:                0,
+		Gold:                int64(u.Gold),
 		MapID:               int(u.MapID),
 		MapType:             int(u.MapType),
 		PosX:                int(u.PosX),
@@ -71,6 +90,10 @@ func buildPlayerUpdate(u *User, accountID int64) *storage.Player {
 		CurTitle:            int64(u.CurTitle),
 		TaskStatus:          encodeTaskStatus(u.TaskStatus),
 		TaskBufs:            encodeTaskBufs(u.TaskBufs),
+		Friends:             encodeFriends(u.Friends),
+		Blacklist:           encodeBlacklist(u.Blacklist),
+		TeamInfo:            encodeTeamInfo(u.Team),
+		StudentIDs:          encodeStudentIDs(u.StudentIDs),
 		CurrentPetID:        int64(u.CurrentPetID),
 		CurrentPetCatchTime: int64(u.CatchID),
 		CurrentPetDV:        int64(u.PetDV),

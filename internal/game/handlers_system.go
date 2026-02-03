@@ -18,6 +18,9 @@ func registerSystemHandlers(s *gateway.Server, deps *Deps, state *State) {
 	s.Register(1002, handleSystemTime())
 	s.Register(1004, handleMapHot(state))
 	s.Register(1005, handleGetImageAddress(deps))
+	s.Register(1102, handleMoneyBuyProduct(state))
+	s.Register(1104, handleGoldBuyProduct(state))
+	s.Register(1106, handleGoldOnlineCheckRemain(state))
 }
 
 func handleLoginIn(deps *Deps, state *State) gateway.Handler {
@@ -141,5 +144,36 @@ func handleGetImageAddress(deps *Deps) gateway.Handler {
 		binary.Write(buf, binary.BigEndian, uint16(80))
 		protocol.WriteFixedString(buf, "", 16)
 		ctx.Server.SendResponse(ctx.Conn, 1005, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleMoneyBuyProduct(state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		user := state.GetOrCreateUser(ctx.UserID)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		binary.Write(buf, binary.BigEndian, user.Coins*100)
+		ctx.Server.SendResponse(ctx.Conn, 1102, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleGoldBuyProduct(state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		user := state.GetOrCreateUser(ctx.UserID)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		binary.Write(buf, binary.BigEndian, user.Gold*100)
+		ctx.Server.SendResponse(ctx.Conn, 1104, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleGoldOnlineCheckRemain(state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		user := state.GetOrCreateUser(ctx.UserID)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, user.Gold)
+		ctx.Server.SendResponse(ctx.Conn, 1106, ctx.UserID, buf.Bytes())
 	}
 }

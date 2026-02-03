@@ -64,6 +64,10 @@ type Player struct {
 	CurrentPetDV        int64
 	TaskStatus string
 	TaskBufs   string
+	Friends    string
+	Blacklist  string
+	TeamInfo   string
+	StudentIDs string
 }
 
 type Item struct {
