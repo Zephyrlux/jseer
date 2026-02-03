@@ -3,6 +3,7 @@ package game
 import (
 	"bytes"
 	"encoding/binary"
+	"sort"
 	"time"
 
 	"jseer/internal/gateway"
@@ -10,10 +11,14 @@ import (
 )
 
 func registerMapHandlers(s *gateway.Server, deps *Deps, state *State) {
+	s.Register(2000, handleOnMapSwitch())
 	s.Register(2001, handleEnterMap(deps, state))
 	s.Register(2002, handleLeaveMap(deps, state))
 	s.Register(2003, handleListMapPlayer(state))
 	s.Register(2004, handleMapOgreList(state))
+	s.Register(2021, handleMapBoss(state))
+	s.Register(2022, handleSpecialPetNote())
+	s.Register(2023, handleOfflineExp(state))
 	s.Register(2051, handleGetSimUserInfo(state))
 	s.Register(2052, handleGetMoreUserInfo(state))
 	s.Register(2053, handleRequestCount(state))
@@ -33,6 +38,73 @@ func registerMapHandlers(s *gateway.Server, deps *Deps, state *State) {
 	s.Register(2111, handlePeopleTransform(state))
 	s.Register(2112, handleOnOrOffFlying(deps, state))
 	s.Register(2113, handleRemoveCoins(deps, state))
+}
+
+func handleOnMapSwitch() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		ctx.Server.SendResponse(ctx.Conn, 2000, ctx.UserID, []byte{})
+	}
+}
+
+func handleMapBoss(state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		user := state.GetOrCreateUser(ctx.UserID)
+		mapID := int(user.MapID)
+		reader := NewReader(ctx.Body)
+		if reader.Remaining() >= 4 {
+			mapID = int(reader.ReadUint32BE())
+		}
+		body := buildMapBossList(mapID)
+		ctx.Server.SendResponse(ctx.Conn, 2021, ctx.UserID, body)
+	}
+}
+
+func handleSpecialPetNote() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2022, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleOfflineExp(state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		user := state.GetOrCreateUser(ctx.UserID)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, user.ExpPool)
+		ctx.Server.SendResponse(ctx.Conn, 2023, ctx.UserID, buf.Bytes())
+	}
+}
+
+func buildMapBossList(mapID int) []byte {
+	entries := getMapBossEntries(mapID)
+	if len(entries) == 0 {
+		return make([]byte, 4)
+	}
+	regions := make([]int, 0, len(entries))
+	for region := range entries {
+		regions = append(regions, int(region))
+	}
+	sort.Ints(regions)
+
+	buf := new(bytes.Buffer)
+	binary.Write(buf, binary.BigEndian, uint32(len(regions)))
+	for _, r := range regions {
+		region := uint32(r)
+		entry := entries[region]
+		hp := uint32(0)
+		if entry.HasShield {
+			if boss := GetSPTBossByID(entry.BossPetID); boss != nil && boss.MaxHP > 0 {
+				hp = uint32(boss.MaxHP)
+			}
+		}
+		binary.Write(buf, binary.BigEndian, uint32(entry.BossPetID))
+		binary.Write(buf, binary.BigEndian, region)
+		binary.Write(buf, binary.BigEndian, hp)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+	}
+	return buf.Bytes()
 }
 
 func handleChangeDoodle(deps *Deps, state *State) gateway.Handler {

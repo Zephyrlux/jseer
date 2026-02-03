@@ -15,6 +15,7 @@ import (
 
 // RegisterHandlers wires login commands.
 func RegisterHandlers(s *Server) {
+	s.Register(1, handleVerify())
 	s.Register(2, handleRegister())
 	s.Register(3, handleSendEmailCode())
 	s.Register(103, handleLegacyLogin())
@@ -24,6 +25,12 @@ func RegisterHandlers(s *Server) {
 	s.Register(108, handleCreateRole())
 	s.Register(109, handleSysRole())
 	s.Register(111, handleFenghaoTime())
+}
+
+func handleVerify() Handler {
+	return func(ctx *Context) {
+		ctx.Server.SendResponse(ctx.Conn, 1, ctx.UserID, 0, nil)
+	}
 }
 
 func handleRegister() Handler {
@@ -223,7 +230,7 @@ func buildGoodServerList(cfg config.GameConfig, onlineCount uint32) []byte {
 	binary.BigEndian.PutUint32(body[off+26:off+30], 1) // friends
 
 	off += 30
-	binary.BigEndian.PutUint32(body[off:off+4], 0) // friend count
+	binary.BigEndian.PutUint32(body[off:off+4], 0)   // friend count
 	binary.BigEndian.PutUint32(body[off+4:off+8], 0) // black count
 	return body
 }

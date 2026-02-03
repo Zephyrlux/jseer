@@ -10,6 +10,8 @@ import (
 )
 
 func registerFriendHandlers(s *gateway.Server, deps *Deps, state *State) {
+	s.Register(2148, handleFriendUnknown())
+	s.Register(2149, handleFriendUnknown())
 	s.Register(2150, handleGetRelationList(state))
 	s.Register(2151, handleFriendAdd(deps, state))
 	s.Register(2152, handleFriendAnswer(deps, state))
@@ -19,6 +21,14 @@ func registerFriendHandlers(s *gateway.Server, deps *Deps, state *State) {
 	s.Register(2157, handleSeeOnline(state))
 	s.Register(2158, handleRequestOut())
 	s.Register(2159, handleRequestAnswer())
+}
+
+func handleFriendUnknown() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, ctx.CmdID, ctx.UserID, buf.Bytes())
+	}
 }
 
 func handleFriendAdd(deps *Deps, state *State) gateway.Handler {

@@ -8,10 +8,10 @@ import (
 	"jseer/internal/gateway"
 )
 
-func registerCompatHandlers(s *gateway.Server) {
+func registerCompatHandlers(s *gateway.Server, deps *Deps, state *State) {
 	s.Register(1022, handleCheckFightCode())
 	s.Register(10301, handleServerTime())
-	s.Register(2231, handleAcceptDailyTask())
+	s.Register(2231, handleAcceptDailyTask(deps, state))
 	s.Register(41080, handleGetForeverValue())
 	s.Register(4475, handleGetItemListLegacy())
 	s.Register(47334, handleLegacyFriendList())
@@ -43,10 +43,18 @@ func handleServerTime() gateway.Handler {
 	}
 }
 
-func handleAcceptDailyTask() gateway.Handler {
+func handleAcceptDailyTask(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		taskID := int(reader.ReadUint32BE())
+		user := state.GetOrCreateUser(ctx.UserID)
+		if user.TaskStatus == nil {
+			user.TaskStatus = make(map[int]byte)
+		}
+		user.TaskStatus[taskID] = 1
+		savePlayer(deps, ctx.UserID, user)
 		buf := new(bytes.Buffer)
-		binary.Write(buf, binary.BigEndian, uint32(0))
+		binary.Write(buf, binary.BigEndian, uint32(taskID))
 		ctx.Server.SendResponse(ctx.Conn, 2231, ctx.UserID, buf.Bytes())
 	}
 }

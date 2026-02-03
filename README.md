@@ -2,7 +2,25 @@
   <img src="docs/assets/logo.svg" alt="jseer" width="720" />
 </p>
 
-<p align="center">面向赛尔号经典客户端的 Go 服务端实现，提供登录/网关/资源/GM 能力，支持 MySQL、SQLite、PostgreSQL。</p>
+<p align="center">
+  <strong>面向赛尔号经典客户端的 Go 服务端实现</strong><br/>
+  登录 / 网关 / 资源 / GM，一体化配置与多数据库支持
+</p>
+
+<p align="center">
+  <a href="docs/architecture.md">架构</a> ·
+  <a href="docs/api.md">API</a> ·
+  <a href="docs/deployment.md">部署</a> ·
+  <a href="docs/testing.md">测试</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Go-1.21%2B-00ADD8?logo=go&logoColor=white" />
+  <img src="https://img.shields.io/badge/Framework-Iris-0B1220" />
+  <img src="https://img.shields.io/badge/ORM-Ent-4A5568" />
+  <img src="https://img.shields.io/badge/DB-MySQL%20%7C%20SQLite%20%7C%20PostgreSQL-0F766E" />
+  <img src="https://img.shields.io/badge/GM-Vue3%20%2B%20Vite-42B883?logo=vuedotjs&logoColor=white" />
+</p>
 
 ## 特性
 | 模块 | 说明 |

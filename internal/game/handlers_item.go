@@ -11,11 +11,14 @@ import (
 func registerItemHandlers(s *gateway.Server, deps *Deps, state *State) {
 	s.Register(2601, handleItemBuy(deps, state))
 	s.Register(2602, handleItemSale(deps, state))
+	s.Register(2603, handleItemRepair())
 	s.Register(2604, handleChangeCloth(deps, state))
 	s.Register(2605, handleItemList(state))
 	s.Register(2606, handleMultiItemBuy(deps, state))
 	s.Register(2607, handleItemExpend(deps, state))
+	s.Register(2608, handleGetLastEgg())
 	s.Register(2609, handleEquipUpdate())
+	s.Register(2610, handleEatSpecialMedicine())
 	s.Register(2901, handleExchangeClothComplete())
 }
 
@@ -224,6 +227,30 @@ func handleMultiItemBuy(deps *Deps, state *State) gateway.Handler {
 func handleEquipUpdate() gateway.Handler {
 	return func(ctx *gateway.Context) {
 		ctx.Server.SendResponse(ctx.Conn, 2609, ctx.UserID, []byte{})
+	}
+}
+
+func handleItemRepair() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2603, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleGetLastEgg() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2608, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleEatSpecialMedicine() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2610, ctx.UserID, buf.Bytes())
 	}
 }
 

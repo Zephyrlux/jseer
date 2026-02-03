@@ -51,6 +51,15 @@ func (s *Server) Register(cmd int32, h Handler) {
 	s.handlers[cmd] = h
 }
 
+func (s *Server) RegisterIfAbsent(cmd int32, h Handler) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if _, ok := s.handlers[cmd]; ok {
+		return
+	}
+	s.handlers[cmd] = h
+}
+
 func (s *Server) SetDefault(h Handler) {
 	s.defaultHandle = h
 }

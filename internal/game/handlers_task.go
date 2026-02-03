@@ -12,7 +12,12 @@ func registerTaskHandlers(s *gateway.Server, deps *Deps, state *State) {
 	s.Register(2202, handleCompleteTask(deps, state))
 	s.Register(2203, handleGetTaskBuf(state))
 	s.Register(2204, handleAddTaskBuf(deps, state))
+	s.Register(2205, handleDeleteTask(deps, state))
+	s.Register(2206, handleChangeTaskStatus(deps, state))
+	s.Register(2232, handleDeleteDailyTask(deps, state))
+	s.Register(2233, handleCompleteDailyTask(deps, state))
 	s.Register(2234, handleGetDailyTaskBuf())
+	s.Register(2235, handleAddDailyTaskBuf())
 }
 
 func handleAcceptTask(deps *Deps, state *State) gateway.Handler {
@@ -104,6 +109,87 @@ func handleGetDailyTaskBuf() gateway.Handler {
 		binary.Write(buf, binary.BigEndian, uint32(0))
 		binary.Write(buf, binary.BigEndian, uint32(0))
 		ctx.Server.SendResponse(ctx.Conn, 2234, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleDeleteTask(deps *Deps, state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		taskID := int(reader.ReadUint32BE())
+		user := state.GetOrCreateUser(ctx.UserID)
+		if user.TaskStatus != nil {
+			delete(user.TaskStatus, taskID)
+		}
+		if user.TaskBufs != nil {
+			delete(user.TaskBufs, taskID)
+		}
+		savePlayer(deps, ctx.UserID, user)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(taskID))
+		ctx.Server.SendResponse(ctx.Conn, 2205, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleChangeTaskStatus(deps *Deps, state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		taskID := int(reader.ReadUint32BE())
+		status := byte(0)
+		if reader.Remaining() >= 4 {
+			status = byte(reader.ReadUint32BE())
+		}
+		user := state.GetOrCreateUser(ctx.UserID)
+		if user.TaskStatus == nil {
+			user.TaskStatus = make(map[int]byte)
+		}
+		user.TaskStatus[taskID] = status
+		savePlayer(deps, ctx.UserID, user)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(taskID))
+		binary.Write(buf, binary.BigEndian, uint32(status))
+		ctx.Server.SendResponse(ctx.Conn, 2206, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleDeleteDailyTask(deps *Deps, state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		taskID := int(reader.ReadUint32BE())
+		user := state.GetOrCreateUser(ctx.UserID)
+		if user.TaskStatus != nil {
+			delete(user.TaskStatus, taskID)
+		}
+		savePlayer(deps, ctx.UserID, user)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(taskID))
+		ctx.Server.SendResponse(ctx.Conn, 2232, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleCompleteDailyTask(deps *Deps, state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		taskID := int(reader.ReadUint32BE())
+		param := 0
+		if reader.Remaining() >= 4 {
+			param = int(reader.ReadUint32BE())
+		}
+		user := state.GetOrCreateUser(ctx.UserID)
+		body, _ := buildTaskCompleteResponse(taskID, param, user, deps)
+		if user.TaskStatus == nil {
+			user.TaskStatus = make(map[int]byte)
+		}
+		user.TaskStatus[taskID] = 3
+		savePlayer(deps, ctx.UserID, user)
+		ctx.Server.SendResponse(ctx.Conn, 2233, ctx.UserID, body)
+	}
+}
+
+func handleAddDailyTaskBuf() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2235, ctx.UserID, buf.Bytes())
 	}
 }
 
