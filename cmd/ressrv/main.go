@@ -39,6 +39,12 @@ func main() {
 
 	app := iris.New()
 	app.Get("/healthz", func(ctx iris.Context) { ctx.JSON(iris.Map{"status": "ok"}) })
+	app.Get("/ip.txt", func(ctx iris.Context) {
+		current := cfgVal.Load().(*config.Config)
+		logger.Info("ip.txt request", zap.String("remote", ctx.RemoteAddr()))
+		ctx.ContentType("text/plain")
+		_, _ = ctx.WriteString(current.HTTP.IPTxt)
+	})
 	app.Get("/{path:path}", func(ctx iris.Context) {
 		current := cfgVal.Load().(*config.Config)
 		serveResource(ctx, current.HTTP.StaticRoot, current.HTTP.ProxyRoot, current.HTTP.Upstream)

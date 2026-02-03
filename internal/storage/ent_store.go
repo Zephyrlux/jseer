@@ -52,6 +52,7 @@ func (s *EntStore) GetAccountByEmail(ctx context.Context, email string) (*Accoun
 }
 
 func (s *EntStore) CreateAccount(ctx context.Context, in *Account) (*Account, error) {
+	ensureAccountSalt(in)
 	row, err := s.client.Account.Create().SetEmail(in.Email).SetPasswordHash(in.Password).SetSalt(in.Salt).SetStatus(in.Status).Save(ctx)
 	if err != nil {
 		return nil, err

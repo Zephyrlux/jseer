@@ -1,0 +1,62 @@
+{
+  "maps": {
+    "10": {
+      "0": { "bossPetId": 4150, "level": 80, "hasShield": false }
+    },
+    "12": {
+      "0": { "bossPetId": 47, "level": 10, "hasShield": true },
+      "1": { "bossPetId": 83, "level": 5, "hasShield": false }
+    },
+    "16": {
+      "0": { "bossPetId": 393, "level": 75, "hasShield": false }
+    },
+    "17": {
+      "0": { "bossPetId": 42, "level": 35, "hasShield": false }
+    },
+    "21": {
+      "0": { "bossPetId": 34, "level": 25, "hasShield": false }
+    },
+    "22": {
+      "0": { "bossPetId": 34, "level": 25, "hasShield": false }
+    },
+    "27": {
+      "0": { "bossPetId": 69, "level": 45, "hasShield": false }
+    },
+    "32": {
+      "0": { "bossPetId": 70, "level": 70, "hasShield": false }
+    },
+    "40": {
+      "0": { "bossPetId": 50, "level": 65, "hasShield": false }
+    },
+    "49": {
+      "0": { "bossPetId": 113, "level": 55, "hasShield": false }
+    },
+    "53": {
+      "0": { "bossPetId": 187, "level": 50, "hasShield": false }
+    },
+    "59": {
+      "0": { "bossPetId": 347, "level": 70, "hasShield": false }
+    },
+    "60": {
+      "0": { "bossPetId": 216, "level": 80, "hasShield": false }
+    },
+    "61": {
+      "0": { "bossPetId": 421, "level": 70, "hasShield": false }
+    },
+    "106": {
+      "0": { "bossPetId": 88, "level": 60, "hasShield": false }
+    },
+    "314": {
+      "0": { "bossPetId": 132, "level": 70, "hasShield": false }
+    },
+    "325": {
+      "0": { "bossPetId": 264, "level": 70, "hasShield": false }
+    },
+    "348": {
+      "0": { "bossPetId": 274, "level": 75, "hasShield": false },
+      "1": { "bossPetId": 391, "level": 70, "hasShield": false },
+      "2": { "bossPetId": 216, "level": 80, "hasShield": false },
+      "3": { "bossPetId": 413, "level": 75, "hasShield": false }
+    }
+  }
+}

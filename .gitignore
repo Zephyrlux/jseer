@@ -49,3 +49,6 @@ gm-web/.vite/
 *.tmp
 tmp/
 .air*
+
+resources/
+resources_proxy/

@@ -2,15 +2,20 @@ package loginserver
 
 import (
 	"crypto/md5"
+	crand "crypto/rand"
 	"encoding/binary"
 	"encoding/hex"
 	"math/rand"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf16"
 
 	"jseer/internal/config"
 	"jseer/internal/storage"
+
+	"go.uber.org/zap"
 )
 
 // RegisterHandlers wires login commands.
@@ -49,7 +54,7 @@ func handleRegister() Handler {
 		acct, err := ctx.Server.store.CreateAccount(ctx.Context(), &storage.Account{
 			Email:    email,
 			Password: password,
-			Salt:     "",
+			Salt:     makeSalt(),
 			Status:   "active",
 		})
 		if err != nil {
@@ -63,6 +68,7 @@ func handleRegister() Handler {
 func handleSendEmailCode() Handler {
 	return func(ctx *Context) {
 		code := randomHex(32)
+		ctx.Server.logger.Info("email code", zap.String("code", code), zap.String("ip", remoteIP(ctx.Conn)))
 		body := make([]byte, 32)
 		copy(body, []byte(code))
 		ctx.Server.SendResponse(ctx.Conn, 3, ctx.UserID, 0, body)
@@ -83,6 +89,43 @@ func handleMainLogin() Handler {
 		email := readFixedString(ctx.Body, 0, 64)
 		passMD5 := readFixedString(ctx.Body, 64, 32)
 		if email == "" {
+			email = readFixedString(ctx.Body, 4, 64)
+		}
+		if passMD5 == "" {
+			passMD5 = readFixedString(ctx.Body, 4+64, 32)
+		}
+		if email == "" {
+			email = readFixedString(ctx.Body, 8, 64)
+		}
+		if passMD5 == "" {
+			passMD5 = readFixedString(ctx.Body, 8+64, 32)
+		}
+		if email == "" {
+			email = findEmailInBody(ctx.Body)
+		}
+		if passMD5 == "" {
+			passMD5 = findMD5InBody(ctx.Body)
+		}
+		if email == "" || passMD5 == "" {
+			ctx.Server.logger.Warn(
+				"login parse empty",
+				zap.Int("body_len", len(ctx.Body)),
+				zap.String("email", email),
+				zap.Int("pass_len", len(passMD5)),
+				zap.String("body_hex", hexDump(ctx.Body, 96)),
+				zap.String("body_ascii", asciiPreview(ctx.Body, 96)),
+				zap.String("ip", remoteIP(ctx.Conn)),
+			)
+		} else {
+			ctx.Server.logger.Info(
+				"login parse ok",
+				zap.String("email", email),
+				zap.Int("pass_len", len(passMD5)),
+				zap.String("ip", remoteIP(ctx.Conn)),
+			)
+		}
+		if email == "" {
+			ctx.Server.logger.Warn("login reject empty email", zap.String("ip", remoteIP(ctx.Conn)))
 			ctx.Server.SendResponse(ctx.Conn, 104, 0, 1, nil)
 			return
 		}
@@ -92,10 +135,11 @@ func handleMainLogin() Handler {
 			acct, err = ctx.Server.store.CreateAccount(ctx.Context(), &storage.Account{
 				Email:    email,
 				Password: passMD5,
-				Salt:     "",
+				Salt:     makeSalt(),
 				Status:   "active",
 			})
 			if err != nil {
+				ctx.Server.logger.Warn("login create account failed", zap.Error(err), zap.String("ip", remoteIP(ctx.Conn)))
 				ctx.Server.SendResponse(ctx.Conn, 104, 0, 1, nil)
 				return
 			}
@@ -134,15 +178,42 @@ func handleCreateRole() Handler {
 		}
 		color := int(readUint32(ctx.Body, 20))
 
+		cfg := loadDefaultPlayerConfig()
+		level := cfg.Player.Level
+		if level == 0 {
+			level = 1
+		}
+		coins := cfg.Player.Coins
+		if coins == 0 {
+			coins = 2000
+		}
+		mapID := cfg.Player.MapID
+		if mapID == 0 {
+			mapID = 1
+		}
+		posX := cfg.Player.PosX
+		posY := cfg.Player.PosY
+		if posX == 0 {
+			posX = 300
+		}
+		if posY == 0 {
+			posY = 270
+		}
+		timeLimit := cfg.Player.TimeLimit
+		if timeLimit == 0 {
+			timeLimit = 86400
+		}
+
 		_, err := ctx.Server.store.CreatePlayer(ctx.Context(), &storage.Player{
-			Account: int64(ctx.UserID),
-			Nick:    nickname,
-			Level:   1,
-			Coins:   10000,
-			Gold:    0,
-			MapID:   1,
-			PosX:    300,
-			PosY:    300,
+			Account:   int64(ctx.UserID),
+			Nick:      nickname,
+			Level:     level,
+			Coins:     coins,
+			Gold:      cfg.Player.Gold,
+			MapID:     mapID,
+			PosX:      posX,
+			PosY:      posY,
+			TimeLimit: timeLimit,
 		})
 		if err != nil {
 			ctx.Server.SendResponse(ctx.Conn, 108, ctx.UserID, 1, nil)
@@ -191,10 +262,14 @@ func readFixedString(data []byte, offset, length int) string {
 		end = len(data)
 	}
 	segment := data[offset:end]
-	if idx := strings.IndexByte(string(segment), 0); idx >= 0 {
-		segment = segment[:idx]
+	if s := decodeMaybeUTF16(segment); s != "" {
+		return s
 	}
-	return strings.TrimRight(string(segment), "\x00")
+	raw := string(segment)
+	if idx := strings.IndexByte(raw, 0); idx >= 0 {
+		raw = raw[:idx]
+	}
+	return strings.TrimRight(raw, "\x00")
 }
 
 func readUint32(data []byte, offset int) uint32 {
@@ -202,6 +277,136 @@ func readUint32(data []byte, offset int) uint32 {
 		return 0
 	}
 	return binary.BigEndian.Uint32(data[offset:])
+}
+
+func decodeMaybeUTF16(segment []byte) string {
+	if len(segment) < 2 {
+		return ""
+	}
+	zeroEven := 0
+	zeroOdd := 0
+	for i := 0; i < len(segment); i++ {
+		if segment[i] == 0 {
+			if i%2 == 0 {
+				zeroEven++
+			} else {
+				zeroOdd++
+			}
+		}
+	}
+	// If most even or odd bytes are zero, treat as UTF-16.
+	half := len(segment) / 2
+	if zeroEven < half-2 && zeroOdd < half-2 {
+		return ""
+	}
+	be := zeroEven > zeroOdd
+	runes := make([]uint16, 0, half)
+	for i := 0; i+1 < len(segment); i += 2 {
+		var v uint16
+		if be {
+			v = uint16(segment[i])<<8 | uint16(segment[i+1])
+		} else {
+			v = uint16(segment[i+1])<<8 | uint16(segment[i])
+		}
+		if v == 0 {
+			break
+		}
+		runes = append(runes, v)
+	}
+	if len(runes) == 0 {
+		return ""
+	}
+	return string(utf16.Decode(runes))
+}
+
+func stripZeroBytes(data []byte) string {
+	buf := make([]byte, 0, len(data))
+	for _, b := range data {
+		if b != 0 {
+			buf = append(buf, b)
+		}
+	}
+	return string(buf)
+}
+
+func hexDump(data []byte, max int) string {
+	if max <= 0 || max > len(data) {
+		max = len(data)
+	}
+	const hex = "0123456789abcdef"
+	out := make([]byte, 0, max*2)
+	for i := 0; i < max; i++ {
+		b := data[i]
+		out = append(out, hex[b>>4], hex[b&0x0f])
+	}
+	return string(out)
+}
+
+func asciiPreview(data []byte, max int) string {
+	if max <= 0 || max > len(data) {
+		max = len(data)
+	}
+	out := make([]byte, 0, max)
+	for i := 0; i < max; i++ {
+		b := data[i]
+		if b >= 32 && b <= 126 {
+			out = append(out, b)
+		} else {
+			out = append(out, '.')
+		}
+	}
+	return string(out)
+}
+
+var (
+	emailRe = regexp.MustCompile(`[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}`)
+	md5Re   = regexp.MustCompile(`[a-fA-F0-9]{32}`)
+)
+
+func findEmailInBody(data []byte) string {
+	if s := decodeMaybeUTF16(data); s != "" {
+		if m := emailRe.FindString(s); m != "" {
+			return m
+		}
+	}
+	if m := emailRe.FindString(stripZeroBytes(data)); m != "" {
+		return m
+	}
+	ascii := make([]byte, 0, len(data))
+	for _, b := range data {
+		if b >= 32 && b <= 126 {
+			ascii = append(ascii, b)
+		} else {
+			ascii = append(ascii, ' ')
+		}
+	}
+	if m := emailRe.FindString(string(ascii)); m != "" {
+		return m
+	}
+	return ""
+}
+
+func findMD5InBody(data []byte) string {
+	if s := decodeMaybeUTF16(data); s != "" {
+		if m := md5Re.FindString(s); m != "" {
+			return m
+		}
+	}
+	if m := md5Re.FindString(stripZeroBytes(data)); m != "" {
+		return m
+	}
+	ascii := make([]byte, 0, len(data))
+	for _, b := range data {
+		if b >= 32 && b <= 126 {
+			ascii = append(ascii, b)
+		} else {
+			ascii = append(ascii, ' ')
+		}
+	}
+	if m := md5Re.FindString(string(ascii)); m != "" {
+		return m
+	}
+	return ""
 }
 
 func makeLoginBody(session []byte, roleCreated bool) []byte {
@@ -266,8 +471,27 @@ func randomBytes(n int) []byte {
 }
 
 func randomHex(n int) string {
-	b := randomBytes(n / 2)
+	if n <= 0 {
+		return ""
+	}
+	if n%2 != 0 {
+		n++
+	}
+	b := make([]byte, n/2)
+	if _, err := crand.Read(b); err != nil {
+		for i := range b {
+			b[i] = byte(rand.Intn(256))
+		}
+	}
 	return hex.EncodeToString(b)[:n]
+}
+
+func makeSalt() string {
+	salt := randomHex(32)
+	if salt == "" {
+		salt = "0000000000000000"
+	}
+	return salt
 }
 
 func fmtUserID(id uint32) string {

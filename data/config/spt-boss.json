@@ -1,0 +1,24 @@
+{
+  "bosses": [
+    { "name": "蘑菇怪", "level": 10, "maxHp": 100, "rewardName": "小蘑菇" },
+    { "name": "钢牙鲨", "level": 25, "maxHp": 200, "rewardName": "黑晶矿" },
+    { "name": "里奥斯", "level": 35, "maxHp": 338, "rewardName": "里奥斯精元" },
+    { "name": "阿克希亚", "level": 65, "maxHp": 1000, "rewardName": "阿克希亚精元" },
+    { "name": "提亚斯", "level": 50, "maxHp": 500, "rewardName": "提亚斯精元" },
+    { "name": "雷伊", "level": 70, "maxHp": 800, "rewardName": "雷伊精元" },
+    { "name": "纳多雷", "level": 70, "maxHp": 1400, "rewardName": "纳多雷精元" },
+    { "name": "雷纳多", "level": 75, "maxHp": 1500, "rewardName": "雷纳多精元" },
+    { "name": "尤纳斯", "level": 70, "maxHp": 2800, "rewardName": "尤纳斯精元" },
+    { "name": "魔狮迪露", "level": 50, "maxHp": 3000000, "rewardName": "魔狮迪露精元" },
+    { "name": "哈默雷特", "level": 80, "maxHp": 10000, "rewardName": "哈默雷特精元" },
+    { "name": "奈尼芬多", "level": 60, "maxHp": 2500, "rewardName": "奈尼芬多精元" },
+    { "name": "厄尔塞拉", "level": 80, "maxHp": 3000, "rewardName": "厄尔塞拉精元" },
+    { "name": "盖亚", "level": 80, "maxHp": 2000, "rewardName": "盖亚精元" },
+    { "name": "塔克林", "level": 80, "maxHp": 13000, "rewardName": "塔克林精元" },
+    { "name": "塔西亚", "level": 70, "maxHp": 10000, "rewardName": "塔西亚精元" },
+    { "name": "远古鱼龙" },
+    { "name": "上古炎兽" },
+    { "name": "普尼真身", "level": 100 },
+    { "name": "拂晓兔", "level": 80 }
+  ]
+}

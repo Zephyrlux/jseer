@@ -3,7 +3,6 @@ package game
 import (
 	"net"
 	"sync"
-	"time"
 )
 
 type Cloth struct {
@@ -224,48 +223,7 @@ func (s *State) GetOrCreateUser(userID uint32) *User {
 	if u, ok := s.users[userID]; ok {
 		return u
 	}
-	now := uint32(time.Now().Unix())
-	u := &User{
-		ID:           userID,
-		Nick:         "Seer" + itoa(userID),
-		RegTime:      now - 86400*365,
-		Color:        0x66CCFF,
-		Texture:      1,
-		Energy:       100,
-		Coins:        2000,
-		MapID:        1,
-		PosX:         300,
-		PosY:         270,
-		TimeLimit:    86400,
-		LoginCnt:     0,
-		PetDV:        31,
-		TaskStatus:   make(map[int]byte),
-		TaskBufs:     make(map[int]map[int]uint32),
-		Items:        make(map[int]*ItemInfo),
-		Friends:      make([]FriendInfo, 0),
-		Blacklist:    make([]uint32, 0),
-		Achievements: make([]uint32, 0),
-		Titles:       make([]uint32, 0),
-		Mailbox:      make([]Mail, 0),
-		BossShield:   make(map[uint64]uint32),
-		StudentIDs:   make([]uint32, 0),
-		Nono: NonoInfo{
-			HasNono:    true,
-			Color:      0xFFFFFF,
-			Flag:       1,
-			State:      0,
-			Nick:       "NoNo",
-			Power:      10000,
-			Mate:       10000,
-			AI:         0,
-			IQ:         0,
-			HP:         10000,
-			MaxHP:      10000,
-			Energy:     100,
-			Birth:      now,
-			SuperStage: 1,
-		},
-	}
+	u := newDefaultUser(userID)
 	s.users[userID] = u
 	return u
 }

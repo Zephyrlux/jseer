@@ -85,6 +85,10 @@ func (s *Server) Start(ctx context.Context) error {
 			s.logger.Warn("accept error", zap.Error(err))
 			continue
 		}
+		s.logger.Info("login conn accepted",
+			zap.String("remote", conn.RemoteAddr().String()),
+			zap.String("ip", remoteIP(conn)),
+		)
 		go s.handleConn(conn)
 	}
 }
@@ -127,9 +131,18 @@ func (s *Server) handleConn(conn net.Conn) {
 		line, _ := reader.ReadBytes(0)
 		msg := string(append([]byte{first}, line...))
 		if msg == policyRequest {
+			s.logger.Info("policy request",
+				zap.String("remote", conn.RemoteAddr().String()),
+				zap.String("ip", remoteIP(conn)),
+			)
 			_, _ = conn.Write([]byte(policyResponse))
 			return
 		}
+		s.logger.Warn("unknown text request",
+			zap.String("remote", conn.RemoteAddr().String()),
+			zap.String("ip", remoteIP(conn)),
+			zap.String("msg", msg),
+		)
 		// unknown text request, ignore
 		return
 	}
@@ -157,6 +170,12 @@ func (s *Server) handleConn(conn net.Conn) {
 			return
 		}
 		ctx := &Context{Server: s, Conn: conn, CmdID: cmdID, UserID: userID, SeqID: seqID, Body: body}
+		s.logger.Info("login packet",
+			zap.Int32("cmd", cmdID),
+			zap.Uint32("uid", userID),
+			zap.Int("len", pktLen),
+			zap.String("ip", remoteIP(conn)),
+		)
 		s.dispatch(ctx)
 
 		if _, err := io.ReadFull(reader, lenBuf); err != nil {
@@ -178,6 +197,13 @@ func (s *Server) dispatch(ctx *Context) {
 // SendResponse sends login response with result code.
 func (s *Server) SendResponse(conn net.Conn, cmdID int32, userID uint32, result int32, body []byte) {
 	resp := protocol.BuildResponse(cmdID, userID, result, body)
+	s.logger.Info("login response",
+		zap.Int32("cmd", cmdID),
+		zap.Uint32("uid", userID),
+		zap.Int32("result", result),
+		zap.Int("body", len(body)),
+		zap.String("ip", remoteIP(conn)),
+	)
 	_, _ = conn.Write(resp)
 }
 

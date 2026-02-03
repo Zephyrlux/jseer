@@ -3,16 +3,20 @@ package game
 import "sync"
 
 type SPTBoss struct {
-	Name         string
-	PetID        int
-	Level        int
-	MaxHP        int
-	RewardName   string
-	RewardItemID int
-	RewardCount  int
+	Name         string `json:"name"`
+	PetID        int    `json:"petId"`
+	Level        int    `json:"level"`
+	MaxHP        int    `json:"maxHp"`
+	RewardName   string `json:"rewardName"`
+	RewardItemID int    `json:"rewardItemId"`
+	RewardCount  int    `json:"rewardCount"`
 }
 
-var sptBosses = []*SPTBoss{
+type sptBossFile struct {
+	Bosses []*SPTBoss `json:"bosses"`
+}
+
+var defaultSptBosses = []*SPTBoss{
 	{Name: "蘑菇怪", Level: 10, MaxHP: 100, RewardName: "小蘑菇"},
 	{Name: "钢牙鲨", Level: 25, MaxHP: 200, RewardName: "黑晶矿"},
 	{Name: "里奥斯", Level: 35, MaxHP: 338, RewardName: "里奥斯精元"},
@@ -38,6 +42,7 @@ var sptBosses = []*SPTBoss{
 var (
 	sptBossOnce sync.Once
 	sptBossByID map[int]*SPTBoss
+	sptBosses   []*SPTBoss
 )
 
 func GetSPTBossByID(petID int) *SPTBoss {
@@ -49,6 +54,11 @@ func GetSPTBossByID(petID int) *SPTBoss {
 }
 
 func initSPTBoss() {
+	sptBosses = defaultSptBosses
+	var cfg sptBossFile
+	if readConfigJSON("spt-boss.json", &cfg) && len(cfg.Bosses) > 0 {
+		sptBosses = cfg.Bosses
+	}
 	sptBossByID = make(map[int]*SPTBoss)
 	for _, boss := range sptBosses {
 		if boss.PetID == 0 && boss.Name != "" {

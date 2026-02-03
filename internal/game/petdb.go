@@ -319,7 +319,7 @@ func createStarterPet(petID int, level int) *PetInstance {
 			ID:         petID,
 			Level:      level,
 			DV:         31,
-			Nature:     rand.Intn(25),
+			Nature:     randNature(),
 			Exp:        0,
 			HP:         100,
 			MaxHP:      100,
@@ -334,7 +334,7 @@ func createStarterPet(petID int, level int) *PetInstance {
 		}
 	}
 	dv := rand.Intn(32)
-	nature := rand.Intn(25)
+	nature := randNature()
 	stats := getStats(base, level, dv, evSet{})
 	skills := getSkillsForLevel(base, level)
 	return &PetInstance{

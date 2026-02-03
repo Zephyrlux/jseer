@@ -11,7 +11,6 @@ import (
 
 	"jseer/internal/gateway"
 	"jseer/internal/protocol"
-	"jseer/internal/storage"
 
 	"go.uber.org/zap"
 )
@@ -44,23 +43,14 @@ func handleLoginIn(deps *Deps, state *State) gateway.Handler {
 		if deps != nil && deps.Store != nil {
 			p, err := deps.Store.GetPlayerByAccount(context.Background(), int64(ctx.UserID))
 			if err != nil {
-				p, err = deps.Store.CreatePlayer(context.Background(), &storage.Player{
-					Account:      int64(ctx.UserID),
-					Nick:         pickNick(user, ctx.UserID),
-					Level:        1,
-					Coins:        2000,
-					Gold:         0,
-					MapID:        1,
-					MapType:      0,
-					PosX:         300,
-					PosY:         270,
-					LastMapID:    1,
-					Color:        0x66CCFF,
-					Texture:      1,
-					Energy:       100,
-					TimeLimit:    86400,
-					CurrentPetDV: 31,
-				})
+				player := buildPlayerUpdate(user, int64(ctx.UserID))
+				if player != nil {
+					player.Nick = pickNick(user, ctx.UserID)
+					if player.LastMapID == 0 {
+						player.LastMapID = player.MapID
+					}
+					p, err = deps.Store.CreatePlayer(context.Background(), player)
+				}
 				if err == nil {
 					syncUserFromPlayer(ctx.UserID, user, p)
 				}
@@ -110,6 +100,7 @@ func handleLoginIn(deps *Deps, state *State) gateway.Handler {
 		}
 		body := buildLoginResponse(user)
 		ctx.Server.SendResponse(ctx.Conn, 1001, ctx.UserID, body)
+		pushInitialMapEnter(deps, state, ctx)
 		if user.Nono.SuperNono > 0 {
 			vipBuf := new(bytes.Buffer)
 			binary.Write(vipBuf, binary.BigEndian, ctx.UserID)
@@ -125,6 +116,67 @@ func handleLoginIn(deps *Deps, state *State) gateway.Handler {
 		if deps != nil && deps.Logger != nil {
 			deps.Logger.Info("LOGIN_IN response", zap.Uint32("uid", ctx.UserID))
 		}
+	}
+}
+
+func pushInitialMapEnter(deps *Deps, state *State, ctx *gateway.Context) {
+	if state == nil {
+		return
+	}
+	user := state.GetOrCreateUser(ctx.UserID)
+	cfg := loadDefaultPlayerConfig()
+	mapID := user.MapID
+	if mapID == 0 {
+		mapID = cfg.Player.MapID
+	}
+	if mapID == 0 {
+		mapID = 1
+	}
+	x := user.PosX
+	y := user.PosY
+	if x == 0 && y == 0 {
+		x = cfg.Player.PosX
+		y = cfg.Player.PosY
+	}
+
+	user.MapType = 0
+	user.PosX = x
+	user.PosY = y
+	user.LastMapID = mapID
+	state.UpdatePlayerMap(ctx.UserID, mapID)
+	savePlayer(deps, ctx.UserID, user)
+
+	body := buildPeopleInfo(ctx.UserID, user, uint32(time.Now().Unix()))
+	ctx.Server.SendResponse(ctx.Conn, 2001, ctx.UserID, body)
+
+	listBuf := new(bytes.Buffer)
+	players := state.GetPlayersInMap(mapID)
+	binary.Write(listBuf, binary.BigEndian, uint32(len(players)))
+	for _, pid := range players {
+		pUser := state.GetOrCreateUser(pid)
+		info := buildPeopleInfo(pid, pUser, uint32(time.Now().Unix()))
+		listBuf.Write(info)
+	}
+	ctx.Server.SendResponse(ctx.Conn, 2003, ctx.UserID, listBuf.Bytes())
+
+	ctx.Server.SendResponse(ctx.Conn, 2004, ctx.UserID, buildMapOgreBody(mapID))
+
+	if bossBody := buildMapBossListForUser(user, int(mapID)); len(bossBody) > 0 {
+		ctx.Server.SendResponse(ctx.Conn, 2021, ctx.UserID, bossBody)
+	}
+
+	if mapID > 10000 || mapID == ctx.UserID {
+		handleNonoInfo(state)(ctx)
+	}
+
+	if deps != nil && deps.Logger != nil {
+		deps.Logger.Info(
+			"push initial map enter",
+			zap.Uint32("uid", ctx.UserID),
+			zap.Uint32("map_id", mapID),
+			zap.Uint32("pos_x", x),
+			zap.Uint32("pos_y", y),
+		)
 	}
 }
 

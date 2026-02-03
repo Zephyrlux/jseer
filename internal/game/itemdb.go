@@ -150,6 +150,7 @@ func getItemPrice(itemID int) int {
 }
 
 func isUniqueItem(itemID int) bool {
+	uniqueOnce.Do(loadUniqueItemsConfig)
 	for _, id := range uniqueIDs {
 		if itemID == id {
 			return true

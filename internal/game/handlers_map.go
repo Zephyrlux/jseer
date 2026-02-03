@@ -209,6 +209,9 @@ func handleEnterMap(deps *Deps, state *State) gateway.Handler {
 			listBuf.Write(info)
 		}
 		ctx.Server.SendResponse(ctx.Conn, 2003, ctx.UserID, listBuf.Bytes())
+
+		ogreBody := buildMapOgreBody(mapID)
+		ctx.Server.SendResponse(ctx.Conn, 2004, ctx.UserID, ogreBody)
 	}
 }
 
@@ -242,40 +245,8 @@ func handleMapOgreList(state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		user := state.GetOrCreateUser(ctx.UserID)
 		mapID := user.MapID
-
-		ogres := getMapOgreSlots(mapID)
-		buf := new(bytes.Buffer)
-		for i := 0; i <= 8; i++ {
-			if data, ok := ogres[i]; ok {
-				binary.Write(buf, binary.BigEndian, data[0])
-				binary.Write(buf, binary.BigEndian, data[1])
-			} else {
-				binary.Write(buf, binary.BigEndian, uint32(0))
-				binary.Write(buf, binary.BigEndian, uint32(0))
-			}
-		}
-		ctx.Server.SendResponse(ctx.Conn, 2004, ctx.UserID, buf.Bytes())
+		ctx.Server.SendResponse(ctx.Conn, 2004, ctx.UserID, buildMapOgreBody(mapID))
 	}
-}
-
-func getMapOgreSlots(mapID uint32) map[int][2]uint32 {
-	// mapID -> slot -> [petID, shiny]
-	ogres := map[uint32]map[int][2]uint32{
-		8: {
-			0: {10, 0},
-			1: {58, 0},
-		},
-		301: {
-			0: {1, 0},
-			1: {4, 0},
-			2: {7, 0},
-			3: {10, 0},
-		},
-	}
-	if slots, ok := ogres[mapID]; ok {
-		return slots
-	}
-	return map[int][2]uint32{}
 }
 
 func handleGetSimUserInfo(state *State) gateway.Handler {

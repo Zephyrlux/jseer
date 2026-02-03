@@ -1,5 +1,7 @@
 package game
 
+import "sync"
+
 type TaskRewardItem struct {
 	ID    int
 	Count int
@@ -26,7 +28,7 @@ type TaskConfig struct {
 	TargetItemID int
 }
 
-var taskConfigs = map[int]*TaskConfig{
+var defaultTaskConfigs = map[int]*TaskConfig{
 	85: {
 		ID:   85,
 		Name: "novice_gift",
@@ -83,6 +85,69 @@ var taskConfigs = map[int]*TaskConfig{
 	},
 }
 
+var (
+	taskConfigOnce sync.Once
+	taskConfigMap  map[int]*TaskConfig
+)
+
+type taskConfigFile struct {
+	Tasks map[string]taskConfigJSON `json:"tasks"`
+}
+
+type taskConfigJSON struct {
+	Name         string                `json:"name"`
+	Type         string                `json:"type"`
+	ParamMap     map[string]int        `json:"paramMap"`
+	TargetItemID int                   `json:"targetItemId"`
+	Rewards      taskConfigRewardsJSON `json:"rewards"`
+}
+
+type taskConfigRewardsJSON struct {
+	Items   []TaskRewardItem    `json:"items"`
+	PetID   int                 `json:"petId"`
+	Special []TaskSpecialReward `json:"special"`
+	Coins   int                 `json:"coins"`
+}
+
 func GetTaskConfig(taskID int) *TaskConfig {
-	return taskConfigs[taskID]
+	taskConfigOnce.Do(loadTaskConfig)
+	return taskConfigMap[taskID]
+}
+
+func loadTaskConfig() {
+	taskConfigMap = make(map[int]*TaskConfig)
+	for id, cfg := range defaultTaskConfigs {
+		taskConfigMap[id] = cfg
+	}
+
+	var cfgFile taskConfigFile
+	if !readConfigJSON("tasks.json", &cfgFile) {
+		return
+	}
+	if len(cfgFile.Tasks) == 0 {
+		return
+	}
+	taskConfigMap = make(map[int]*TaskConfig)
+	for key, item := range cfgFile.Tasks {
+		id := int(parseUint32(key))
+		if id == 0 {
+			continue
+		}
+		paramMap := make(map[int]int)
+		for k, v := range item.ParamMap {
+			ki := int(parseUint32(k))
+			if ki == 0 {
+				continue
+			}
+			paramMap[ki] = v
+		}
+		taskConfigMap[id] = &TaskConfig{
+			ID:           id,
+			Name:         item.Name,
+			Type:         item.Type,
+			ParamMap:     paramMap,
+			Rewards:      TaskRewards{Items: item.Rewards.Items, PetID: item.Rewards.PetID, Special: item.Rewards.Special, Coins: item.Rewards.Coins},
+			TargetItemID: item.TargetItemID,
+		}
+	}
 }

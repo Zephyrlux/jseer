@@ -76,6 +76,7 @@ func (s *memoryStore) GetAccountByEmail(ctx context.Context, email string) (*Acc
 func (s *memoryStore) CreateAccount(ctx context.Context, in *Account) (*Account, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	ensureAccountSalt(in)
 	s.nextAccountID++
 	copy := *in
 	copy.ID = s.nextAccountID

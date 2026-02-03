@@ -45,12 +45,16 @@ echo ""
 export JSEER_CONFIG=${JSEER_CONFIG:-"configs/config.yaml"}
 
 pids=()
+logs_dir="${LOG_DIR:-logs}"
+mkdir -p "$logs_dir"
 
 start_service() {
   local name=$1
   local cmd=$2
   echo "[start] $name"
-  bash -c "$cmd" &
+  local log_file="${logs_dir}/${name}.log"
+  echo "  -> log: $log_file"
+  bash -c "$cmd" >"$log_file" 2>&1 &
   pids+=("$!")
 }
 
@@ -65,6 +69,7 @@ echo "资源地址: http://localhost:32400/index.html"
 echo "登录IP:  http://localhost:32401/ip.txt"
 echo "GM 地址:  http://localhost:3001"
 echo "GM 前端: http://localhost:${GM_WEB_PORT:-5173}"
+echo "日志目录: $logs_dir"
 
 cleanup() {
   echo "\nStopping services..."

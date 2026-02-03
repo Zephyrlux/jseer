@@ -92,6 +92,7 @@ func (s *Server) handleConn(conn net.Conn) {
 	defer conn.Close()
 	_ = conn.SetReadDeadline(time.Now().Add(time.Duration(s.cfg.HandshakeTimeoutS) * time.Second))
 	reader := bufio.NewReaderSize(conn, s.cfg.ReadBufferBytes)
+	firstPacket := true
 
 	for {
 		// read length
@@ -120,6 +121,10 @@ func (s *Server) handleConn(conn net.Conn) {
 			s.logger.Warn("parse packet failed", zap.Error(err))
 			continue
 		}
+		if firstPacket {
+			_ = conn.SetReadDeadline(time.Time{})
+			firstPacket = false
+		}
 
 		ctx := &Context{
 			Server: s,
@@ -143,8 +148,14 @@ func (s *Server) dispatch(ctx *Context) {
 		return
 	}
 	if s.defaultHandle != nil {
+		s.logger.Warn(
+			"unhandled cmd, using default",
+			zap.Int32("cmd", ctx.CmdID),
+			zap.Uint32("uid", ctx.UserID),
+			zap.Int("len", len(ctx.Body)),
+			zap.String("remote", ctx.Conn.RemoteAddr().String()),
+		)
 		s.defaultHandle(ctx)
-		return
 	}
 }
 
