@@ -2,8 +2,6 @@
   <img src="docs/assets/logo.svg" alt="jseer" width="720" />
 </p>
 
-<h1 align="center">jseer</h1>
-
 <p align="center">面向赛尔号经典客户端的 Go 服务端实现，提供登录/网关/资源/GM 能力，支持 MySQL、SQLite、PostgreSQL。</p>
 
 ## 特性
