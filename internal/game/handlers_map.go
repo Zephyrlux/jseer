@@ -16,6 +16,9 @@ func registerMapHandlers(s *gateway.Server, deps *Deps, state *State) {
 	s.Register(2004, handleMapOgreList(state))
 	s.Register(2051, handleGetSimUserInfo(state))
 	s.Register(2052, handleGetMoreUserInfo(state))
+	s.Register(2053, handleRequestCount(state))
+	s.Register(2062, handleChangeDoodle(deps, state))
+	s.Register(2064, handleGetRequestAward(deps, state))
 	s.Register(2061, handleChangeNickName(deps, state))
 	s.Register(2063, handleChangeColor(deps, state))
 	s.Register(2101, handlePeopleWalk(state))
@@ -24,6 +27,64 @@ func registerMapHandlers(s *gateway.Server, deps *Deps, state *State) {
 	s.Register(2104, handleAimat(state))
 	s.Register(2111, handlePeopleTransform(state))
 	s.Register(2112, handleOnOrOffFlying(deps, state))
+}
+
+func handleChangeDoodle(deps *Deps, state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		doodleID := reader.ReadUint32BE()
+		user := state.GetOrCreateUser(ctx.UserID)
+		user.Texture = doodleID
+		savePlayer(deps, ctx.UserID, user)
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, ctx.UserID)
+		binary.Write(buf, binary.BigEndian, user.Color)
+		binary.Write(buf, binary.BigEndian, user.Texture)
+		binary.Write(buf, binary.BigEndian, user.Coins)
+		ctx.Server.SendResponse(ctx.Conn, 2062, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleGetRequestAward(deps *Deps, state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		user := state.GetOrCreateUser(ctx.UserID)
+		if user.Items == nil {
+			user.Items = make(map[int]*ItemInfo)
+		}
+		rewardIDs := []int{100073, 100074, 100075}
+		for _, itemID := range rewardIDs {
+			if isUniqueItem(itemID) && user.Items[itemID] != nil {
+				continue
+			}
+			info := user.Items[itemID]
+			if info == nil {
+				info = &ItemInfo{Count: 0, ExpireTime: defaultItemExpire}
+				user.Items[itemID] = info
+			}
+			info.Count++
+			upsertItem(deps, user, itemID)
+		}
+		savePlayer(deps, ctx.UserID, user)
+		ctx.Server.SendResponse(ctx.Conn, 2064, ctx.UserID, []byte{})
+	}
+}
+
+func handleRequestCount(state *State) gateway.Handler {
+	return func(ctx *gateway.Context) {
+		reader := NewReader(ctx.Body)
+		targetID := reader.ReadUint32BE()
+		if targetID == 0 {
+			targetID = ctx.UserID
+		}
+		var count uint32
+		if state != nil {
+			_ = state.GetOrCreateUser(targetID)
+		}
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, targetID)
+		binary.Write(buf, binary.BigEndian, count)
+		ctx.Server.SendResponse(ctx.Conn, 2053, ctx.UserID, buf.Bytes())
+	}
 }
 
 func handleEnterMap(deps *Deps, state *State) gateway.Handler {

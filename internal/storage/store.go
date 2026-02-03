@@ -19,6 +19,7 @@ type Store interface {
 	UpsertItem(ctx context.Context, playerID int64, itemID int, count int, meta string) (*Item, error)
 	DeleteItem(ctx context.Context, playerID int64, itemID int) error
 	ListPetsByPlayer(ctx context.Context, playerID int64) ([]*Pet, error)
+	UpsertPet(ctx context.Context, in *Pet) (*Pet, error)
 
 	// Configs & versions
 	ListConfigKeys(ctx context.Context) ([]string, error)
@@ -68,6 +69,8 @@ type Player struct {
 	Blacklist  string
 	TeamInfo   string
 	StudentIDs string
+	RoomID     int64
+	Fitments   string
 }
 
 type Item struct {

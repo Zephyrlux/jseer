@@ -98,6 +98,8 @@ func (s *EntStore) CreatePlayer(ctx context.Context, in *Player) (*Player, error
 		SetBlacklist(normalizeJSONArray(in.Blacklist)).
 		SetTeamInfo(normalizeJSON(in.TeamInfo)).
 		SetStudentIDs(normalizeJSONArray(in.StudentIDs)).
+		SetRoomID(in.RoomID).
+		SetFitments(normalizeJSONArray(in.Fitments)).
 		SetCurrentPetID(in.CurrentPetID).
 		SetCurrentPetCatchTime(in.CurrentPetCatchTime).
 		SetCurrentPetDV(in.CurrentPetDV).
@@ -134,6 +136,8 @@ func (s *EntStore) UpdatePlayer(ctx context.Context, in *Player) (*Player, error
 		SetBlacklist(normalizeJSONArray(in.Blacklist)).
 		SetTeamInfo(normalizeJSON(in.TeamInfo)).
 		SetStudentIDs(normalizeJSONArray(in.StudentIDs)).
+		SetRoomID(in.RoomID).
+		SetFitments(normalizeJSONArray(in.Fitments)).
 		SetCurrentPetID(in.CurrentPetID).
 		SetCurrentPetCatchTime(in.CurrentPetCatchTime).
 		SetCurrentPetDV(in.CurrentPetDV).
@@ -228,6 +232,56 @@ func (s *EntStore) ListPetsByPlayer(ctx context.Context, playerID int64) ([]*Pet
 		})
 	}
 	return out, nil
+}
+
+func (s *EntStore) UpsertPet(ctx context.Context, in *Pet) (*Pet, error) {
+	row, err := s.client.Pet.Query().
+		Where(pet.PlayerIDEQ(int(in.PlayerID)), pet.CatchTimeEQ(in.CatchTime)).
+		Only(ctx)
+	if err != nil {
+		if !ent.IsNotFound(err) {
+			return nil, err
+		}
+		row, err = s.client.Pet.Create().
+			SetPlayerID(int(in.PlayerID)).
+			SetSpeciesID(in.SpeciesID).
+			SetLevel(in.Level).
+			SetExp(in.Exp).
+			SetHP(in.HP).
+			SetCatchTime(in.CatchTime).
+			SetDv(in.DV).
+			SetSkills(in.Skills).
+			SetNature(in.Nature).
+			Save(ctx)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		row, err = row.Update().
+			SetSpeciesID(in.SpeciesID).
+			SetLevel(in.Level).
+			SetExp(in.Exp).
+			SetHP(in.HP).
+			SetDv(in.DV).
+			SetSkills(in.Skills).
+			SetNature(in.Nature).
+			Save(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return &Pet{
+		ID:        int64(row.ID),
+		PlayerID:  int64(row.PlayerID),
+		SpeciesID: row.SpeciesID,
+		Level:     row.Level,
+		Exp:       row.Exp,
+		HP:        row.HP,
+		Nature:    row.Nature,
+		Skills:    row.Skills,
+		CatchTime: row.CatchTime,
+		DV:        row.Dv,
+	}, nil
 }
 
 func (s *EntStore) ListConfigKeys(ctx context.Context) ([]string, error) {
@@ -405,6 +459,8 @@ func mapPlayer(row *ent.Player) *Player {
 		Blacklist:           row.Blacklist,
 		TeamInfo:            row.TeamInfo,
 		StudentIDs:          row.StudentIDs,
+		RoomID:              row.RoomID,
+		Fitments:            row.Fitments,
 		CurrentPetID:        row.CurrentPetID,
 		CurrentPetCatchTime: row.CurrentPetCatchTime,
 		CurrentPetDV:        row.CurrentPetDV,

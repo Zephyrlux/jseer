@@ -8,11 +8,11 @@ import (
 )
 
 type Deps struct {
-	Logger      *zap.Logger
-	State       *State
-	GameIP      string
-	GamePort    int
-	Store       storage.Store
+	Logger   *zap.Logger
+	State    *State
+	GameIP   string
+	GamePort int
+	Store    storage.Store
 }
 
 func RegisterHandlers(s *gateway.Server, deps *Deps) {
@@ -38,6 +38,7 @@ func RegisterHandlers(s *gateway.Server, deps *Deps) {
 	registerArenaHandlers(s)
 	registerFightHandlers(s, deps, state)
 	registerGameHandlers(s)
+	registerCompatHandlers(s)
 	registerStubHandlers(s)
 
 	s.SetDefault(handleStubEmpty())
@@ -65,12 +66,9 @@ func registerStubHandlers(s *gateway.Server) {
 	// 4-byte zero responses (aligned with Lua emptyResponse(4)).
 	stub4Zero := []int32{
 		9757,
-		2053, 2054, 2055,
-		2311, 2312, 2314, 2315,
-		2320, 2321, 2322, 2323, 2324, 2327, 2328, 2329, 2330, 2331, 2332,
-		2343, 2351, 2352, 2353, 2356, 2357, 2358, 2393,
+		2054, 2055,
+		2393,
 		3401, 3402, 3403, 3406, 3407,
-		10004, 10005, 10007, 10008, 10009,
 	}
 	for _, cmd := range stub4Zero {
 		s.Register(cmd, handleStub4Zero())

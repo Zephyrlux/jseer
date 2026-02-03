@@ -11,7 +11,7 @@ import (
 func registerPetHandlers(s *gateway.Server, deps *Deps, state *State) {
 	s.Register(2301, handleGetPetInfo(state))
 	s.Register(2303, handleGetPetList())
-	s.Register(2304, handlePetRelease(state))
+	s.Register(2304, handlePetRelease(deps, state))
 	s.Register(2305, handlePetShow(state))
 	s.Register(2306, handlePetCure())
 	s.Register(2309, handlePetBargeList(state))
@@ -64,7 +64,7 @@ func handleGetPetList() gateway.Handler {
 	}
 }
 
-func handlePetRelease(state *State) gateway.Handler {
+func handlePetRelease(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		reader := NewReader(ctx.Body)
 		catchID := reader.ReadUint32BE()
@@ -78,6 +78,7 @@ func handlePetRelease(state *State) gateway.Handler {
 		user := state.GetOrCreateUser(ctx.UserID)
 		user.CurrentPetID = uint32(petType)
 		user.CatchID = catchID
+		savePlayer(deps, ctx.UserID, user)
 
 		buf := new(bytes.Buffer)
 		binary.Write(buf, binary.BigEndian, uint32(0)) // homeEnergy
@@ -106,13 +107,21 @@ func handlePetShow(state *State) gateway.Handler {
 		if reqCatch > 0 {
 			catchTime = reqCatch
 		}
+		dv := uint32(31)
+		for _, p := range user.Pets {
+			if p.CatchTime == catchTime {
+				dv = p.DV
+				petID = p.ID
+				break
+			}
+		}
 
 		buf := new(bytes.Buffer)
 		binary.Write(buf, binary.BigEndian, ctx.UserID)
 		binary.Write(buf, binary.BigEndian, catchTime)
 		binary.Write(buf, binary.BigEndian, petID)
 		binary.Write(buf, binary.BigEndian, reqFlag)
-		binary.Write(buf, binary.BigEndian, uint32(31))
+		binary.Write(buf, binary.BigEndian, dv)
 		binary.Write(buf, binary.BigEndian, uint32(0))
 		ctx.Server.SendResponse(ctx.Conn, 2305, ctx.UserID, buf.Bytes())
 	}
@@ -120,6 +129,7 @@ func handlePetShow(state *State) gateway.Handler {
 
 func handlePetCure() gateway.Handler {
 	return func(ctx *gateway.Context) {
+		// Keep ack-only to match protocol expectations; healing is handled by 2310 for single pet.
 		ctx.Server.SendResponse(ctx.Conn, 2306, ctx.UserID, []byte{})
 	}
 }
@@ -136,7 +146,7 @@ func handlePetBargeList(state *State) gateway.Handler {
 		user := state.GetOrCreateUser(ctx.UserID)
 		caughtSet := map[int]bool{}
 		for _, p := range user.Pets {
-			caughtSet[p.SpeciesID] = true
+			caughtSet[int(p.ID)] = true
 		}
 
 		buf := new(bytes.Buffer)

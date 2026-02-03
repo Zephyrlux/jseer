@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"sync"
 )
 
@@ -17,6 +18,14 @@ type itemPriceDB struct {
 }
 
 var globalItemPrices = &itemPriceDB{}
+
+type itemNameDB struct {
+	mu     sync.RWMutex
+	loaded bool
+	names  map[string]int
+}
+
+var globalItemNames = &itemNameDB{}
 
 var uniqueRanges = []struct {
 	Min int
@@ -39,6 +48,19 @@ func LoadItemPrices() map[int]int {
 	_ = loadItemPrices(filepath.Join(dataRoot, "items.xml"), globalItemPrices.prices)
 	globalItemPrices.loaded = true
 	return globalItemPrices.prices
+}
+
+func LoadItemNames() map[string]int {
+	globalItemNames.mu.Lock()
+	defer globalItemNames.mu.Unlock()
+	if globalItemNames.loaded {
+		return globalItemNames.names
+	}
+	globalItemNames.names = make(map[string]int)
+	dataRoot := resolveDataRoot()
+	_ = loadItemNames(filepath.Join(dataRoot, "items.xml"), globalItemNames.names)
+	globalItemNames.loaded = true
+	return globalItemNames.names
 }
 
 func loadItemPrices(path string, out map[int]int) error {
@@ -80,6 +102,45 @@ func loadItemPrices(path string, out map[int]int) error {
 	return nil
 }
 
+func loadItemNames(path string, out map[string]int) error {
+	f, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	dec := xml.NewDecoder(f)
+	for {
+		tok, err := dec.Token()
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			return err
+		}
+		se, ok := tok.(xml.StartElement)
+		if !ok {
+			continue
+		}
+		if se.Name.Local != "Item" {
+			continue
+		}
+		id := 0
+		name := ""
+		for _, attr := range se.Attr {
+			switch attr.Name.Local {
+			case "ID":
+				id, _ = strconv.Atoi(attr.Value)
+			case "Name":
+				name = attr.Value
+			}
+		}
+		if id > 0 && name != "" {
+			out[name] = id
+		}
+	}
+	return nil
+}
+
 func getItemPrice(itemID int) int {
 	prices := LoadItemPrices()
 	if prices == nil {
@@ -100,4 +161,21 @@ func isUniqueItem(itemID int) bool {
 		}
 	}
 	return false
+}
+
+func findItemIDByName(name string) int {
+	if name == "" {
+		return 0
+	}
+	names := LoadItemNames()
+	if id := names[name]; id > 0 {
+		return id
+	}
+	if strings.Contains(name, "精元") && !strings.Contains(name, "的") {
+		alt := strings.Replace(name, "精元", "的精元", 1)
+		if id := names[alt]; id > 0 {
+			return id
+		}
+	}
+	return 0
 }

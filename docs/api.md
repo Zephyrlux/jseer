@@ -1,24 +1,38 @@
 # API 文档（概要）
 
-## GM API（Iris）
-Base URL: `http://<gm-host>:3001/api`
+本项目 GM API 使用 JSON，统一前缀为 `/api`。
 
-### 认证
-- `POST /auth/login`
-  - body: `{ "username": "admin", "password": "admin" }`
-  - response: `{ "token": "...", "expires_at": 0 }`
+## 1. 认证
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| POST | `/auth/login` | 登录并获取 Token |
 
-### 配置管理
-- `GET /config/keys`
-- `GET /config/{key}`
-- `POST /config/{key}`
-  - body: `{ "value": { ... } }`
-- `GET /config/{key}/versions`
+请求示例：
+```json
+{"username": "admin", "password": "admin"}
+```
 
-### 审计
-- `GET /audit`
+响应示例：
+```json
+{"token": "<jwt>", "expires_at": 0}
+```
 
-## Resource API
-- `GET /ip.txt` → 返回登录服地址（示例：`127.0.0.1:1863`）
+## 2. 配置管理
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| GET | `/config/keys` | 获取配置键列表 |
+| GET | `/config/{key}` | 获取配置值 |
+| POST | `/config/{key}` | 写入配置值 |
+| GET | `/config/{key}/versions` | 查看配置版本 |
 
-> 注：后续会补齐玩家、道具、战斗、活动等完整 GM API。
+## 3. 审计
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| GET | `/audit` | 审计日志列表 |
+
+## 4. 资源服务
+| 方法 | 路径 | 说明 |
+| --- | --- | --- |
+| GET | `/ip.txt` | 返回登录服地址（示例：`127.0.0.1:1863`） |
+
+> 注：GM API 与配置模型会随模块补齐逐步扩展。

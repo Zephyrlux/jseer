@@ -19,27 +19,39 @@ type LearnableMove struct {
 }
 
 type PetBase struct {
-	ID          int
-	Hp          int
-	Atk         int
-	Def         int
-	SpAtk       int
-	SpDef       int
-	Spd         int
-	GrowthType  int
-	Learnable   []LearnableMove
+	ID         int
+	Type       int
+	BaseExp    int
+	Name       string
+	Hp         int
+	Atk        int
+	Def        int
+	SpAtk      int
+	SpDef      int
+	Spd        int
+	GrowthType int
+	Learnable  []LearnableMove
 }
 
 type SkillInfo struct {
-	ID  int
-	PP  int
+	ID            int
+	PP            int
+	Power         int
+	Type          int
+	Category      int
+	Accuracy      int
+	Priority      int
+	SideEffect    int
+	SideEffectArg string
+	MustHit       bool
 }
 
 type PetDB struct {
-	mu      sync.RWMutex
-	loaded  bool
-	pets    map[int]*PetBase
-	skills  map[int]*SkillInfo
+	mu     sync.RWMutex
+	loaded bool
+	pets   map[int]*PetBase
+	skills map[int]*SkillInfo
+	names  map[string]int
 }
 
 var globalPetDB = &PetDB{}
@@ -52,9 +64,15 @@ func LoadPetDB() *PetDB {
 	}
 	globalPetDB.pets = make(map[int]*PetBase)
 	globalPetDB.skills = make(map[int]*SkillInfo)
+	globalPetDB.names = make(map[string]int)
 	dataRoot := resolveDataRoot()
 	_ = loadSkills(filepath.Join(dataRoot, "skills.xml"), globalPetDB.skills)
 	_ = loadPets(filepath.Join(dataRoot, "spt.xml"), globalPetDB.pets)
+	for id, pet := range globalPetDB.pets {
+		if pet != nil && pet.Name != "" {
+			globalPetDB.names[pet.Name] = id
+		}
+	}
 	globalPetDB.loaded = true
 	return globalPetDB
 }
@@ -100,16 +118,51 @@ func loadSkills(path string, out map[int]*SkillInfo) error {
 		}
 		id := 0
 		pp := 35
+		power := 0
+		typ := 0
+		category := 0
+		accuracy := 100
+		priority := 0
+		sideEffect := 0
+		sideArg := ""
+		mustHit := false
 		for _, attr := range se.Attr {
 			switch attr.Name.Local {
 			case "ID":
 				id, _ = strconv.Atoi(attr.Value)
 			case "MaxPP":
 				pp, _ = strconv.Atoi(attr.Value)
+			case "Power":
+				power, _ = strconv.Atoi(attr.Value)
+			case "Type":
+				typ, _ = strconv.Atoi(attr.Value)
+			case "Category":
+				category, _ = strconv.Atoi(attr.Value)
+			case "Accuracy":
+				accuracy, _ = strconv.Atoi(attr.Value)
+			case "Priority":
+				priority, _ = strconv.Atoi(attr.Value)
+			case "SideEffect":
+				sideEffect, _ = strconv.Atoi(attr.Value)
+			case "SideEffectArg":
+				sideArg = attr.Value
+			case "MustHit":
+				mustHit = attr.Value == "1"
 			}
 		}
 		if id > 0 {
-			out[id] = &SkillInfo{ID: id, PP: pp}
+			out[id] = &SkillInfo{
+				ID:            id,
+				PP:            pp,
+				Power:         power,
+				Type:          typ,
+				Category:      category,
+				Accuracy:      accuracy,
+				Priority:      priority,
+				SideEffect:    sideEffect,
+				SideEffectArg: sideArg,
+				MustHit:       mustHit,
+			}
 		}
 	}
 	return nil
@@ -142,6 +195,12 @@ func loadPets(path string, out map[int]*PetBase) error {
 					switch attr.Name.Local {
 					case "ID":
 						current.ID, _ = strconv.Atoi(attr.Value)
+					case "Type":
+						current.Type, _ = strconv.Atoi(attr.Value)
+					case "YieldingExp":
+						current.BaseExp, _ = strconv.Atoi(attr.Value)
+					case "DefName":
+						current.Name = attr.Value
 					case "Hp", "HP":
 						current.Hp, _ = strconv.Atoi(attr.Value)
 					case "Atk":
@@ -202,20 +261,20 @@ func createStarterPet(petID int, level int) *PetInstance {
 	}
 	if base == nil {
 		return &PetInstance{
-			ID:        petID,
-			Level:     level,
-			DV:        31,
-			Nature:    rand.Intn(25),
-			Exp:       0,
-			HP:        100,
-			MaxHP:     100,
-			Attack:    20,
-			Defence:   20,
-			SA:        20,
-			SD:        20,
-			Speed:     20,
-			Skills:    []int{10001, 0, 0, 0},
-			CatchMap:  301,
+			ID:         petID,
+			Level:      level,
+			DV:         31,
+			Nature:     rand.Intn(25),
+			Exp:        0,
+			HP:         100,
+			MaxHP:      100,
+			Attack:     20,
+			Defence:    20,
+			SA:         20,
+			SD:         20,
+			Speed:      20,
+			Skills:     []int{10001, 0, 0, 0},
+			CatchMap:   301,
 			CatchLevel: level,
 		}
 	}
@@ -352,21 +411,21 @@ func getExpInfo(base *PetBase, level int, currentLevelExp int) expInfo {
 }
 
 type PetInstance struct {
-	ID          int
-	Level       int
-	DV          int
-	Nature      int
-	Exp         int
-	HP          int
-	MaxHP       int
-	Attack      int
-	Defence     int
-	SA          int
-	SD          int
-	Speed       int
-	Skills      []int
-	CatchMap    int
-	CatchLevel  int
+	ID         int
+	Level      int
+	DV         int
+	Nature     int
+	Exp        int
+	HP         int
+	MaxHP      int
+	Attack     int
+	Defence    int
+	SA         int
+	SD         int
+	Speed      int
+	Skills     []int
+	CatchMap   int
+	CatchLevel int
 }
 
 func getSkillPP(skillID int) int {
@@ -375,6 +434,22 @@ func getSkillPP(skillID int) int {
 		return s.PP
 	}
 	return 20
+}
+
+func getSkillInfo(skillID int) *SkillInfo {
+	db := LoadPetDB()
+	return db.skills[skillID]
+}
+
+func findPetIDByName(name string) int {
+	if name == "" {
+		return 0
+	}
+	db := LoadPetDB()
+	if id := db.names[name]; id > 0 {
+		return id
+	}
+	return 0
 }
 
 func sanitizeName(name string) string {

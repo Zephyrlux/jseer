@@ -40,6 +40,8 @@ func (Player) Fields() []ent.Field {
 		field.String("blacklist").Default("[]"),
 		field.String("team_info").Default("{}"),
 		field.String("student_ids").Default("[]"),
+		field.Int64("room_id").Default(0),
+		field.String("fitments").Default("[]"),
 		field.Int64("current_pet_id").Default(0),
 		field.Int64("current_pet_catch_time").Default(0),
 		field.Int64("current_pet_dv").Default(31),

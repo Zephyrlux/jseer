@@ -3,7 +3,10 @@ package game
 import (
 	"bytes"
 	"context"
+	"crypto/md5"
 	"encoding/binary"
+	"encoding/hex"
+	"fmt"
 	"time"
 
 	"jseer/internal/gateway"
@@ -18,6 +21,7 @@ func registerSystemHandlers(s *gateway.Server, deps *Deps, state *State) {
 	s.Register(1002, handleSystemTime())
 	s.Register(1004, handleMapHot(state))
 	s.Register(1005, handleGetImageAddress(deps))
+	s.Register(1006, handleGetSessionKey())
 	s.Register(1102, handleMoneyBuyProduct(state))
 	s.Register(1104, handleGoldBuyProduct(state))
 	s.Register(1106, handleGoldOnlineCheckRemain(state))
@@ -33,20 +37,20 @@ func handleLoginIn(deps *Deps, state *State) gateway.Handler {
 			p, err := deps.Store.GetPlayerByAccount(context.Background(), int64(ctx.UserID))
 			if err != nil {
 				p, err = deps.Store.CreatePlayer(context.Background(), &storage.Player{
-					Account:     int64(ctx.UserID),
-					Nick:        pickNick(user, ctx.UserID),
-					Level:       1,
-					Coins:       2000,
-					Gold:        0,
-					MapID:       1,
-					MapType:     0,
-					PosX:        300,
-					PosY:        270,
-					LastMapID:   1,
-					Color:       0x66CCFF,
-					Texture:     1,
-					Energy:      100,
-					TimeLimit:   86400,
+					Account:      int64(ctx.UserID),
+					Nick:         pickNick(user, ctx.UserID),
+					Level:        1,
+					Coins:        2000,
+					Gold:         0,
+					MapID:        1,
+					MapType:      0,
+					PosX:         300,
+					PosY:         270,
+					LastMapID:    1,
+					Color:        0x66CCFF,
+					Texture:      1,
+					Energy:       100,
+					TimeLimit:    86400,
 					CurrentPetDV: 31,
 				})
 				if err == nil {
@@ -67,6 +71,7 @@ func handleLoginIn(deps *Deps, state *State) gateway.Handler {
 							DV:        p.DV,
 							Exp:       p.Exp,
 							HP:        p.HP,
+							Skills:    decodePetSkills(p.Skills),
 						})
 					}
 				}
@@ -144,6 +149,18 @@ func handleGetImageAddress(deps *Deps) gateway.Handler {
 		binary.Write(buf, binary.BigEndian, uint16(80))
 		protocol.WriteFixedString(buf, "", 16)
 		ctx.Server.SendResponse(ctx.Conn, 1005, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleGetSessionKey() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		now := uint32(time.Now().Unix())
+		sum := md5.Sum([]byte(fmt.Sprintf("%d:%d", ctx.UserID, now)))
+		key := hex.EncodeToString(sum[:])
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, now)
+		buf.WriteString(key)
+		ctx.Server.SendResponse(ctx.Conn, 1006, ctx.UserID, buf.Bytes())
 	}
 }
 

@@ -16,6 +16,14 @@ type ItemInfo struct {
 	ExpireTime uint32
 }
 
+type Fitment struct {
+	ID     uint32
+	X      uint32
+	Y      uint32
+	Dir    uint32
+	Status uint32
+}
+
 type FriendInfo struct {
 	UserID   uint32
 	TimePoke uint32
@@ -155,6 +163,8 @@ type User struct {
 	Items     map[int]*ItemInfo
 	Fight     *FightState
 	InFight   bool
+	RoomID    uint32
+	Fitments  []Fitment
 }
 
 type State struct {

@@ -176,6 +176,29 @@ func (s *memoryStore) ListPetsByPlayer(ctx context.Context, playerID int64) ([]*
 	return out, nil
 }
 
+func (s *memoryStore) UpsertPet(ctx context.Context, in *Pet) (*Pet, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	list := s.pets[in.PlayerID]
+	for _, it := range list {
+		if it.CatchTime == in.CatchTime {
+			it.SpeciesID = in.SpeciesID
+			it.Level = in.Level
+			it.Exp = in.Exp
+			it.HP = in.HP
+			it.DV = in.DV
+			it.Skills = in.Skills
+			it.Nature = in.Nature
+			copy := *it
+			return &copy, nil
+		}
+	}
+	inCopy := *in
+	inCopy.ID = time.Now().UnixNano()
+	s.pets[in.PlayerID] = append(list, &inCopy)
+	return &inCopy, nil
+}
+
 func (s *memoryStore) ListConfigKeys(ctx context.Context) ([]string, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()

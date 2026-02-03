@@ -136,7 +136,7 @@ func buildTaskCompleteResponse(taskID int, param int, user *User, deps *Deps) ([
 		user.CatchID = uint32(captureTm)
 		pet := createStarterPet(petID, 5)
 		if pet != nil {
-			user.Pets = append(user.Pets, Pet{
+			newPet := Pet{
 				ID:        uint32(petID),
 				CatchTime: uint32(captureTm),
 				Level:     uint32(pet.Level),
@@ -144,7 +144,9 @@ func buildTaskCompleteResponse(taskID int, param int, user *User, deps *Deps) ([
 				Exp:       pet.Exp,
 				HP:        pet.HP,
 				Skills:    pet.Skills,
-			})
+			}
+			user.Pets = append(user.Pets, newPet)
+			upsertPet(deps, user, newPet)
 			user.PetDV = uint32(pet.DV)
 		}
 	} else if cfg.Rewards.PetID > 0 {

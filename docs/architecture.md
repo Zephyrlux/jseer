@@ -1,48 +1,49 @@
-# jseer 架构说明
+# 架构说明
 
 本项目以开源形式发布，用于协议研究、学习与技术验证。
 
 免责声明：本项目不包含任何官方客户端资源或授权内容，使用者需自行评估并遵守相关法律法规与资源授权要求。
 
-## 1. 目标
-- 完整复刻 Lua 客户端协议与功能。  
-- Go + Ent + Iris 技术栈，支持 MySQL / SQLite / PostgreSQL。  
-- GM 后台全覆盖配置，实时生效、版本管理、审计与权限分级。  
-- 高并发、数据一致性、可扩展、可维护。
+## 1. 设计目标
+- 完整对齐客户端协议与功能行为。
+- Go + Ent + Iris 作为统一后端技术基座。
+- 多数据库支持（MySQL / SQLite / PostgreSQL）。
+- 高并发、数据一致性、可维护、可扩展。
 
-## 2. 服务拆分
-- **Gateway (TCP)**：负责 AS3 客户端协议收发与命令分发。  
-- **Login Server (TCP)**：处理登录认证与服务器列表（CMD 104/105/106 等）。  
-- **Resource HTTP**：提供 `ip.txt` 等资源入口。  
-- **GM HTTP (Iris)**：GM 登录/权限/配置/审计 API。  
-- **Game Logic**：地图、战斗、精灵、道具、活动等模块化服务层。
-
-## 3. 目录结构（核心）
+## 2. 服务拓扑
 ```
-cmd/
-  gateway/        # TCP 游戏网关
-  gmserver/       # GM API 服务
-  ressrv/         # ip.txt 资源服务
-internal/
-  config/         # 配置加载
-  logging/        # 日志封装
-  protocol/       # 协议编解码
-  gateway/        # TCP 网关实现
-  game/           # 业务逻辑模块（逐步补齐）
-  gm/             # GM API 与权限
-  storage/        # 数据访问抽象（Ent/Memory）
-ent/schema/       # Ent 数据模型
-configs/           # 配置样例
-
-gm-web/            # Vue3+Vite GM 管理后台
+Client (TCP) -> Gateway -> Game Logic -> Storage (Ent)
+                |                 |
+                |                 +-> Cache / Config (可扩展)
+                |
+Client (HTTP) -> Resource Server (ip.txt / static)
+Admin  (HTTP) -> GM Server (API)
 ```
 
-## 4. 配置与数据一致性
-- 运行时配置由 GM 平台写入数据库，并提供版本历史。  
-- 服务端通过内存缓存与变更通知机制（后续可接入 Redis/NATS）。  
-- 战斗与经济系统使用事务/锁保证一致性。
+## 3. 模块划分
+| 模块 | 说明 |
+| --- | --- |
+| gateway | TCP 协议编解码与命令路由 |
+| game | 地图、精灵、道具、任务、战斗等业务模块 |
+| storage | Ent 模型与数据访问层 |
+| gm | GM 认证、权限、配置与审计 |
+| resource | ip.txt 与静态资源分发 |
 
-## 5. 协议落地策略
-- 优先保证协议可跑通与稳定性，再逐条完善 **真实包体与业务逻辑**。  
-- 以模块为单位逐步还原完整协议体与业务。  
-- 每条协议都有对应单元测试与模拟客户端测试脚本。
+## 4. 协议处理流程
+1. TCP 网关接收包体，解析 Header（cmd/user/seq）。
+2. 路由到具体业务 Handler。
+3. Handler 调用存储层，构建响应包体。
+4. 返回包体并广播（必要时）。
+
+## 5. 配置与审计
+- GM 配置写入数据库，带版本号与操作者信息。
+- 服务端使用缓存提高读取性能，并支持热更新刷新。
+- 关键操作写入审计日志，便于追踪与回滚。
+
+## 6. 数据一致性
+- 所有业务数据统一通过 Ent 访问，避免原生 SQL。
+- 关键写入路径使用事务封装，保证一致性。
+
+## 7. 可扩展性
+- 协议按模块拆分，新增命令时独立扩展。
+- GM 配置采用 Key-Value + 版本化模型，方便拓展新模块。

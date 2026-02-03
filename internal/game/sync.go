@@ -57,6 +57,12 @@ func syncUserFromPlayer(userID uint32, u *User, p *storage.Player) *User {
 	} else if u.StudentIDs == nil {
 		u.StudentIDs = make([]uint32, 0)
 	}
+	if p.RoomID > 0 {
+		u.RoomID = uint32(p.RoomID)
+	}
+	if p.Fitments != "" {
+		u.Fitments = decodeFitments(p.Fitments)
+	}
 	u.CurrentPetID = uint32(p.CurrentPetID)
 	u.CatchID = uint32(p.CurrentPetCatchTime)
 	u.PetDV = uint32(p.CurrentPetDV)
@@ -94,6 +100,8 @@ func buildPlayerUpdate(u *User, accountID int64) *storage.Player {
 		Blacklist:           encodeBlacklist(u.Blacklist),
 		TeamInfo:            encodeTeamInfo(u.Team),
 		StudentIDs:          encodeStudentIDs(u.StudentIDs),
+		RoomID:              int64(u.RoomID),
+		Fitments:            encodeFitments(u.Fitments),
 		CurrentPetID:        int64(u.CurrentPetID),
 		CurrentPetCatchTime: int64(u.CatchID),
 		CurrentPetDV:        int64(u.PetDV),

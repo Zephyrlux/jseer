@@ -8,17 +8,41 @@ import (
 )
 
 func registerPetAdvancedHandlers(s *gateway.Server, deps *Deps, state *State) {
-	s.Register(2302, handleModifyPetName(state))
-	s.Register(2307, handlePetStudySkill(state))
-	s.Register(2308, handlePetDefault(state))
-	s.Register(2310, handlePetOneCure(state))
+	s.Register(2302, handleModifyPetName(deps, state))
+	s.Register(2307, handlePetStudySkill(deps, state))
+	s.Register(2308, handlePetDefault(deps, state))
+	s.Register(2310, handlePetOneCure(deps, state))
+	s.Register(2311, handlePetCollect())
+	s.Register(2312, handlePetSkillSwitch())
 	s.Register(2313, handleIsCollect())
+	s.Register(2314, handlePetEvolution())
+	s.Register(2315, handlePetHatch())
 	s.Register(2316, handlePetHatchGet())
-	s.Register(2318, handlePetSetExp(state))
+	s.Register(2318, handlePetSetExp(deps, state))
 	s.Register(2319, handlePetGetExp(state))
+	s.Register(2320, handlePetRoweiList())
+	s.Register(2321, handlePetRowei())
+	s.Register(2322, handlePetRetrieve())
+	s.Register(2323, handlePetRoomShow())
+	s.Register(2324, handlePetRoomList())
+	s.Register(2325, handlePetRoomInfo())
+	s.Register(2326, handleUsePetItemOutOfFight())
+	s.Register(2327, handleUseSpeedupItem())
+	s.Register(2328, handleSkillSort())
+	s.Register(2329, handleUseAutoFightItem())
+	s.Register(2330, handleOnOffAutoFight())
+	s.Register(2331, handleUseEnergyXishou())
+	s.Register(2332, handleUseStudyItem())
+	s.Register(2343, handlePetResetNature())
+	s.Register(2351, handlePetFusion())
+	s.Register(2352, handleGetSoulBeadBuf())
+	s.Register(2353, handleSetSoulBeadBuf())
+	s.Register(2356, handleGetSoulBeadStatus())
+	s.Register(2357, handleTransformSoulBead())
+	s.Register(2358, handleSoulBeadToPet())
 }
 
-func handleModifyPetName(state *State) gateway.Handler {
+func handleModifyPetName(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		reader := NewReader(ctx.Body)
 		catchTime := reader.ReadUint32BE()
@@ -28,6 +52,7 @@ func handleModifyPetName(state *State) gateway.Handler {
 			for i := range user.Pets {
 				if user.Pets[i].CatchTime == catchTime {
 					user.Pets[i].Name = name
+					upsertPet(deps, user, user.Pets[i])
 					break
 				}
 			}
@@ -38,7 +63,7 @@ func handleModifyPetName(state *State) gateway.Handler {
 	}
 }
 
-func handlePetStudySkill(state *State) gateway.Handler {
+func handlePetStudySkill(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		reader := NewReader(ctx.Body)
 		catchTime := reader.ReadUint32BE()
@@ -57,6 +82,7 @@ func handlePetStudySkill(state *State) gateway.Handler {
 					if !exists {
 						user.Pets[i].Skills = append(user.Pets[i].Skills, int(skillID))
 					}
+					upsertPet(deps, user, user.Pets[i])
 					break
 				}
 			}
@@ -67,7 +93,7 @@ func handlePetStudySkill(state *State) gateway.Handler {
 	}
 }
 
-func handlePetDefault(state *State) gateway.Handler {
+func handlePetDefault(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		reader := NewReader(ctx.Body)
 		catchTime := reader.ReadUint32BE()
@@ -77,6 +103,7 @@ func handlePetDefault(state *State) gateway.Handler {
 				if p.CatchTime == catchTime {
 					user.CurrentPetID = p.ID
 					user.CatchID = p.CatchTime
+					savePlayer(deps, ctx.UserID, user)
 					break
 				}
 			}
@@ -87,7 +114,7 @@ func handlePetDefault(state *State) gateway.Handler {
 	}
 }
 
-func handlePetOneCure(state *State) gateway.Handler {
+func handlePetOneCure(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		reader := NewReader(ctx.Body)
 		catchTime := reader.ReadUint32BE()
@@ -95,7 +122,10 @@ func handlePetOneCure(state *State) gateway.Handler {
 		if catchTime > 0 {
 			for i := range user.Pets {
 				if user.Pets[i].CatchTime == catchTime {
-					user.Pets[i].HP = 100
+					base := LoadPetDB().pets[int(user.Pets[i].ID)]
+					stats := getStats(base, int(user.Pets[i].Level), int(user.Pets[i].DV), evSet{})
+					user.Pets[i].HP = stats.MaxHP
+					upsertPet(deps, user, user.Pets[i])
 					break
 				}
 			}
@@ -124,7 +154,7 @@ func handlePetHatchGet() gateway.Handler {
 	}
 }
 
-func handlePetSetExp(state *State) gateway.Handler {
+func handlePetSetExp(deps *Deps, state *State) gateway.Handler {
 	return func(ctx *gateway.Context) {
 		reader := NewReader(ctx.Body)
 		catchTime := reader.ReadUint32BE()
@@ -140,6 +170,8 @@ func handlePetSetExp(state *State) gateway.Handler {
 			for i := range user.Pets {
 				if user.Pets[i].CatchTime == catchTime {
 					user.Pets[i].Exp += int(expAmount)
+					user.Pets[i].Skills = append([]int{}, user.Pets[i].Skills...)
+					upsertPet(deps, user, user.Pets[i])
 					break
 				}
 			}
@@ -147,6 +179,198 @@ func handlePetSetExp(state *State) gateway.Handler {
 		buf := new(bytes.Buffer)
 		binary.Write(buf, binary.BigEndian, user.ExpPool)
 		ctx.Server.SendResponse(ctx.Conn, 2318, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handlePetCollect() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2311, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handlePetSkillSwitch() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2312, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handlePetEvolution() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2314, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handlePetHatch() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2315, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handlePetRoweiList() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2320, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handlePetRowei() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2321, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handlePetRetrieve() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2322, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handlePetRoomShow() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2323, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handlePetRoomList() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2324, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handlePetRoomInfo() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2325, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleUsePetItemOutOfFight() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2326, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleUseSpeedupItem() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2327, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleSkillSort() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2328, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleUseAutoFightItem() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2329, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleOnOffAutoFight() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2330, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleUseEnergyXishou() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2331, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleUseStudyItem() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2332, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handlePetResetNature() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2343, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handlePetFusion() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2351, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleGetSoulBeadBuf() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2352, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleSetSoulBeadBuf() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2353, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleGetSoulBeadStatus() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2356, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleTransformSoulBead() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2357, ctx.UserID, buf.Bytes())
+	}
+}
+
+func handleSoulBeadToPet() gateway.Handler {
+	return func(ctx *gateway.Context) {
+		buf := new(bytes.Buffer)
+		binary.Write(buf, binary.BigEndian, uint32(0))
+		ctx.Server.SendResponse(ctx.Conn, 2358, ctx.UserID, buf.Bytes())
 	}
 }
 
